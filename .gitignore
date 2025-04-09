@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Backend/KutuphaneYonetimSistemi/appsettings.json
