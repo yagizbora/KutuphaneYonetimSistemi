@@ -1,8 +1,10 @@
 ﻿using Microsoft.OpenApi.Models;
 using KutuphaneYonetimSistemi.Common; 
 using Npgsql;
+using Microsoft.AspNetCore.Builder;
+using AspNetCoreRateLimit;
 using System.Data;
-
+    
 namespace KutuphaneYonetimSistemi
 {
     public class Startup
@@ -16,6 +18,7 @@ namespace KutuphaneYonetimSistemi
 
         public void ConfigureServices(IServiceCollection services)
         {
+
             string? connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             if (string.IsNullOrEmpty(connectionString))
@@ -27,6 +30,7 @@ namespace KutuphaneYonetimSistemi
             services.AddSingleton(new DbHelper(connectionString));
 
             services.AddSingleton<IDbConnection>(sp => new NpgsqlConnection(connectionString));
+
 
             services.AddCors(options =>
             {
@@ -50,7 +54,7 @@ namespace KutuphaneYonetimSistemi
                 });
                 c.AddSecurityDefinition("Token", new OpenApiSecurityScheme
                 {
-                    Description = "Token header ile gönderilir. Örnek: Token {your_token}",
+                    Description = "Token",
                     Name = "token",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
@@ -72,10 +76,15 @@ namespace KutuphaneYonetimSistemi
 
                 c.OperationFilter<CustomHeaderSwaggerAttribute>();
             });
+            services.AddMemoryCache();
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.AddInMemoryRateLimiting();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -101,11 +110,13 @@ namespace KutuphaneYonetimSistemi
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseIpRateLimiting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
