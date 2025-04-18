@@ -1,14 +1,13 @@
 ﻿using Microsoft.OpenApi.Models;
 using KutuphaneYonetimSistemi.Common; 
 using Npgsql;
-using Microsoft.AspNetCore.Builder;
-using AspNetCoreRateLimit;
 using System.Data;
-    
+
 namespace KutuphaneYonetimSistemi
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -76,10 +75,10 @@ namespace KutuphaneYonetimSistemi
 
                 c.OperationFilter<CustomHeaderSwaggerAttribute>();
             });
-            services.AddMemoryCache();
-            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-            services.AddInMemoryRateLimiting();
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            //services.AddMemoryCache();
+            //services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            //services.AddInMemoryRateLimiting();
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -106,11 +105,9 @@ namespace KutuphaneYonetimSistemi
             app.UseStaticFiles();
 
             app.UseCors("MyPolicy");
-
+            
             app.UseRouting();
-
             app.UseAuthorization();
-            app.UseIpRateLimiting();
 
             app.UseEndpoints(endpoints =>
             {

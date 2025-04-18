@@ -27,7 +27,7 @@ namespace KutuphaneYonetimSistemi.Common
 
             if (string.IsNullOrEmpty(token))
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token Boş Olamaz" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
             }
 
             using (var connection = _dbHelper.GetConnection())
@@ -46,7 +46,7 @@ namespace KutuphaneYonetimSistemi.Common
 
                         if (loginTimeDiff.TotalMinutes >= 90)
                         {
-                            var timeoutsql = "UPDATE table_users SET token = NULL,login_date = NULL WHERE id = @id";
+                            var timeoutsql = "UPDATE table_users SET token = NULL,login_date = NULL,is_login = FALSE WHERE id = @id";
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
                             if (timeout > 0)
                             {

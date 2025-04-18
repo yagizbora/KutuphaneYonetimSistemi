@@ -2,6 +2,7 @@
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Globalization;
 using System.Threading.RateLimiting;
 
@@ -19,6 +20,28 @@ namespace KutuphaneYonetimSistemi.Controllers
         public UserController(DbHelper dbHelper)
         {
             _dbHelper = dbHelper;
+        }
+
+        [HttpGet("ListAllUser")]
+        public async Task<IActionResult> ListAllUser()
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using(var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE";
+                    var List = connection.Query<ListAllUsers>(query, connection);
+                    return Ok(List);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
         }
 
         [HttpPost("Login")]
@@ -42,12 +65,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                     DateTime? login_date = DateTime.ParseExact(DateTime.Now.ToString(), format, CultureInfo.InvariantCulture);
                     if (!string.IsNullOrEmpty(token) && login_date != null)
                     {
-                        string inserttokenquery = "UPDATE table_users SET token = @token, login_date = @login_date WHERE id = @id";
+                        string inserttokenquery = "UPDATE table_users SET token = @token, login_date = @login_date,is_login = true WHERE id = @id";
                         var inserttoken = await connection.ExecuteAsync(inserttokenquery, new { token = token, id = userdata.id, login_date = login_date });
                     }
 
                     var response = new
                     {
+                        login_date = login_date,
                         user_id = userdata.id,
                         username = userdata.username,
                         token = token,
@@ -91,6 +115,40 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
             }
             catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout(Logout model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string checkuserislogin = "SELECT is_login FROM table_users WHERE id = @user_id";
+                    var islogin = await connection.QueryFirstOrDefaultAsync<bool>(checkuserislogin, model);
+                    if (islogin == false)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User is not login"));
+                    }
+                    string query = "UPDATE table_users SET token = NULL, login_date = NULL,is_login = false WHERE id = @user_id";
+                    var result = await connection.ExecuteAsync(query, model);
+                    if (result > 0)
+                    {
+                        return Ok(ResponseHelper.ActionResponse("User logout successfully"));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User couldn't logout"));
+                    }
+                }
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }

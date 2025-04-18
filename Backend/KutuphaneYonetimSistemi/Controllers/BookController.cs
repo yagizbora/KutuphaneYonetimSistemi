@@ -193,9 +193,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string checkbooksisavaible = "SELECT Durum FROM table_kitaplar WHERE id = @id";
-                    bool checkbooksisavaibleresponse = await connection.QueryFirstOrDefaultAsync<bool>(checkbooksisavaible, new { id = models.id });
+                    bool? checkbooksisavaibleresponse = await connection.QueryFirstOrDefaultAsync<bool?>(checkbooksisavaible, new { id = models.id });
 
-                    if (!checkbooksisavaibleresponse)
+                    if (!checkbooksisavaibleresponse.HasValue)
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+                    }
+
+                    if (checkbooksisavaibleresponse.Value == false)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsNotFree));
                     }
@@ -304,7 +309,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
                     }
 
-                    if (book.odunc_alma_tarihi == null)
+                    if (!book.odunc_alma_tarihi.HasValue)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
                     }
@@ -319,8 +324,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                         if (updateResult > 0)
                         {
                             string insertSuccessPaymentQuery = @"
-                            INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted,payment_date) 
-                            VALUES (@payment_amount, @payment_type, @book_id, true, false,@payment_date)";
+                           INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date) 
+                           VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date)";
 
                             int paymentLogResult = await connection.ExecuteAsync(insertSuccessPaymentQuery, new
                             {
@@ -346,8 +351,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (models.payment_amount < delayFee)
                     {
                         string insertPaymentQuery = @"
-                    INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted,payment_date,payment_failed_subject) 
-                    VALUES (@payment_amount, @payment_type, @book_id, false, false,@payment_date,Ödeme miktarı yetersiz!)";
+                       INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, payment_failed_subject) 
+                       VALUES (@payment_amount, @payment_type, @book_id, false, false, @payment_date, 'Ödeme miktarı yetersiz!')";
 
                         await connection.ExecuteAsync(insertPaymentQuery, new
                         {
@@ -366,8 +371,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (returnBookResult > 0)
                     {
                         string insertSuccessPaymentQuery = @"
-                    INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted,payment_date) 
-                    VALUES (@payment_amount, @payment_type, @book_id, true, false,@payment_date)";
+                       INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date) 
+                       VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date)";
 
                         int paymentLogResult = await connection.ExecuteAsync(insertSuccessPaymentQuery, new
                         {
