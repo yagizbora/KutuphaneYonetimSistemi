@@ -3,6 +3,7 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Threading.RateLimiting;
 
@@ -28,7 +29,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using(var connection = _dbHelper.GetConnection())
@@ -68,7 +69,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                         string inserttokenquery = "UPDATE table_users SET token = @token, login_date = @login_date,is_login = true WHERE id = @id";
                         var inserttoken = await connection.ExecuteAsync(inserttokenquery, new { token = token, id = userdata.id, login_date = login_date });
                     }
-
                     var response = new
                     {
                         login_date = login_date,
@@ -76,7 +76,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                         username = userdata.username,
                         token = token,
                     };
-
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }
             }
@@ -86,13 +85,69 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
+        [HttpDelete("DeleteUser/{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    if (!ControllerContext.HttpContext.Request.Headers.TryGetValue("token", out var tokenValue))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Token header eksik."));
+                    }
+
+                    string token = tokenValue.FirstOrDefault();
+
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Token boş."));
+                    }
+
+                   string CheckUsertoDeletedisSame = "SELECT COUNT(*) FROM table_users WHERE id = @id AND token = @token";
+                   int checkuser = connection.QueryFirstOrDefault<int>(CheckUsertoDeletedisSame, new { id, token });
+                   if(checkuser == 1)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("You can't delete yourself"));
+                    }
+
+                   string checkuserisdeleted = "SELECT COUNT(*) FROM table_users WHERE id = @id AND is_deleted = false";
+                    int checkuserisdeletedresult = connection.QueryFirstOrDefault<int>(checkuserisdeleted, new { id });
+                    if (checkuserisdeletedresult == 0)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User is already deleted"));
+                    }
+
+                    string query = "UPDATE table_users SET is_deleted = true WHERE id = @id";
+                    var result = await connection.ExecuteAsync(query, new { id });
+                    if (result > 0)
+                    {
+                        return Ok(ResponseHelper.ActionResponse("User deleted successfully"));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User couldn't delete"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser(UserModel model)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -109,7 +164,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string hashedpassword = model.password;
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(hashedpassword, 12);
 
-                    string query = "INSERT INTO table_users (username, hashedpassword,is_deleted) VALUES (@username, @passwordHash,false)";
+                    string query = "INSERT INTO table_users (username, hashedpassword,is_deleted,is_login) VALUES (@username, @passwordHash,false,false)";
                     var result = await connection.ExecuteAsync(query, new { username = model.username, passwordHash = passwordHash });
                     return Ok(ResponseHelper.ResponseSuccesfully<object>("User created Successfully"));
                 }
@@ -125,7 +180,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())

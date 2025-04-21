@@ -22,7 +22,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())

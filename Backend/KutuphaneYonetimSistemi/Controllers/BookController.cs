@@ -24,7 +24,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -46,7 +46,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
                     WHERE tk.is_deleted = false ORDER BY id ASC;";
 
-                    var books = (await connection.QueryAsync<ListBookModels>(query)).ToList();
+                    var books = await connection.QueryAsync<ListBookModels>(query);
                     return Ok(ResponseHelper.OkResponse("Books fetched.", books));
                 }
             }
@@ -61,7 +61,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -89,7 +89,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -118,7 +118,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -149,7 +149,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -187,7 +187,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
-                return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
