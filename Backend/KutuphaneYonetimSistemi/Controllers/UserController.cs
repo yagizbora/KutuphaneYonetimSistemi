@@ -122,7 +122,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("User is already deleted"));
                     }
 
-                    string query = "UPDATE table_users SET is_deleted = true WHERE id = @id";
+                    string query = "UPDATE table_users SET is_deleted = true,is_login = false,login_date = NULL WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, new { id });
                     if (result > 0)
                     {
