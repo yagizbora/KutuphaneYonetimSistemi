@@ -99,7 +99,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = connection.Execute(query, parameters);
                     if (result > 0 || result == 1)
                     {
-                        return Ok(ResponseHelper.ActionResponse("Book deleted successfully."));
+                        return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                     }
                     else
                     {
@@ -167,7 +167,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = connection.Execute(datasql, models);
                     if (result > 0 || result == 1)
                     {
-                        return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.ReecordUpdated));
+                        return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordUpdated));
                     }
                     else
                     {

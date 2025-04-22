@@ -2,10 +2,7 @@
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-using Newtonsoft.Json.Linq;
 using System.Globalization;
-using System.Threading.RateLimiting;
 
 
 namespace KutuphaneYonetimSistemi.Controllers
@@ -24,7 +21,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
 
         [HttpGet("ListAllUser")]
-        public async Task<IActionResult> ListAllUser()
+        public IActionResult ListAllUser()
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -32,7 +29,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
-                using(var connection = _dbHelper.GetConnection())
+                using (var connection = _dbHelper.GetConnection())
                 {
                     string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE";
                     var List = connection.Query<ListAllUsers>(query, connection);
@@ -101,11 +98,18 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Token header eksik."));
                     }
 
-                    string token = tokenValue.FirstOrDefault();
+                    string? token = tokenValue.FirstOrDefault();
 
                     if (string.IsNullOrEmpty(token))
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Token boş."));
+                    }
+
+                    string useridisexist = "SELECT COUNT(*) FROM table_users WHERE id = @id";
+                    int useridisexistresult = connection.QueryFirstOrDefault<int>(useridisexist, new { id });
+                    if(useridisexistresult == 0)
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
                     }
 
                    string CheckUsertoDeletedisSame = "SELECT COUNT(*) FROM table_users WHERE id = @id AND token = @token";
@@ -115,7 +119,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("You can't delete yourself"));
                     }
 
-                   string checkuserisdeleted = "SELECT COUNT(*) FROM table_users WHERE id = @id AND is_deleted = false";
+                   string checkuserisdeleted = "SELECT COUNT(*) FROM table_users WHERE id = @id AND is_deleted = true";
                     int checkuserisdeletedresult = connection.QueryFirstOrDefault<int>(checkuserisdeleted, new { id });
                     if (checkuserisdeletedresult == 0)
                     {

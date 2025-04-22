@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace KutuphaneYonetimSistemi.Common
+﻿namespace KutuphaneYonetimSistemi.Common
 {
     public class ResponseHelper
     {

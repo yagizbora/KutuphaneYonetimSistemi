@@ -7,7 +7,7 @@ namespace KutuphaneYonetimSistemi.Common
         public const string ImageUploadFailed = "Resim yükleme başarısız oldu";
 
         public const string RecordAdded = "Kayıt başarıyla eklendi";
-        public const string ReecordUpdated = "Kayıt başarıyla güncellendi";
+        public const string RecordUpdated = "Kayıt başarıyla güncellendi";
         public const string RecordDeleted = "Kayıt Başarıyla Silindi";
 
         public const string DataFetched = "Veriler başarıyla getirildi";
