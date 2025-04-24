@@ -51,7 +51,7 @@ namespace KutuphaneYonetimSistemi.Common
                                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Oturum süresi doldu!" };
                             }
                         }
-                        if(loginTimeDiff.TotalMinutes <= 90)
+                        if(user.login_date.Value < DateTime.Now)
                         {
                             var timeoutsql = "UPDATE table_users SET token = NULL,login_date = NULL,is_login = FALSE WHERE id = @id";
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
@@ -59,8 +59,7 @@ namespace KutuphaneYonetimSistemi.Common
                             {
                                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Sistemde hata oluştu sistemdeki giriş saatiniz güncel saatten daha aşağıda bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!" };
                             }
-                        }
-                        ;
+                        };
                     }
                     else
                     {
