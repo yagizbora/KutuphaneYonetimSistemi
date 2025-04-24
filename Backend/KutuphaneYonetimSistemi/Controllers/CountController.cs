@@ -28,7 +28,9 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = $"SELECT  (SELECT COUNT(*) FROM table_kitaplar WHERE durum = false AND is_deleted = false ) AS taken_books, (SELECT COUNT(*) FROM table_kitaplar WHERE is_deleted = false  ) AS books_count,  (SELECT COUNT(*) FROM table_kitaplar WHERE durum = true AND is_deleted = false ) AS untaken_books;";
+                    string query = $"SELECT (SELECT COUNT(*) FROM table_kitaplar WHERE durum = false AND is_deleted = false ) AS taken_books, " +
+                        $" (SELECT COUNT(*) FROM table_kitaplar WHERE is_deleted = false  ) AS books_count, " +
+                        $" (SELECT COUNT(*) FROM table_kitaplar WHERE durum = true AND is_deleted = false ) AS untaken_books;";
                     var result = await connection.QuerySingleAsync(query);
                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched,result));
                 }

@@ -57,7 +57,8 @@ namespace KutuphaneYonetimSistemi.Common
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
                             if (timeout > 0)
                             {
-                                return new ApiResponse<UserLoginModels>() { Status = false, Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!" };
+                                return new ApiResponse<UserLoginModels>() { Status = false, Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz" +
+                                    $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!" };
                             }
                         }
                     }

@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
