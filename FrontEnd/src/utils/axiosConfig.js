@@ -1,10 +1,14 @@
-import axios from "axios";
-import "js-loading-overlay";
-import router from "../router";
+import axios from 'axios';
 import Swal from "sweetalert2";
-const API_URL = import.meta.env.VITE_API_URL;
 
-export const axiosApp = axios.create({
+// API URL validation and setup
+const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
+if (!API_URL) {
+  console.error('API URL is not configured properly!');
+}
+
+// Main axios instance for authenticated requests
+const instance = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-type": "application/json;charset=UTF-8",
@@ -13,16 +17,11 @@ export const axiosApp = axios.create({
   },
 });
 
-axiosApp.interceptors.request.use(
+// Request interceptor
+instance.interceptors.request.use(
   function (config) {
     config.headers.token = localStorage.getItem("token");
     config.headers.user_id = localStorage.getItem("user_id");
-
-    JsLoadingOverlay.show({
-      spinnerIcon: "ball-atom",
-      spinnerColor: "#007bff",
-      spinnerSize: "2x",
-    });
     return config;
   },
   function (error) {
@@ -31,28 +30,27 @@ axiosApp.interceptors.request.use(
   }
 );
 
-axiosApp.interceptors.response.use(
+// Response interceptor
+instance.interceptors.response.use(
   (response) => {
-    JsLoadingOverlay.hide();
     return response;
   },
   (error) => {
-    JsLoadingOverlay.hide();
     if (error?.response?.data === "Token Hatalı") {
       localStorage.clear();
-      router.push("/auth/login");
+      window.location.replace('/login');
     }
 
-    if (error?.response.status === 401) {
+    if (error?.response?.status === 401) {
       Swal.fire({
         title: "Hata!",
         text: `${error?.response?.data?.message || "Yetkisiz erişim!"}.`,
         icon: "error",
         confirmButtonText: "Tamam",
       });
-      router.push("/auth/login");
+      window.location.replace('/login');
     }
-    else if (error?.response.status === 429) {
+    else if (error?.response?.status === 429) {
       Swal.fire({
         title: "Warning!",
         text: error?.response?.data?.message,
@@ -78,24 +76,20 @@ axiosApp.interceptors.response.use(
       }
     }
 
-    throw error;
+    return Promise.reject(error);
   }
 );
 
-export const axiosPublicApp = axios.create({
+// Public axios instance for non-authenticated requests
+export const axiosPublic = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-type": "application/json;",
   },
 });
 
-axiosPublicApp.interceptors.request.use(
+axiosPublic.interceptors.request.use(
   function (config) {
-    JsLoadingOverlay.show({
-      spinnerIcon: "ball-atom",
-      spinnerColor: "#007bff",
-      spinnerSize: "2x",
-    });
     return config;
   },
   function (error) {
@@ -103,24 +97,23 @@ axiosPublicApp.interceptors.request.use(
   }
 );
 
-axiosPublicApp.interceptors.response.use(
+axiosPublic.interceptors.response.use(
   (response) => {
-    JsLoadingOverlay.hide();
     return response;
   },
   (error) => {
-    JsLoadingOverlay.hide();
     Swal.fire({
       title: `Hata!`,
       text: `${error?.response?.data || error?.message}.`,
       icon: "error",
       confirmButtonText: "Tamam",
     });
-    throw error;
+    return Promise.reject(error);
   }
 );
 
-export const axiosFileApp = axios.create({
+// File upload axios instance
+export const axiosFile = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "multipart/form-data",
@@ -129,15 +122,10 @@ export const axiosFileApp = axios.create({
   },
 });
 
-axiosFileApp.interceptors.request.use(
+axiosFile.interceptors.request.use(
   function (config) {
     config.headers.token = localStorage.getItem("token");
     config.headers.user_id = localStorage.getItem("user_id");
-    JsLoadingOverlay.show({
-      spinnerIcon: "ball-atom",
-      spinnerColor: "#007bff",
-      spinnerSize: "2x",
-    });
     return config;
   },
   function (error) {
@@ -145,27 +133,25 @@ axiosFileApp.interceptors.request.use(
   }
 );
 
-axiosFileApp.interceptors.response.use(
+axiosFile.interceptors.response.use(
   (response) => {
-    JsLoadingOverlay.hide();
     return response;
   },
   (error) => {
-    JsLoadingOverlay.hide();
-    if (error.response.data == "Token Hatalı") {
+    if (error.response.data === "Token Hatalı") {
       localStorage.clear();
-      router.push("/auth/login");
+      window.location.replace('/login');
     }
-    if (error?.response.status == 401) {
+    if (error?.response?.status === 401) {
       Swal.fire({
         title: "Hata!",
         text: `${error?.response?.data?.message || "Yetkisiz erişim!"}.`,
         icon: "error",
         confirmButtonText: "Tamam",
       });
-      router.push("/auth/login");
+      window.location.replace('/login');
     }
-    else if (error?.response.status === 429) {
+    else if (error?.response?.status === 429) {
       Swal.fire({
         title: "Warning!",
         text: error?.response?.data?.message,
@@ -190,7 +176,8 @@ axiosFileApp.interceptors.response.use(
         });
       }
     }
-
-    throw error;
+    return Promise.reject(error);
   }
 );
+
+export default instance; 
