@@ -13,8 +13,6 @@ namespace KutuphaneYonetimSistemi.Models
         public string? ISBN { get; set; }
         public bool? Durum { get; set; }
         public string? kitap_tur { get; set; }
-        public string? odunc_alan { get; set; }
-        public DateTime? odunc_alma_tarihi { get; set; }
         public int kitap_tur_kodu { get; set; }
      }
     public class CreateBook
@@ -34,6 +32,20 @@ namespace KutuphaneYonetimSistemi.Models
         public required string ISBN { get; set; }
         public required int kitap_tur_kodu { get; set; }
     }
+
+    public class lendingBooksGet
+    {
+        public int? Id { get; set; }
+        public string? kitap_adi { get; set; }
+        public string? yazar_adi { get; set; }
+        public string? yazar_soyadi { get; set; }
+        public string? isbn { get; set; }
+        public string? kitap_tur { get; set; }
+        public string? odunc_alan { get; set; }
+        public DateTime? odunc_alma_tarihi { get; set; }
+        public bool? durum { get; set; }
+    }
+
     public class LendingBooks
     {
         public required int id { get; set; }

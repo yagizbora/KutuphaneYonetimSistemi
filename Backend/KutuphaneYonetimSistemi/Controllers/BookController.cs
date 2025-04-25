@@ -37,8 +37,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                     tk.yazar_soyadi ,
                     tk.isbn ,
                     tk.durum ,
-                    tk.odunc_alan ,
-                    tk.odunc_alma_tarihi ,
                     tkt.kitap_tur_kodu ,
                     tkt.aciklama as kitap_tur 
                     FROM table_kitaplar tk 
@@ -94,6 +92,14 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
+
+                    string firstquery = "SELECT Durum FROM table_kitaplar WHERE id = @id";
+                    bool checkbookistakenornot = connection.QueryFirst<bool>(firstquery, new {id = id});
+                    if (!checkbookistakenornot)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("This book is taken and cannot be delete"));
+                    }
+
                     string query = "UPDATE table_kitaplar SET is_deleted = true WHERE id = @id";
                     var parameters = new { id = id };
                     var result = connection.Execute(query, parameters);
@@ -112,6 +118,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
+
         [HttpPost("CreateBook")]
         public IActionResult Createbook([FromBody] CreateBook models)
         {
@@ -181,6 +189,49 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
+
+        [HttpGet("LendingBooksGet")]
+        public async Task<IActionResult> LendingBooksGet()
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = @"SELECT tk.id, tk.kitap_adi, tk.yazar_adi, tk.yazar_soyadi, tk.isbn, tk.durum, tkt.aciklama as kitap_tur,tk.odunc_alan,tk.odunc_alma_tarihi 
+                                     FROM table_kitaplar tk 
+                                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
+                                     WHERE tk.is_deleted = false;";
+                    var list = await connection.QueryAsync<lendingBooksGet>(query, connection);
+                    return Ok(list);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+        [HttpGet("LendingBooksGetbyid/{id}")]
+        public async Task<IActionResult> LendingBooksGetbyid(int id)
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = @"SELECT tk.id, tk.kitap_adi, tk.yazar_adi, tk.yazar_soyadi, tk.isbn, tk.durum, tkt.aciklama as kitap_tur,tk.odunc_alan,tk.odunc_alma_tarihi 
+                                     FROM table_kitaplar tk 
+                                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
+                                     WHERE tk.id = @id AND tk.is_deleted = false";
+                    var list = await connection.QueryAsync<lendingBooksGet>(query, new { id });
+                    return Ok(list);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
         [HttpPost("LendingBooks")]
         public async Task<IActionResult> LendingBooks([FromBody] LendingBooks models)
         {
