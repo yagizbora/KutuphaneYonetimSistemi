@@ -42,6 +42,7 @@ instance.interceptors.response.use(
     }
 
     if (error?.response?.status === 401) {
+      localStorage.clear();
       Swal.fire({
         title: "Hata!",
         text: `${error?.response?.data?.message || "Yetkisiz erişim!"}.`,
@@ -143,6 +144,7 @@ axiosFile.interceptors.response.use(
       window.location.replace('/login');
     }
     if (error?.response?.status === 401) {
+      localStorage.clear();
       Swal.fire({
         title: "Hata!",
         text: `${error?.response?.data?.message || "Yetkisiz erişim!"}.`,

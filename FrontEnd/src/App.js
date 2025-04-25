@@ -5,7 +5,8 @@ import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
-
+import Book from './pages/Book/Book.js';
+import LendingBook from './pages/LendingBook/LendingBook.js';
 // Protected Route bileşeni
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -42,6 +43,8 @@ function App() {
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/book" element={<Book />} />
+                <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
             </Layout>

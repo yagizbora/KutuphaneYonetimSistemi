@@ -1,3 +1,5 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
 :root {
   --primary-color: #6B4EFF;
   --primary-light: #8168FF;

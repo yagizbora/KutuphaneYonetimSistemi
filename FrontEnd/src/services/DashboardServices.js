@@ -6,7 +6,7 @@ const DashboardService = {
             const response = await axios.get('/Count/CountBooks');
             return response.data;
         } catch (error) {
-            throw error;
+            console.error('Error fetching dashboard data:', error);
         }
     }
 };
