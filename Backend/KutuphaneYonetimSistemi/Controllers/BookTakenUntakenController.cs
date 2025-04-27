@@ -20,6 +20,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("LendingBooksGet")]
         public async Task<IActionResult> LendingBooksGet()
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -27,7 +31,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = @"SELECT tk.id, tk.kitap_adi, tk.yazar_adi, tk.yazar_soyadi, tk.isbn, tk.durum, tkt.aciklama as kitap_tur,tk.odunc_alan,tk.odunc_alma_tarihi 
                                      FROM table_kitaplar tk 
                                      JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
-                                     WHERE tk.is_deleted = false;";
+                                     WHERE tk.is_deleted = false AND tk.durum = true;";
                     var list = await connection.QueryAsync<lendingBooksGet>(query, connection);
                     return Ok(list);
                 }
@@ -42,6 +46,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("LendingBooksGetbyid/{id}")]
         public async Task<IActionResult> LendingBooksGetbyid(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -49,7 +57,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = @"SELECT tk.id, tk.kitap_adi, tk.yazar_adi, tk.yazar_soyadi, tk.isbn, tk.durum, tkt.aciklama as kitap_tur,tk.odunc_alan,tk.odunc_alma_tarihi 
                                      FROM table_kitaplar tk 
                                      JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
-                                     WHERE tk.id = @id AND tk.is_deleted = false";
+                                     WHERE tk.id = @id AND tk.is_deleted = false AND tk.durum = true";
                     var list = await connection.QueryAsync<lendingBooksGet>(query, new { id });
                     return Ok(list);
                 }
@@ -109,6 +117,34 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
+        //TAKEN BOOKS
+
+        [HttpGet("TakenBooksGet")]
+            public async Task<IActionResult> TakenBooksGet()
+            {
+                TokenController g = new TokenController(_dbHelper);
+                var login = g.GetUserByToken(ControllerContext);
+                if (!login.Status)
+                    return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                try
+                {
+                    using (var connection = _dbHelper.GetConnection())
+                    {
+                        string query = @"SELECT id,kitap_adi,durum,odunc_alan,odunc_alma_tarihi 
+                                         FROM table_kitaplar 
+                                         WHERE is_deleted = false AND durum = false;";
+                        var list = await connection.QueryAsync<TakenBooksGet>(query);
+                        return Ok(list);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+                }
+            }
+
         [HttpGet("CalculateBookLending/{id}")]
         public async Task<IActionResult> CalculateBook(int id)
         {

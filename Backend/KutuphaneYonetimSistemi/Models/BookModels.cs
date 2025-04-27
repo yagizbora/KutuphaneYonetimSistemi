@@ -52,6 +52,16 @@ namespace KutuphaneYonetimSistemi.Models
         public required string odunc_alan { get; set; }
         public required DateTime odunc_alma_tarihi { get; set; }
     }
+    public class TakenBooksGet
+    {
+        public int? id { get; set; }                 
+        public string? kitap_adi { get; set; }        
+        public bool? durum { get; set; }              
+        public string? odunc_alan { get; set; }      
+        public DateTime? odunc_alma_tarihi { get; set; } 
+    }
+
+
     public class BookStatusModel
     {
         public bool Durum { get; set; }
