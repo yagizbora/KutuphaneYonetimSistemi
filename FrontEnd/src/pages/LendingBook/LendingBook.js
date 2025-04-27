@@ -137,7 +137,6 @@ const LendingBook = () => {
                 }
             }
         },
-        { field: 'odunc_alan', headerName: 'Ödünç Alan', width: 150, flex: 1 },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
         {

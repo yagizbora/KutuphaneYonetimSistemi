@@ -1,13 +1,15 @@
 import axios from 'axios';
 import Swal from "sweetalert2";
+import 'js-loading-overlay';
 
-// API URL validation and setup
+
+
+
 const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
 if (!API_URL) {
   console.error('API URL is not configured properly!');
 }
 
-// Main axios instance for authenticated requests
 const instance = axios.create({
   baseURL: API_URL,
   headers: {
@@ -17,25 +19,33 @@ const instance = axios.create({
   },
 });
 
-// Request interceptor
 instance.interceptors.request.use(
   function (config) {
+
+    JsLoadingOverlay.show({
+      color: 'rgba(0, 0, 0, 0.6)',
+      imageColor: '#ffffff',
+      customSpinner: true,
+    });
+
     config.headers.token = localStorage.getItem("token");
     config.headers.user_id = localStorage.getItem("user_id");
     return config;
   },
   function (error) {
     console.error("Request error:", error);
+    JsLoadingOverlay.hide();
     return Promise.reject(error);
   }
 );
 
-// Response interceptor
 instance.interceptors.response.use(
   (response) => {
+    JsLoadingOverlay.hide();
     return response;
   },
   (error) => {
+    JsLoadingOverlay.hide();
     if (error?.response?.data === "Token Hatalı") {
       localStorage.clear();
       window.location.replace('/login');
@@ -81,7 +91,6 @@ instance.interceptors.response.use(
   }
 );
 
-// Public axios instance for non-authenticated requests
 export const axiosPublic = axios.create({
   baseURL: API_URL,
   headers: {
@@ -113,7 +122,6 @@ axiosPublic.interceptors.response.use(
   }
 );
 
-// File upload axios instance
 export const axiosFile = axios.create({
   baseURL: API_URL,
   headers: {
@@ -182,4 +190,4 @@ axiosFile.interceptors.response.use(
   }
 );
 
-export default instance; 
+export default instance;

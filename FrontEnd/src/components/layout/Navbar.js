@@ -36,7 +36,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       icon: 'fas fa-exchange-alt',
       items: [
         { path: '/lending-book', text: 'Ödünç Verme' },
-        { path: '/book/return', text: 'Geri Alma' }
+        { path: '/book/return-book', text: 'Geri Alma' }
       ]
     },
     {

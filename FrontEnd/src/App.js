@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Book from './pages/Book/Book.js';
 import LendingBook from './pages/LendingBook/LendingBook.js';
 import BookType from './pages/BookType/BookType.js';
+import ReturnBook from './pages/ReturnBook/ReturnBook.js';
 // Protected Route bileşeni
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/book" element={<Book />} />
                 <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="/book/categories" element={<BookType />} />
+                <Route path="/book/return-book" element={<ReturnBook />} />
               </Routes>
             </Layout>
           </ProtectedRoute>
