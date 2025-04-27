@@ -18,9 +18,13 @@ import {
     Grid,
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import DialogContentText from '@mui/material/DialogContentText';
 import Swal from 'sweetalert2';
 import ReturnBookService from '../../services/ReturnBookService';
@@ -90,15 +94,109 @@ const ReturnBook = () => {
                     return '';
                 }
             }
+        },
+        {
+            field: 'İşlemler',
+            headerName: 'İşlemler',
+            sortable: false,
+            width: 269,
+            editable: false,
+            renderCell: (params) => (
+                <Stack direction="row" spacing={1} justifyContent="left" alignItems="center">
+                    <Button
+                        variant="contained"
+                        size="large"
+                        color="error"
+                        startIcon={<PaymentsIcon />}
+                        sx={{ backgroundColor: 'green' }}
+                        onClick={() => calculateFine(params.row)}
+                    >
+                        Ödeme Ekranını aç
+                    </Button>
+                </Stack>
+            )
+
         }
     ]
 
     const [data, setData] = useState([]);
+    const [openeditdialog, setOpeneditdialog] = useState(false);
+    const [paymentdata, setPaymentdata] = useState({
+        id: null,
+        "calculatedDelayAllowance": "",
+        "geri_verme_tarihi": null,
+        "payment_amount": "",
+        "payment_type": "",
+        "receipt_no": ""
 
+    });
+
+    const calculateFine = async (data) => {
+        try {
+            setPaymentdata({
+
+                id: null,
+                "calculatedDelayAllowance": "",
+                "geri_verme_tarihi": null,
+                "payment_amount": "",
+                "payment_type": "",
+                "receipt_no": ""
+            })
+
+            const response = await returnbookservice.CalculateBookLending(data.id);
+            if (response) {
+
+                setPaymentdata((prevData) => ({
+                    ...prevData,
+                    calculatedDelayAllowance: response.data.data.calculatedDelayAllowance,
+                    id: data.id
+                }))
+                console.log(response.data.data.calculatedDelayAllowance);
+                console.log(data.id);
+                setOpeneditdialog(true);
+            }
+        }
+        catch (error) {
+            console.error('Error fetching data:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+            });
+        }
+    }
     const getreturnbook = async () => {
         const response = await returnbookservice.getReturnBook();
         setData(response.data);
     }
+
+    const returnbook = async () => {
+        try {
+            const response = await returnbookservice.ReturnBook({ ...paymentdata });
+            if (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı',
+                    text: 'Kitap başarıyla iade edildi.',
+                });
+                setOpeneditdialog(false);
+                getreturnbook();
+            }
+        }
+        catch (error) {
+            console.error('Error fetching data:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyin.',
+            });
+            setOpeneditdialog(false);
+        }
+
+
+    }
+
+
     useEffect(() => {
         getreturnbook();
     }, [])
@@ -128,6 +226,98 @@ const ReturnBook = () => {
                     </Paper>
                 </Box>
             </Container>
+
+            <Dialog
+                open={openeditdialog}
+                onClose={() => setOpeneditdialog(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>Kitap para ödeme ekranı</DialogTitle>
+                <DialogContent>
+                    <div className="dialog-container">
+                        <Grid container spacing={2}>
+
+                            {/* Ödenicek minimum Tutar */}
+                            <Grid item xs={12} md={4}>
+                                <p>Ödenecek minimum Tutar</p>
+                                <TextField
+                                    disabled
+                                    fullWidth
+                                    value={paymentdata.calculatedDelayAllowance}
+                                />
+                            </Grid>
+
+                            {/* Ödeme Türü */}
+                            <Grid item xs={12} md={4}>
+                                <p>Ödeme Türü</p>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Ödeme Türü"
+                                    value={paymentdata.payment_type}
+                                    onChange={(e) =>
+                                        setPaymentdata({ ...paymentdata, payment_type: e.target.value })
+                                    }
+                                />
+                            </Grid>
+
+                            {/* Ödünç Verme Tarihi */}
+                            <Grid item xs={12} md={4}>
+                                <p>Ödünç Verme Tarihi</p>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={["DatePicker"]}>
+                                        <DatePicker
+                                            label="Tarih Seç"
+                                            value={paymentdata.geri_verme_tarihi}
+                                            onChange={(newValue) =>
+                                                setPaymentdata({
+                                                    ...paymentdata,
+                                                    geri_verme_tarihi: newValue,
+                                                })
+                                            }
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Grid>
+
+                            {/* Ödenen Miktar */}
+                            <Grid item xs={12} md={4}>
+                                <p>Ödenen Miktar</p>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    placeholder="Ödenen Miktar"
+                                    value={paymentdata.payment_amount}
+                                    onChange={(e) =>
+                                        setPaymentdata({ ...paymentdata, payment_amount: e.target.value })
+                                    }
+                                />
+                            </Grid>
+
+                            {/* Fiş No */}
+                            <Grid item xs={12} md={4}>
+                                <p>Fiş No</p>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Fiş No"
+                                    value={paymentdata.receipt_no}
+                                    onChange={(e) =>
+                                        setPaymentdata({ ...paymentdata, receipt_no: e.target.value })
+                                    }
+                                />
+                            </Grid>
+
+                        </Grid>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => returnbook(false)}
+                        variant="outlined"
+                        sx={{ margin: 1 }}
+                    >Ödemeyi Yap</Button>
+                </DialogActions>
+            </Dialog>
         </div>
 
     );

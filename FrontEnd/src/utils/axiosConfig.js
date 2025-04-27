@@ -1,3 +1,5 @@
+/* eslint no-undef: "off" */
+/* eslint-disable no-console */
 import axios from 'axios';
 import Swal from "sweetalert2";
 import 'js-loading-overlay';

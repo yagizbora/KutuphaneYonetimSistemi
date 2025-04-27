@@ -39,6 +39,7 @@ function App() {
         <Route path="/404" element={<NotFound />} />
         <Route path="/access-denied" element={<AccessDenied />} />
 
+
         {/* Protected routes */}
         <Route path="/*" element={
           <ProtectedRoute>

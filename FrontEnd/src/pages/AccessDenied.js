@@ -6,7 +6,7 @@ const AccessDenied = () => {
     <div className="access-denied-container">
       <div className="access-denied-content">
         <h1>Access Denied</h1>
-        <p>You don't have permission to access this page.</p>
+        <p>You dont have permission to access this page.</p>
         <div className="action-buttons">
           <Link to="/" className="home-link">
             Go to Home

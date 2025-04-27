@@ -1,7 +1,17 @@
 .ReturnBook {
     display: flex;
+    height: 100vh;
+}
+
+.dialog-container {
+    display: flex;
+    justify-content: center;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+.dialog-textfield1 {
+    align-items: center;
 }

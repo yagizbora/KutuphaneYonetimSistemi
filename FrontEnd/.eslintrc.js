@@ -12,10 +12,15 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
+  globals: {
+    JsLoadingOverlay: 'readonly',
+  },
   plugins: [],
   rules: {
-    'no-unused-vars': 'off',
-    'react/prop-types': 'off',
+
+    "no-unused-vars": "off",
+    "react/prop-types": "off",
+    "no-undef": 'off',
     'import/first': 'off',
     'react/no-unescaped-entities': 'off',
     'no-empty': 'off',
