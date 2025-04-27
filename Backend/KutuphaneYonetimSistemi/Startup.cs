@@ -17,6 +17,13 @@ namespace KutuphaneYonetimSistemi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(builder =>
+            {
+                builder.AddConsole(); // Konsola log yazma
+                builder.AddDebug();   // Debug logları
+                builder.SetMinimumLevel(LogLevel.Debug); // Log seviyesini Debug'a ayarla
+
+            });
 
             string? connectionString = Configuration.GetConnectionString("DefaultConnection");
 
@@ -102,7 +109,7 @@ namespace KutuphaneYonetimSistemi
             }
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseCors("MyPolicy");
             

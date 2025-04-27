@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:44336;http://localhost:5056"
+      "applicationUrl": "https://localhost:44336"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -26,25 +26,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:58262"
-    },
-    "Container (.NET SDK)": {
-      "commandName": "SdkContainer",
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "environmentVariables": {
-        "ASPNETCORE_HTTPS_PORTS": "8081",
-        "ASPNETCORE_HTTP_PORTS": "8080"
-      },
-      "publishAllPorts": true,
-      "useSSL": true
-    },
-    "WSL": {
-      "commandName": "WSL2",
-      "launchUrl": "https://localhost:44336/swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "https://localhost:44336;http://localhost:5056"
-      },
-      "distributionName": ""
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
@@ -53,7 +34,7 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:58262/",
-      "sslPort": 44336
+      "sslPort": 44336 // IIS Express SSL portunu 44336 olarak ayarladık
     }
   }
 }
