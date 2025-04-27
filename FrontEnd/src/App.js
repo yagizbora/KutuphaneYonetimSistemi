@@ -7,14 +7,15 @@ import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
 import Book from './pages/Book/Book.js';
 import LendingBook from './pages/LendingBook/LendingBook.js';
+import BookType from './pages/BookType/BookType.js';
 // Protected Route bileşeni
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -30,8 +31,8 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={
-          localStorage.getItem('token') 
-            ? <Navigate to="/" replace /> 
+          localStorage.getItem('token')
+            ? <Navigate to="/" replace />
             : <Login />
         } />
         <Route path="/404" element={<NotFound />} />
@@ -45,7 +46,7 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/book" element={<Book />} />
                 <Route path="/lending-book" element={<LendingBook />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
+                <Route path="/book/categories" element={<BookType />} />
               </Routes>
             </Layout>
           </ProtectedRoute>

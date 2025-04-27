@@ -13,11 +13,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Token varsa direkt dashboard'a yönlendir
+ 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       navigate('/');
+    }
+    if (!token) {
+      localStorage.clear();
     }
   }, [navigate]);
 
