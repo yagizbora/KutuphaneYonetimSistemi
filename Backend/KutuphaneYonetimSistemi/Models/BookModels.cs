@@ -73,10 +73,10 @@ namespace KutuphaneYonetimSistemi.Models
     public class ReturnBook
     {
         public required int id { get; set; }
-        public required string odunc_veren { get; set; }
         public required DateTime geri_verme_tarihi { get; set; }
         public required decimal payment_amount { get; set; }
         public required string payment_type { get; set; }
+        public required string receipt_no { get; set; }
     }
 
 }

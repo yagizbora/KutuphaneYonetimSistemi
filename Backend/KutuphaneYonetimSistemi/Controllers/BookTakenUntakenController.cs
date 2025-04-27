@@ -239,15 +239,16 @@ namespace KutuphaneYonetimSistemi.Controllers
                         if (updateResult > 0)
                         {
                             string insertSuccessPaymentQuery = @"
-                           INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date) 
-                           VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date)";
+                           INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date,receipt_no) 
+                           VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date,@receipt_no)";
 
                             int paymentLogResult = await connection.ExecuteAsync(insertSuccessPaymentQuery, new
                             {
                                 models.payment_amount,
                                 models.payment_type,
                                 book_id = models.id,
-                                payment_date = DateTime.Now
+                                payment_date = DateTime.Now,
+                                receipt_no = models.receipt_no
                             });
                             if (paymentLogResult > 0)
                             {
