@@ -33,7 +33,7 @@ import 'dayjs/locale/tr';
 
 const bookService = new BookService();
 const lendingBookService = new LendingBookService();
-const LendingBook = () => { 
+const LendingBook = () => {
     const [data, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedBook, setSelectedBook] = useState('');
@@ -41,12 +41,12 @@ const LendingBook = () => {
     const [oduncalan, setOduncalan] = useState('');
     const [oduncAlmaTarihi, setOduncAlmaTarihi] = useState(dayjs());
 
-useEffect(() => {
-    getBooks();
-    getBookList();
-}, []);
+    useEffect(() => {
+        getBooks();
+        getBookList();
+    }, []);
 
-    const getBooks = async () => { 
+    const getBooks = async () => {
         try {
             setLoading(true);
             const response = await lendingBookService.getLendingBooks();
@@ -79,7 +79,7 @@ useEffect(() => {
         }
     }
     const handleLendBook = async () => {
-        if(selectedBook === '' || oduncalan === '' || oduncAlmaTarihi.value === '') {
+        if (selectedBook === '' || oduncalan === '' || oduncAlmaTarihi.value === '') {
             Swal.fire({
                 title: 'Hata',
                 text: 'Lütfen tüm alanları doldurunuz.',
@@ -87,78 +87,78 @@ useEffect(() => {
             });
             return;
         }
-            try {
-                const response = await lendingBookService.lendBook({ id: selectedBook, odunc_alan: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
-                if (response) {
-                    Swal.fire({
-                        title: 'Başarılı',
-                        text: 'Kitap başarıyla ödünç verildi.',
-                        icon: 'success'
-                    });
-                    getBooks();
-                    setOduncalan('');
-                    setOduncAlmaTarihi(dayjs());
+        try {
+            const response = await lendingBookService.lendBook({ id: selectedBook, odunc_alan: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
+            if (response) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: 'Kitap başarıyla ödünç verildi.',
+                    icon: 'success'
+                });
+                getBooks();
+                setOduncalan('');
+                setOduncAlmaTarihi(dayjs());
+            }
+        }
+        catch (error) {
+            console.error('Error lending book:', error);
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Kitap ödünç verilirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
+        { field: 'yazar_adi', headerName: 'Yazar Adı', width: 150, flex: 1 },
+        { field: 'yazar_soyadi', headerName: 'Yazar Soyadı', width: 150, flex: 1 },
+        {
+            field: 'odunc_alma_tarihi',
+            headerName: 'Tarih',
+            width: 150,
+            flex: 1,
+            valueFormatter: (params) => {
+                if (!params) return '';
+                try {
+                    const date = new Date(params);
+                    if (isNaN(date.getTime())) return '';
+
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear();
+                    const hours = date.getHours().toString().padStart(2, '0');
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+                    return `${day}.${month}.${year} ${hours}:${minutes}`;
+                } catch {
+                    return '';
                 }
             }
-            catch (error) {
-                console.error('Error lending book:', error);
-                Swal.fire({
-                    title: 'Hata',
-                    text: error?.response?.data?.message || 'Kitap ödünç verilirken bir hata oluştu.',
-                    icon: 'error'
-                });
-            }
+        },
+        { field: 'odunc_alan', headerName: 'Ödünç Alan', width: 150, flex: 1 },
+        { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
+        { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
+        {
+            field: 'durum',
+            headerName: 'Durum',
+            width: 120,
+            renderCell: (params) => (
+                <Checkbox
+                    checked={params.value === true}
+                    disabled
+                />
+            )
         }
-const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
-    { field: 'yazar_adi', headerName: 'Yazar Adı', width: 150, flex: 1 },
-    { field: 'yazar_soyadi', headerName: 'Yazar Soyadı', width: 150, flex: 1 },
-    {
-        field: 'odunc_alma_tarihi',
-        headerName: 'Tarih',
-        width: 150,
-        flex: 1,
-        valueFormatter: (params) => {
-            if (!params) return '';
-            try {
-                const date = new Date(params);
-                if (isNaN(date.getTime())) return '';
-                
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                const hours = date.getHours().toString().padStart(2, '0');
-                const minutes = date.getMinutes().toString().padStart(2, '0');
-                
-                return `${day}.${month}.${year} ${hours}:${minutes}`;
-            } catch {
-                return '';
-            }
-        }
-    },
-    { field: 'odunc_alan', headerName: 'Ödünç Alan', width: 150, flex: 1 },
-    { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
-    { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
-    {
-        field: 'durum',
-        headerName: 'Durum',
-        width: 120,
-        renderCell: (params) => (
-            <Checkbox
-                checked={params.value === true}
-                disabled
-            />
-        )
-    }
-];
+    ];
 
     return (
         <div>
             <Container maxWidth="xl">
                 <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Ödünç Verme 
+                        Ödünç Verme
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" textAlign="left">
                         Kütüphanedeki tüm kitapları buradan ödünç verebilirsiniz.
@@ -184,8 +184,8 @@ const columns = [
                                 }}
                             >
                                 {bookList.map((book) => (
-                                    <MenuItem 
-                                        key={book.id} 
+                                    <MenuItem
+                                        key={book.id}
                                         value={book.id}
                                         sx={{
                                             fontSize: '1.1rem',
@@ -231,9 +231,9 @@ const columns = [
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
+                        <Button
+                            variant="contained"
+                            color="primary"
                             onClick={handleLendBook}
                             sx={{
                                 height: '56px',
@@ -244,28 +244,29 @@ const columns = [
                         </Button>
                     </Grid>
                 </Grid>
-            <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
-                <Box sx={{ height: 600, width: '100%' }}>
-                    <DataGrid
-                        rows={data}
-                        columns={columns}
-                        pageSize={10}
-                        rowsPerPageOptions={[10, 25, 50]}
-                        disableSelectionOnClick
-                        loading={loading}
-                        components={{
-                            Toolbar: GridToolbar
-                        }}
-                        sx={{
-                            boxShadow: 2,
-                            border: 2,
-                            borderColor: 'primary.light',
-                            '& .MuiDataGrid-cell:hover': {
-                                color: 'primary.main',
-                            },
-                        }}
-                    />
-                </Box>
+                <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
+                    <Box sx={{ height: 600, width: '100%' }}>
+                        <DataGrid
+                            rows={data}
+                            columns={columns}
+                            pageSize={10}
+                            rowsPerPageOptions={[10, 25, 50]}
+                            disableSelectionOnClick
+                            disableColumnSorting
+                            loading={loading}
+                            components={{
+                                Toolbar: GridToolbar
+                            }}
+                            sx={{
+                                boxShadow: 2,
+                                border: 2,
+                                borderColor: 'primary.light',
+                                '& .MuiDataGrid-cell:hover': {
+                                    color: 'primary.main',
+                                },
+                            }}
+                        />
+                    </Box>
                 </Paper>
             </Container>
         </div>

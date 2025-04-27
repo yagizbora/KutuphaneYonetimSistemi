@@ -18,7 +18,8 @@ import {
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 import Swal from 'sweetalert2';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import DialogContentText from '@mui/material/DialogContentText';
 
 import BookTypeService from '../../services/BookTypeService';
@@ -53,22 +54,26 @@ const BookType = () => {
         {
             field: 'İşlemler',
             headerName: 'İşlemler',
-            width: 150,
+            sortable: false,
+            width: 500,
             editable: false,
             renderCell: (params) => (
-                <Stack direction="row" spacing={1} justifyContent="center">
+                <Stack direction="row" spacing={1} justifyContent="left" alignItems="center">
                     <Button
                         variant="contained"
-                        size="medium"
+                        size="large"
                         color="error"
+                        startIcon={<DeleteIcon />}
+                        sx={{ backgroundColor: 'red' }}
                         onClick={() => handleDelete(params.row.id)}
                     >
                         Sil
                     </Button>
                     <Button
                         variant="contained"
-                        size="medium"
+                        size="large"
                         color="primary"
+                        startIcon={<EditIcon />}
                         onClick={() => handleEditClick(params.row)}
                     >
                         Düzenle
@@ -173,7 +178,7 @@ const BookType = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü bilgileri alınamadı',
+                text: error?.response?.data?.message || 'Kitap türü bilgileri alınamadı' || error,
             })
         }
     }
@@ -201,6 +206,7 @@ const BookType = () => {
                         rowsPerPageOptions={[10, 25, 50]}
                         disableSelectionOnClick
                         resize
+                        disableColumnSorting
                         components={{
                             Toolbar: GridToolbar,
                         }}

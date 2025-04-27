@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Container, 
+import {
+    Container,
     Box,
     Dialog,
     DialogTitle,
@@ -122,7 +122,7 @@ const Book = () => {
             if (result.isConfirmed) {
                 const response = await bookService.deleteBook(id);
                 await getBooks();
-                
+
                 Swal.fire({
                     title: 'Başarılı!',
                     text: response?.message || 'Kitap başarıyla silindi!',
@@ -204,6 +204,7 @@ const Book = () => {
                         pageSize={10}
                         rowsPerPageOptions={[10, 25, 50]}
                         disableSelectionOnClick
+                        disableColumnSorting
                         loading={loading}
                         components={{
                             Toolbar: GridToolbar
@@ -220,8 +221,8 @@ const Book = () => {
                 </Box>
             </Paper>
 
-            <Dialog 
-                open={showModal} 
+            <Dialog
+                open={showModal}
                 onClose={handleCloseModal}
                 maxWidth="md"
                 fullWidth
