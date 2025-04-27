@@ -55,7 +55,7 @@ const BookType = () => {
             field: 'İşlemler',
             headerName: 'İşlemler',
             sortable: false,
-            width: 500,
+            width: 269,
             editable: false,
             renderCell: (params) => (
                 <Stack direction="row" spacing={1} justifyContent="left" alignItems="center">
@@ -185,8 +185,7 @@ const BookType = () => {
 
 
     return (
-        <Container maxWidth="xl">
-
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Kitap Türü Listesi
@@ -196,22 +195,24 @@ const BookType = () => {
                 </Typography>
             </Box>
 
-            <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
+            <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
+                <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+                    <Box sx={{ height: 600, width: '100%' }}>
+                        <DataGrid
+                            rows={data}
+                            columns={columns}
+                            pageSize={10}
+                            rowsPerPageOptions={[10, 25, 50]}
+                            disableSelectionOnClick
+                            resize
+                            disableColumnSorting
 
-                <Box sx={{ height: 600, width: '100%' }}>
-                    <DataGrid
-                        rows={data}
-                        columns={columns}
-                        pageSize={10}
-                        rowsPerPageOptions={[10, 25, 50]}
-                        disableSelectionOnClick
-                        resize
-                        disableColumnSorting
-                        components={{
-                            Toolbar: GridToolbar,
-                        }}
-                    />
-                </Box>
+                            components={{
+                                Toolbar: GridToolbar,
+                            }}
+                        />
+                    </Box>
+                </Stack>
             </Paper>
 
 

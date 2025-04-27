@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Nav, Navbar as BootstrapNavbar } from 'react-bootstrap';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Navbar.css';
 
