@@ -420,7 +420,6 @@ const Book = () => {
                                     onChange={handleInputChange}
                                     variant="outlined"
                                 />
-
                                 <Select
                                     fullWidth
                                     label="Kitap Türü"
@@ -435,7 +434,6 @@ const Book = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
-
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -445,8 +443,7 @@ const Book = () => {
                                             disabled={true}
                                         />
                                     }
-                                    label="Durum"
-                                />
+                                    label="Durum" />
                             </Stack>
                         </Box>
                     ) : (
