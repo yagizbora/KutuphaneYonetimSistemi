@@ -13,7 +13,7 @@ export default class LendingBookService {
     }
 
     async lendBook(data) {
-        const response = await axios.post('/BookTakenUntaken/LendingBooksGetbyid', data);
+        const response = await axios.post('/BookTakenUntaken/LendingBooks', data);
         return response.data;
     }
 

@@ -10,7 +10,6 @@ import {
     Button,
     TextField,
     Checkbox,
-    FormControlLabel,
     Typography,
     Paper,
     Alert,
@@ -31,6 +30,21 @@ import ReturnBookService from '../../services/ReturnBookService';
 
 
 const returnbookservice = new ReturnBookService();
+
+
+function norows() {
+    return (
+        <Box sx={{
+            display: 'flex',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+        }}>
+            <Alert severity="info">İade alınacak bir kitap bulunamadı. Rahatça bu sayfadan çıkabilirsiniz</Alert>
+        </Box>
+    );
+}
+
 
 const ReturnBook = () => {
 
@@ -177,7 +191,7 @@ const ReturnBook = () => {
                 Swal.fire({
                     icon: 'success',
                     title: 'Başarılı',
-                    text: 'Kitap başarıyla iade edildi.',
+                    text: response.messsage || 'Kitap başarıyla iade edildi.',
                 });
                 setOpeneditdialog(false);
                 getreturnbook();
@@ -217,7 +231,9 @@ const ReturnBook = () => {
                                     columns={columns}
                                     pageSize={5}
                                     rowsPerPageOptions={[5]}
-                                    components={{ Toolbar: GridToolbar }}
+                                    slots={{
+                                        noRowsOverlay: norows
+                                    }}
                                     autoHeight
                                     disableSelectionOnClick
                                 />

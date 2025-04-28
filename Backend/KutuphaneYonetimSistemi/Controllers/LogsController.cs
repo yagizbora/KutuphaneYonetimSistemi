@@ -27,7 +27,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id""";
+                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" ORDER BY tbl.payment_date DESC;";
                     var List = connection.Query<PaymentLogs>(datasql, connection);
                     return Ok(List);
                 }
