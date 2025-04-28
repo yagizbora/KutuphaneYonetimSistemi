@@ -3,6 +3,7 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using System.Globalization;
 
 
@@ -190,16 +191,16 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
 
-                if(string.IsNullOrEmpty(useridvalue))
+                if (StringValues.IsNullOrEmpty(useridvalue))
                 {
                     return NotFound(ResponseHelper.ErrorResponse("User id yok"));
                 }
 
-                int? userid = Int32.Parse(useridvalue);
-                if(userid == null)
+                if (!int.TryParse(useridvalue, out int userid))
                 {
                     return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
                 }
+
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string checkuserislogin = "SELECT is_login FROM table_users WHERE id = @user_id";
