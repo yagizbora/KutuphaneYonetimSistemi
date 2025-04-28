@@ -7,13 +7,23 @@ export default class BookService {
         return response.data;
     }
 
+    async createbook(data) {
+        try {
+            const response = await axios.post('/Book/CreateBook', data);
+            return response;
+        } catch (error) {
+            console.error('Error creating book:', error);
+
+        }
+    }
+
     async getbooksbyid(id) {
         try {
             const response = await axios.get(`/Book/GetBook/${id}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching book details:', error);
-            throw error;
+
         }
     }
 
@@ -32,7 +42,7 @@ export default class BookService {
             return response;
         } catch (error) {
             console.error('Error deleting book:', error);
-            throw error;
+
         }
     }
 }
