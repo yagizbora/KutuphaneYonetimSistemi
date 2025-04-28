@@ -81,6 +81,10 @@ const Book = () => {
 
     const handleShowModal = async (bookData) => {
         try {
+            const response = await bookTypeService.getbooktypes();
+            if (response) {
+                setBookTypes(response.data.data);
+            }
             const bookDetails = await bookService.getbooksbyid(bookData.id);
             const selectedBookData = bookDetails[0];
             setSelectedBook(selectedBookData);
@@ -129,10 +133,12 @@ const Book = () => {
     }
 
     const handleInputChange = (e) => {
-        const { name, value, checked } = e.target;
-        setEditedBook(prev => ({
-            ...prev,
-            [name]: name === 'durum' ? checked : value
+        const { name, value } = e.target;
+
+
+        setEditedBook((prevData) => ({
+            ...prevData,
+            [name]: value,
         }));
     };
 
@@ -415,14 +421,20 @@ const Book = () => {
                                     variant="outlined"
                                 />
 
-                                <TextField
+                                <Select
                                     fullWidth
                                     label="Kitap Türü"
-                                    name="kitap_tur"
-                                    value={editedBook.kitap_tur || ''}
+                                    name="kitap_tur_kodu"
+                                    value={editedBook.kitap_tur_kodu || ''}
                                     onChange={handleInputChange}
                                     variant="outlined"
-                                />
+                                >
+                                    {bookTypes.map((type) => (
+                                        <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                            {type.aciklama}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
 
                                 <FormControlLabel
                                     control={
