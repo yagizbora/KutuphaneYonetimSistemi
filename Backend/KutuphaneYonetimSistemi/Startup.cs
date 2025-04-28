@@ -1,5 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
-using KutuphaneYonetimSistemi.Common; 
+﻿using KutuphaneYonetimSistemi.Common;
+using Microsoft.OpenApi.Models;
 using Npgsql;
 using System.Data;
 
@@ -65,6 +65,14 @@ namespace KutuphaneYonetimSistemi
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
+
+                c.AddSecurityDefinition("user_id", new OpenApiSecurityScheme
+                {
+                    Description = "User id",
+                    Name = "User_id",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -76,11 +84,24 @@ namespace KutuphaneYonetimSistemi
                                 Id = "Token"
                             }
                         },
-                        Array.Empty<string>()
+                        new List<string>()
                     }
                 });
 
-                c.OperationFilter<CustomHeaderSwaggerAttribute>();
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "user_id"
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
             });
             //services.AddMemoryCache();
             //services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
@@ -112,7 +133,7 @@ namespace KutuphaneYonetimSistemi
             //app.UseStaticFiles();
 
             app.UseCors("MyPolicy");
-            
+
             app.UseRouting();
             app.UseAuthorization();
 
