@@ -18,8 +18,5 @@
         public required string username { get; set; }
         public required string hashedpassword { get; set; }
     }
-    public class Logout
-    {
-        public int user_id { get; set; }
-    }
+
 }

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
@@ -179,7 +180,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout(Logout model)
+        public async Task<IActionResult> Logout()
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -187,16 +188,28 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
+                ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+
+                if(string.IsNullOrEmpty(useridvalue))
+                {
+                    return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                }
+
+                int? userid = Int32.Parse(useridvalue);
+                if(userid == null)
+                {
+                    return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                }
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string checkuserislogin = "SELECT is_login FROM table_users WHERE id = @user_id";
-                    var islogin = await connection.QueryFirstOrDefaultAsync<bool>(checkuserislogin, model);
+                    var islogin = await connection.QueryFirstOrDefaultAsync<bool>(checkuserislogin, new { user_id = userid });
                     if (islogin == false)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("User is not login"));
                     }
                     string query = "UPDATE table_users SET token = NULL, login_date = NULL,is_login = false WHERE id = @user_id";
-                    var result = await connection.ExecuteAsync(query, model);
+                    var result = await connection.ExecuteAsync(query, new { user_id = userid });
                     if (result > 0)
                     {
                         return Ok(ResponseHelper.ActionResponse("User logout successfully"));
