@@ -41,8 +41,6 @@ namespace KutuphaneYonetimSistemi.Models
         public string? yazar_soyadi { get; set; }
         public string? isbn { get; set; }
         public string? kitap_tur { get; set; }
-        public string? odunc_alan { get; set; }
-        public DateTime? odunc_alma_tarihi { get; set; }
         public bool? durum { get; set; }
     }
 

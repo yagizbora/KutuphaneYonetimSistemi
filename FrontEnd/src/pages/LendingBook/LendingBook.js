@@ -114,29 +114,6 @@ const LendingBook = () => {
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
         { field: 'yazar_adi', headerName: 'Yazar Adı', width: 150, flex: 1 },
         { field: 'yazar_soyadi', headerName: 'Yazar Soyadı', width: 150, flex: 1 },
-        {
-            field: 'odunc_alma_tarihi',
-            headerName: 'Tarih',
-            width: 150,
-            flex: 1,
-            valueFormatter: (params) => {
-                if (!params) return '';
-                try {
-                    const date = new Date(params);
-                    if (isNaN(date.getTime())) return '';
-
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    const hours = date.getHours().toString().padStart(2, '0');
-                    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-                    return `${day}.${month}.${year} ${hours}:${minutes}`;
-                } catch {
-                    return '';
-                }
-            }
-        },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
         {
