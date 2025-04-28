@@ -9,6 +9,8 @@ import Book from './pages/Book/Book.js';
 import LendingBook from './pages/LendingBook/LendingBook.js';
 import BookType from './pages/BookType/BookType.js';
 import ReturnBook from './pages/ReturnBook/ReturnBook.js';
+import User from './pages/User/User.js';
+import CreateUser from './pages/User/CreateUser.js';
 // Protected Route bileşeni
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -50,6 +52,8 @@ function App() {
                 <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="/book/categories" element={<BookType />} />
                 <Route path="/book/return-book" element={<ReturnBook />} />
+                <Route path="/user" element={<User />} />
+                <Route path="/user/create" element={<CreateUser />} />
               </Routes>
             </Layout>
           </ProtectedRoute>

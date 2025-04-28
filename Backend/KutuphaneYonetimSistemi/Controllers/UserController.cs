@@ -13,9 +13,9 @@ namespace KutuphaneYonetimSistemi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        public const int saltrounds = 12;
+
         private readonly DbHelper _dbHelper;
-
-
 
         public UserController(DbHelper dbHelper)
         {
@@ -123,7 +123,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                    string checkuserisdeleted = "SELECT COUNT(*) FROM table_users WHERE id = @id AND is_deleted = true";
                     int checkuserisdeletedresult = connection.QueryFirstOrDefault<int>(checkuserisdeleted, new { id });
-                    if (checkuserisdeletedresult == 0)
+                    if (checkuserisdeletedresult == 1)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("User is already deleted"));
                     }
@@ -168,7 +168,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     
 
                     string hashedpassword = model.password;
-                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(hashedpassword, 12);
+                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(hashedpassword, saltrounds);
 
                     string query = "INSERT INTO table_users (username, hashedpassword,is_deleted,is_login) VALUES (@username, @passwordHash,false,false)";
                     var result = await connection.ExecuteAsync(query, new { username = model.username, passwordHash = passwordHash });

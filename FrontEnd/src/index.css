@@ -118,7 +118,7 @@ body {
 /* Main content area */
 .main-content {
   padding: 32px;
-  padding-top: calc(var(--topbar-height) + 32px);
+  padding-top: calc(var(--topbar-height) + 12px);
   min-height: 100vh;
   background-color: var(--bg-light);
 }

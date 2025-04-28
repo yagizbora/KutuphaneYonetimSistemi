@@ -43,8 +43,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       text: 'Üyeler',
       icon: 'fas fa-users',
       items: [
-        { path: '/members', text: 'Üye Listesi' },
-        { path: '/members/add', text: 'Üye Ekle' }
+        { path: '/user', text: 'Üye Listesi' },
       ]
     }
   ];
