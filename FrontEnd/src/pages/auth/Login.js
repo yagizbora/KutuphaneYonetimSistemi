@@ -13,7 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
- 
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -39,8 +39,10 @@ const Login = () => {
 
     try {
       const response = await axios.post('/auth/User/Login', formData);
-      if(response.data.status === true){
+      if (response.data.status === true) {
         localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('user_id', response.data.data.user_id);
+        localStorage.setItem('username', response.data.data.username);
         navigate('/');
       } else {
         setError('Invalid credentials. Please try again.');
@@ -49,8 +51,8 @@ const Login = () => {
     catch (error) {
       console.error('Login error:', error);
       setError(
-        error.response?.data?.message || 
-        error.message || 
+        error.response?.data?.message ||
+        error.message ||
         'Login failed. Please try again.'
       );
     } finally {
@@ -112,8 +114,8 @@ const Login = () => {
                 </Alert>
               )}
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-100 login-button py-2"
                 disabled={loading}
               >
