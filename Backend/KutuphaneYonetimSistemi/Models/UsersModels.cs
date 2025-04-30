@@ -18,5 +18,9 @@
         public required string username { get; set; }
         public required string hashedpassword { get; set; }
     }
+    public class ChangeUsername
+    {
+        public required string username { get; set; }
+    }
 
 }

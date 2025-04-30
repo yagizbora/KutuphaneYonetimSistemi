@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
+using System.Reflection;
 
 
 namespace KutuphaneYonetimSistemi.Controllers
@@ -39,6 +40,53 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
             }
             catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+        [HttpPost("ChangeUsername")]
+        public IActionResult ChangeUsername([FromBody] ChangeUsername model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+                    if (StringValues.IsNullOrEmpty(useridvalue))
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    }
+                    if (!int.TryParse(useridvalue, out int userid))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    }
+                    string usernameisexistquery = "SELECT COUNT(*) FROM table_users where username = @username";
+                    int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, new { username = model.username });
+                    if (usernameisexist > 0)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist username couldn't change"));
+                    }
+                    string mainquery = "UPDATE table_users SET username = @username WHERE id = @user_id";
+                    int result = connection.Execute(mainquery, new { username = model.username, user_id = userid });
+
+                    if(result == 1)
+                    {
+                        return Ok(ResponseHelper.ActionResponse($@"Kullanıcı adı başarıyla güncellendi!"));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Kullanıcı adı güncellenemedi."));
+                    }
+
+                }
+            }
+            catch (Exception ex) 
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }

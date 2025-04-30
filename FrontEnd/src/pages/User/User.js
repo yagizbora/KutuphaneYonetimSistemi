@@ -66,7 +66,6 @@ const user = () => {
     const handledelete = async (data) => {
         try {
             const response = await userservice.deleteuser(data);
-            console.log("HANDLE DELETE response:", response);
 
             if (response?.statusCode === 200 && response?.status === true) {
                 Swal.fire({
@@ -83,7 +82,7 @@ const user = () => {
                 });
             }
         } catch (error) {
-            console.error("HANDLE DELETE catch:", error);
+
             Swal.fire({
                 title: 'Hata',
                 text: error?.response?.data?.message || 'Kullanıcı silinirken bir hata oluştu.',
