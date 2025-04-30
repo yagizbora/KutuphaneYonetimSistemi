@@ -18,7 +18,8 @@ import {
     Select,
     MenuItem,
     FormControl,
-    InputLabel
+    InputLabel,
+    Stack,
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -27,15 +28,123 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
 import BookService from '../../services/BookService';
 import LendingBookService from '../../services/LendingBook';
+import UserService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
+
+const userservice = new UserService();
 
 
 
 
 
 const user = () => {
+
+    const [data, setUsers] = useState([]);
+
+    useEffect(() => {
+        listallusers();
+    }, []);
+
+    const listallusers = async () => {
+        try {
+            const response = await userservice.getUsers();
+            if (response) {
+                setUsers(response.data);
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Kullanıcılar yüklenirken bir hata oluştu.',
+                icon: 'error'
+            })
+        }
+    }
+
+    const handledelete = async (data) => {
+        try {
+            const response = await userservice.deleteuser(data);
+            console.log("HANDLE DELETE response:", response);
+
+            if (response?.statusCode === 200 && response?.status === true) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: response.message || 'Kullanıcı başarıyla silindi.',
+                    icon: 'success'
+                });
+                await listallusers();
+            } else {
+                Swal.fire({
+                    title: 'Hata',
+                    text: response.message || 'Kullanıcı silinemedi.',
+                    icon: 'error'
+                });
+            }
+        } catch (error) {
+            console.error("HANDLE DELETE catch:", error);
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Kullanıcı silinirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    };
+
+
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'username', headerName: 'Kullanıcı adı', width: 150 },
+        {
+            field: 'login_date', headerName: 'Giriş Tarihi', width: 150,
+
+
+            type: 'dateTime', valueFormatter: (params) => {
+                if (!params) {
+                    return 'Giriş yapılmadı';
+
+                }
+                return dayjs(params.value).format('DD/MM/YYYY HH:mm:ss');
+            }
+        },
+        {
+            field: 'is_login', headerName: 'Login', width: 150, type: 'bool', renderCell: (params) => (
+                <Checkbox
+                    checked={params.value || false}
+                    disabled
+                />
+            )
+        },
+        {
+            field: 'actions', headerName: 'İşlemler', width: 150, flex: 1, renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => Swal.fire({
+                        Title: 'Sil',
+                        text: 'Kullanıcıyı silmek istediğinize emin misiniz?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Evet',
+                        cancelButtonText: 'Hayır',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            handledelete(params.row);
+
+                        }
+                    })}
+                >
+                    Kullanıcı Sil
+                </Button>
+
+            )
+        }
+
+    ]
+
     return (
         <Container maxWidth="xl">
             <Box sx={{ padding: 2 }}>
@@ -48,6 +157,31 @@ const user = () => {
                     Kullanıcı Ekle
                 </Button>
             </Box>
+            <Stack>
+                <Paper sx={{ width: '100%', mb: 4, p: 2 }}>
+                    <DataGrid
+                        rows={data}
+                        columns={columns}
+                        pageSize={10}
+                        rowsPerPageOptions={[10, 25, 50]}
+                        disableSelectionOnClick
+                        disableColumnSorting
+                        components={{
+                            Toolbar: GridToolbar
+                        }}
+                        sx={{
+                            boxShadow: 2,
+                            border: 2,
+                            borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                            },
+                        }}
+                    >
+
+                    </DataGrid>
+                </Paper>
+            </Stack>
         </Container>
 
     );

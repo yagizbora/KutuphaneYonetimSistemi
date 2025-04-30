@@ -3,9 +3,24 @@ import axiosConfig from '../utils/axiosConfig';
 export default class userService {
 
     async logout() {
-        const response = await axiosConfig.post('/auth/User/Logout');
-        if (response) {
+        try {
+            const response = await axiosConfig.post('/auth/User/Logout');
+            if (response) {
+                return response;
+            }
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+
+    async getUsers() {
+        try {
+            const response = await axiosConfig.get('/auth/User/ListAllUser');
             return response;
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            throw error;
         }
     }
     async createuser(data) {
@@ -15,7 +30,18 @@ export default class userService {
         }
         catch (error) {
             console.error('Error creating user:', error);
+            throw error;
         }
+    }
 
+    async deleteuser(data) {
+        try {
+            const response = await axiosConfig.delete(`/auth/User/DeleteUser/${data.id}`);
+            return response.data;
+        }
+        catch (error) {
+            console.error('Error deleting user:', error);
+            throw error;
+        }
     }
 }
