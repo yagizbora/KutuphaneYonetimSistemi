@@ -54,22 +54,19 @@ const Topbar = () => {
   };
 
   const handlechangeusername = async () => {
-    console.log('username:', username.username);
-    console.log('confirmusername:', username.confirmusername);
 
-    // Username mismatch kontrolü
+
     if (username.username !== username.confirmusername) {
       Swal.fire({
         icon: 'error',
-        title: 'Username Mismatch',
-        text: 'The new username and confirmation do not match. Please try again.',
+        title: 'Username uyuşmazlığı',
+        text: 'Yeni kullanıcı adınız ile onayladığınız kullanıcı adı uyuşmuyor.',
         confirmButtonText: 'OK'
       });
       setUserChangeModal(false);
       return;
     }
 
-    // Boş username kontrolü
     if (username.username === '') {
       Swal.fire({
         icon: 'error',
@@ -82,10 +79,9 @@ const Topbar = () => {
     }
 
     try {
-      const payload = { username: username.username }; // JSON formatında
-      console.log('Gönderilen payload:', payload);
+      const payload = { username: username.username };
 
-      const response = await userservice.changeusername(payload); // payload'u gönderiyoruz
+      const response = await userservice.changeusername(payload);
 
       if (response) {
         Swal.fire({
@@ -105,7 +101,6 @@ const Topbar = () => {
         confirmButtonText: 'OK'
       });
       setUserChangeModal(false);
-      console.error('Change username error:', error);
     }
   };
 
@@ -166,7 +161,9 @@ const Topbar = () => {
                 value={username.confirmusername}
               />
             </Paper>
-            <Button variant="contained" onClick={handlechangeusername}>Change Username</Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+              <Button variant="contained" onClick={handlechangeusername}>Change Username</Button>
+            </Box>
           </Typography>
         </Box>
       </Modal>
