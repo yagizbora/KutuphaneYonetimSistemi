@@ -44,4 +44,14 @@ export default class userService {
             throw error;
         }
     }
+    async changeusername(data) {
+        try {
+            const response = await axiosConfig.post('/auth/User/ChangeUsername', data);
+            return response;
+        }
+        catch (error) {
+            console.error('Error changing username:', error);
+            throw error;
+        }
+    }
 }
