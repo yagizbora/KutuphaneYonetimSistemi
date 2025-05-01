@@ -45,7 +45,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
         [HttpGet("ListAllUser/{id}")]
-        public IActionResult ListAllUserbyid(int id)
+        public async Task<IActionResult> ListAllUserbyidAsync(int id)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -56,7 +56,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE AND id = @id";
-                    var List = connection.Query<ListAllUsers>(query, new {id = id});
+                    var List = await connection.QueryAsync<ListAllUsers>(query, new {id = id});
                     return Ok(List);
                 }
             }

@@ -137,7 +137,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     string deletebook = "UPDATE table_kitap_turleri SET is_deleted = TRUE WHERE kitap_tur_kodu = @id";
                     var parameters = new { id = id };
-                    var result = connection.Execute(deletebook, parameters);
+                    var result = await connection.ExecuteAsync(deletebook, parameters);
                     if(result == 1 || result > 0)
                     {
                         return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
