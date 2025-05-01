@@ -11,11 +11,11 @@ import BookType from './pages/BookType/BookType.js';
 import ReturnBook from './pages/ReturnBook/ReturnBook.js';
 import User from './pages/User/User.js';
 import CreateUser from './pages/User/CreateUser.js';
-// Protected Route bileşeni
+import Edituser from './pages/User/EditUser.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-
-  if (!token) {
+  const user_id = localStorage.getItem('user_id');
+  if (!token || !user_id) {
     return <Navigate to="/login" replace />;
   }
 
@@ -44,6 +44,7 @@ function App() {
 
         {/* Protected routes */}
         <Route path="/*" element={
+
           <ProtectedRoute>
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar}>
               <Routes>
@@ -54,10 +55,13 @@ function App() {
                 <Route path="/book/return-book" element={<ReturnBook />} />
                 <Route path="/user" element={<User />} />
                 <Route path="/user/create" element={<CreateUser />} />
+                <Route path="/user/edit-user/:id" element={<Edituser />} />
+
               </Routes>
             </Layout>
           </ProtectedRoute>
-        } />
+        }
+        />
       </Routes>
     </Router>
   );

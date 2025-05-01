@@ -23,6 +23,27 @@ export default class userService {
             throw error;
         }
     }
+    async getUserById(data) {
+        try {
+            const response = await axiosConfig.get(`/auth/User/ListAllUser/${data}`);
+            return response;
+        }
+        catch (error) {
+            console.error('Error fetching user by ID:', error);
+            throw error;
+        }
+    }
+
+    async edituser(data) {
+        try {
+            const response = await axiosConfig.post('/auth/User/EditUser', data);
+            return response;
+        }
+        catch (error) {
+            console.error('Error editing user:', error);
+            throw error;
+        }
+    }
     async createuser(data) {
         try {
             const response = await axiosConfig.post('/auth/User/CreateUser', data);

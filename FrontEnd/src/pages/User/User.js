@@ -26,8 +26,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
-import BookService from '../../services/BookService';
-import LendingBookService from '../../services/LendingBook';
 import UserService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
@@ -116,32 +114,49 @@ const user = () => {
             )
         },
         {
-            field: 'actions', headerName: 'İşlemler', width: 150, flex: 1, renderCell: (params) => (
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => Swal.fire({
-                        Title: 'Sil',
-                        text: 'Kullanıcıyı silmek istediğinize emin misiniz?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Evet',
-                        cancelButtonText: 'Hayır',
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            handledelete(params.row);
-
-                        }
-                    })}
-                >
-                    Kullanıcı Sil
-                </Button>
-
+            field: 'is_deleted', headerName: 'is_deleted', width: 150, type: 'bool', renderCell: (params) => (
+                <Checkbox
+                    checked={params.value || false}
+                    disabled
+                />
             )
-        }
+        },
+        {
+            field: 'actions', headerName: 'İşlemler', width: 75, flex: 1, renderCell: (params) => (
 
+                <Box spacing={1} gap={1} sx={{ display: 'flex' }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => Swal.fire({
+                            Title: 'Sil',
+                            text: 'Kullanıcıyı silmek istediğinize emin misiniz?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Evet',
+                            cancelButtonText: 'Hayır',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handledelete(params.row);
+
+                            }
+                        })}
+                    >
+                        Kullanıcı Sil
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        href={`/user/edit-user/${params.row.id}`}
+
+                    >
+                        Sunucuyu düzenle
+                    </Button>
+                </Box>
+            )
+        },
     ]
 
     return (
