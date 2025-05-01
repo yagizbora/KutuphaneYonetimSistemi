@@ -11,6 +11,7 @@
         public string? username { get; set; }
         public DateTime? login_date { get; set; }
         public Boolean? is_login { get; set; }
+        public Boolean is_deleted { get; set; }
     }
     public class GetuserData
     {
