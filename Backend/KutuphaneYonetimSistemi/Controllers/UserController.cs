@@ -34,7 +34,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,login_date,is_login,is_deleted FROM table_users WHERE is_deleted = FALSE ORDER BY id ASC";
+                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE ORDER BY id ASC";
                     var List = connection.Query<ListAllUsers>(query, connection);
                     return Ok(List);
                 }
@@ -55,7 +55,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,login_date,is_login,is_deleted FROM table_users WHERE is_deleted = FALSE AND id = @id";
+                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE AND id = @id";
                     var List = await connection.QueryAsync<ListAllUsers>(query, new {id = id});
                     return Ok(List);
                 }
@@ -156,7 +156,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserModel model)
         {

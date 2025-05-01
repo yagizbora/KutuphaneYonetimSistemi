@@ -114,14 +114,6 @@ const user = () => {
             )
         },
         {
-            field: 'is_deleted', headerName: 'is_deleted', width: 150, type: 'bool', renderCell: (params) => (
-                <Checkbox
-                    checked={params.value || false}
-                    disabled
-                />
-            )
-        },
-        {
             field: 'actions', headerName: 'İşlemler', width: 75, flex: 1, renderCell: (params) => (
 
                 <Box spacing={1} gap={1} sx={{ display: 'flex' }}>
