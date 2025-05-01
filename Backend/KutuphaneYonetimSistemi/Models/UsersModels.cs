@@ -1,4 +1,6 @@
-﻿namespace KutuphaneYonetimSistemi.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace KutuphaneYonetimSistemi.Models
 {
     public class UserModel
     {
@@ -23,5 +25,10 @@
     {
         public required string username { get; set; }
     }
-
+    public class EditUser
+    {
+        public required int id { get; set; }
+        public required string username { get; set; }
+        public required string password { get; set; }
+    }
 }

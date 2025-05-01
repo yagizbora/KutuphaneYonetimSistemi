@@ -66,6 +66,50 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
+        [HttpPost("EditUser")]
+        public async Task<IActionResult> EditUser(EditUser model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string usernameisexistquery = "SELECT COUNT(*) FROM table_users where username = @username";
+                    int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, new { username = model.username });
+                    if (usernameisexist > 0)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist username couldn't change"));
+                    }
+
+                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
+
+                    string mainquery = "UPDATE table_users SET username = @username,hashedpassword = @hashedpassword,is_login = false,login_date = NULL,token = NULL WHERE id = @id";
+                    var result = await connection.ExecuteAsync(mainquery, new
+                    {
+                        model.username,
+                        hashedpassword = passwordHash,
+                        model.id
+                    });
+                    if (result > 0)
+                    {
+                        return Ok(ResponseHelper.ActionResponse("Kullanıcı bilgileri değiştirildi"));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Kullanıcı bilgileri değiştirilirken hata oluştu"));
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
         [HttpPost("ChangeUsername")]
         public IActionResult ChangeUsername([FromBody] ChangeUsername model)
         {
