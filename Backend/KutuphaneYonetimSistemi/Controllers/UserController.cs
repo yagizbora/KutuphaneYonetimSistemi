@@ -44,6 +44,27 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+        [HttpGet("ListAllUser/{id}")]
+        public IActionResult ListAllUserbyid(int id)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE AND id = @id";
+                    var List = connection.Query<ListAllUsers>(query, new {id = id});
+                    return Ok(List);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
 
         [HttpPost("ChangeUsername")]
         public IActionResult ChangeUsername([FromBody] ChangeUsername model)
