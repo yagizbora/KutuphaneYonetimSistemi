@@ -150,9 +150,9 @@ const user = () => {
                         variant="contained"
                         color="primary"
                         href={`/user/edit-user/${params.row.id}`}
-
+                        disabled={(localStorage.getItem('user_id') == params.row.id)}
                     >
-                        Sunucuyu düzenle
+                        Kullanıcıyı düzenle
                     </Button>
                 </Box>
             )

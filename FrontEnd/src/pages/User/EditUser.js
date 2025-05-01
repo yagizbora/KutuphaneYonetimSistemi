@@ -43,6 +43,9 @@ const edituser = () => {
     if (!id) {
         window.history.back();
     }
+    else if (id == localStorage.getItem('user_id')) {
+        window.history.back();
+    }
     const [data, setUsers] = useState({
         "id": 0,
         "username": "",
@@ -74,20 +77,34 @@ const edituser = () => {
 
     const edituser = async () => {
         try {
-            const response = await userservice.edituser({
-                "id": data.id,
-                "username": data.username,
-                "password": data.password
-            });
-            if (response) {
-                Swal.fire({
-                    title: 'Başarılı',
-                    text: response?.data?.message || 'Kullanıcı başarıyla güncellendi.',
-                    icon: 'success'
-                }).then(() => {
-                    window.history.back();
+            Swal.fire({
+                title: 'Kullanıcıyı güncellemek istediğinize emin misiniz?',
+                text: 'Sorma sebebimiz eğer kullanıcı güncellenirse kullanıcı giriş yapmışsa kullanıcıyı çıkış yaptırmak zorunda kalacaksınız.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, güncelle!',
+                cancelButtonText: 'Hayır, iptal et!'
+            })
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const response = await userservice.edituser({
+                            "id": data.id,
+                            "username": data.username,
+                            "password": data.password
+                        });
+                        if (response) {
+                            Swal.fire({
+                                title: 'Başarılı',
+                                text: response?.data?.message || 'Kullanıcı başarıyla güncellendi.',
+                                icon: 'success'
+                            }).then(() => {
+                                window.history.back();
+                            });
+                        }
+                    }
                 });
-            }
         }
         catch (error) {
             Swal.fire({
