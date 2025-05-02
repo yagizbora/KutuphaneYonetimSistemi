@@ -45,6 +45,15 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       items: [
         { path: '/user', text: 'Üye Listesi' },
       ]
+    },
+    {
+      text: 'Loglar',
+      icon: 'fas fa-history',
+      items: [
+        {
+          path: '/logs/payment-logs', text: 'Ödeme Logları'
+        }
+      ]
     }
   ];
 
