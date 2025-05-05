@@ -17,6 +17,9 @@ import {
     Grid,
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -267,14 +270,22 @@ const ReturnBook = () => {
                             {/* Ödeme Türü */}
                             <Grid item xs={12} md={4}>
                                 <p>Ödeme Türü</p>
-                                <TextField
-                                    fullWidth
-                                    placeholder="Ödeme Türü"
-                                    value={paymentdata.payment_type}
-                                    onChange={(e) =>
-                                        setPaymentdata({ ...paymentdata, payment_type: e.target.value })
-                                    }
-                                />
+                                <FormControl sx={{ width: 300, }}>
+                                    <Select
+                                        fullWidth
+                                        type="number"
+                                        placeholder="Ödenen Miktar"
+                                        value={paymentdata.payment_type}
+                                        onChange={(e) =>
+                                            setPaymentdata({ ...paymentdata, payment_type: e.target.value })
+                                        }
+                                    >
+                                        <MenuItem value={"Yok"}>Yok</MenuItem>
+                                        <MenuItem value={"Kart"}>Kart</MenuItem>
+                                        <MenuItem value={"Nakit"}>Nakit</MenuItem>
+                                        <MenuItem value={"Hediye Çeki"}>Hediye Çeki</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
 
                             {/* Ödünç Verme Tarihi */}
