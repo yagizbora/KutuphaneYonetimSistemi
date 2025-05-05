@@ -6,14 +6,14 @@ namespace KutuphaneYonetimSistemi.Models
 
     public class ListBookModels
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public string? kitap_adi { get; set; }
         public string? yazar_adi { get; set; }
         public string? yazar_soyadi { get; set; }
         public string? ISBN { get; set; }
         public bool? Durum { get; set; }
         public string? kitap_tur { get; set; }
-        public int kitap_tur_kodu { get; set; }
+        public int? kitap_tur_kodu { get; set; }
      }
     public class CreateBook
     {
