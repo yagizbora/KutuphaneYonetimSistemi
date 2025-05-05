@@ -30,7 +30,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Total Books</h3>
+            <h3>Toplam Kitaplar</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.books_count}</p>
@@ -38,7 +38,7 @@ const Dashboard = () => {
         </div>
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Taken Books</h3>
+            <h3>Ödünç Alınan Kitaplar</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.taken_books}</p>
@@ -46,7 +46,7 @@ const Dashboard = () => {
         </div>
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Untaken Books</h3>
+            <h3>Ödünç alınmayan Kitap sayısı</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.untaken_books}</p>

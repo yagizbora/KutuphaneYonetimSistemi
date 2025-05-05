@@ -39,7 +39,7 @@ const PaymentLogs = () => {
         catch (error) {
             Swal.fire({
                 title: 'Hata',
-                text: error?.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu.',
+                text: error?.response?.data?.message || 'Bir hata oluştu.',
                 icon: 'error'
             });
         }

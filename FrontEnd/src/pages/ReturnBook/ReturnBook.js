@@ -168,8 +168,6 @@ const ReturnBook = () => {
                     calculatedDelayAllowance: response.data.data.calculatedDelayAllowance,
                     id: data.id
                 }))
-                console.log(response.data.data.calculatedDelayAllowance);
-                console.log(data.id);
                 setOpeneditdialog(true);
             }
         }

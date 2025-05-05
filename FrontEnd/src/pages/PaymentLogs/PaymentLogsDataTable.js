@@ -26,7 +26,6 @@ import dayjs from 'dayjs';
 
 const PaymentLogsDataTable = ({ data }) => {
 
-    console.log(data);
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
