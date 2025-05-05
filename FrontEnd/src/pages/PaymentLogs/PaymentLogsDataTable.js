@@ -21,24 +21,47 @@ import {
     InputLabel,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 
 
 const PaymentLogsDataTable = ({ data }) => {
 
-
+    console.log(data);
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
-        { field: 'payment_amount', headerName: 'Tutar (₺)', width: 120, type: 'number' },
+        {
+            field: 'payment_amount',
+            headerName: 'Tutar (₺)',
+            width: 120,
+            type: 'de',
+            valueFormatter: (params) => {
+                const value = params;
+                if (value === null || value === undefined) {
+                    return 'Tutar yok';
+                }
+
+                const newvalue = Math.round(value * 100) / 100;
+
+                const formatter = new Intl.NumberFormat('tr-TR', {
+                    style: 'currency',
+                    currency: 'TRY',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+                return formatter.format(newvalue);
+            }
+        },
         { field: 'payment_type', headerName: 'Ödeme Türü', width: 120 },
         { field: 'payment_is_success', headerName: 'Başarılı mı?', width: 130, type: 'boolean' },
         {
-            field: 'payment_date', headerName: 'Ödeme Tarihi', width: 180, valueFormatter: (params) => {
-                if (!params.value) {
-                    return 'Tarih yok';
-                }
-                const date = new Date(params.value);
-                return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+            field: 'payment_date',
+            headerName: 'Ödeme Tarihi',
+            width: 160,
+            valueFormatter: (params) => {
+                if (!params) return 'Tarih yok';
+                const date = dayjs(params.value);
+                return date.format('DD.MM.YYYY');
             }
         },
         { field: 'payment_failed_subject', headerName: 'Hata Mesajı', width: 250 },
@@ -49,6 +72,7 @@ const PaymentLogsDataTable = ({ data }) => {
         <DataGrid
             rows={data}
             columns={columns}
+
         >
 
         </DataGrid>

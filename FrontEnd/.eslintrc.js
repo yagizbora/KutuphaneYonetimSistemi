@@ -19,6 +19,7 @@ module.exports = {
   rules: {
 
     "no-unused-vars": "off",
+    "no-useless-catch": "off",
     "react/prop-types": "off",
     "no-undef": 'off',
     'import/first': 'off',

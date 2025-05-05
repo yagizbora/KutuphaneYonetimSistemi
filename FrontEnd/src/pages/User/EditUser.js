@@ -40,12 +40,22 @@ const userservice = new UserService();
 
 const edituser = () => {
     const { id } = useParams();
-    if (!id) {
-        window.history.back();
-    }
-    else if (id == localStorage.getItem('user_id')) {
-        window.history.back();
-    }
+    useEffect(() => {
+        if (!id) {
+            window.history.back();
+        }
+        else if (id == localStorage.getItem('user_id')) {
+            Swal.fire({
+                title: 'Hata',
+                text: 'Kendi kullanıcı bilgilerinizi güncelleyemezsiniz.',
+                icon: 'error',
+                confirmButtonText: 'Tamam'
+
+            }).then(() => {
+                window.history.back();
+            })
+        }
+    }, [id])
     const [data, setUsers] = useState({
         "id": 0,
         "username": "",
