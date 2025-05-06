@@ -65,20 +65,19 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     string query = $@"
-            SELECT 
-                tk.id, 
-                tk.kitap_adi,
-                tk.yazar_adi,
-                tk.yazar_soyadi,
-                tk.isbn,
-                tk.durum,
-                tkt.kitap_tur_kodu AS kitap_tur_kodu,
-                tkt.aciklama AS kitap_tur
-            FROM table_kitaplar tk
-            JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
-            WHERE tk.is_deleted = false {filtersql}
-            ORDER BY tk.id ASC;";
-
+                    SELECT 
+                    tk.id, 
+                    tk.kitap_adi,
+                    tk.yazar_adi,
+                    tk.yazar_soyadi,
+                    tk.isbn,
+                    tk.durum,
+                    tkt.kitap_tur_kodu AS kitap_tur_kodu,
+                    tkt.aciklama AS kitap_tur
+                    FROM table_kitaplar tk
+                    JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
+                    WHERE tk.is_deleted = false {filtersql}
+                    ORDER BY tk.id ASC;";
                     var books = await connection.QueryAsync<ListBookModels>(query, parameters);
                     return Ok(ResponseHelper.OkResponse("Books fetched.", books));
                 }
