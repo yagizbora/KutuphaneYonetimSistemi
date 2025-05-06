@@ -362,13 +362,14 @@ const Book = () => {
                         ))}
 
                     </Select>
+                    <IconButton aria-label="delete" size="large" onClick={() => { searchbooks() }}>
+                        <SearchIcon />
+                    </IconButton>
+                    <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
+                        <DeleteIcon />
+                    </IconButton>
                 </Box>
-                <IconButton aria-label="delete" size="large" onClick={() => { searchbooks() }}>
-                    <SearchIcon />
-                </IconButton>
-                <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
-                    <DeleteIcon />
-                </IconButton>
+
             </Paper>
 
             <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
@@ -411,6 +412,7 @@ const Book = () => {
                                 <p>Kitap Türü</p>
                                 <Select
                                     value={typeofbook.kitap_tur_kodu}
+
                                     onChange={(e) => setTypeofbook({ ...typeofbook, kitap_tur_kodu: e.target.value })}>
                                     {bookTypes.map((type) => (
                                         <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
