@@ -22,14 +22,17 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import BookService from '../../services/BookService';
 import BookTypeService from '../../services/BookTypeService';
 import Swal from 'sweetalert2';
+import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 
 const bookService = new BookService();
 const bookTypeService = new BookTypeService();
 
 const Book = () => {
     const [data, setBooks] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -37,6 +40,11 @@ const Book = () => {
     const [selectedBook, setSelectedBook] = useState(null);
     const [editedBook, setEditedBook] = useState(null);
     const [typeofbook, setTypeofbook] = useState({
+        kitap_tur_kodu: "",
+        aciklama: ""
+    });
+    const [filterbooks, setFilterBooks] = useState({});
+    const [typeofFilterbook, setTypeofFilterbook] = useState({
         kitap_tur_kodu: "",
         aciklama: ""
     });
@@ -51,12 +59,30 @@ const Book = () => {
 
     useEffect(() => {
         getBooks();
+        getbooktypesfilter();
     }, []);
+
+    const getbooktypesfilter = async () => {
+        try {
+            const response = await bookTypeService.getbooktypes();
+            if (response) {
+                setTypeofFilterbook(response.data.data);
+            }
+        } catch (error) {
+            console.error("Kitap türleri yüklenirken bir hata oluştu:", error);
+        }
+    }
+
+    const clearfilter = async () => {
+        setFilterBooks({});
+
+        await getBooks();
+    };
 
     const getBooks = async () => {
         try {
             setLoading(true);
-            const response = await bookService.getBooks();
+            const response = await bookService.getBooks({});
             if (Array.isArray(response)) {
                 setBooks(response);
             } else if (response && Array.isArray(response.data)) {
@@ -72,6 +98,23 @@ const Book = () => {
             setLoading(false);
         }
     };
+
+    const searchbooks = async () => {
+        try {
+            const response = await bookService.getBooks(filterbooks);
+            if (response) {
+                console.log(response);
+                setBooks(response.data);
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.message,
+                icon: 'error'
+            })
+        }
+    }
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -263,6 +306,71 @@ const Book = () => {
                     </Button>
                 </Box>
             </div>
+            <Typography variant="h6" gutterBottom>
+                Filtre
+            </Typography>
+            <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+
+                    <TextField
+                        label="Kitap Adı"
+                        value={filterbooks.kitap_adi || ""}
+                        onChange={(e) => setFilterBooks(prev => ({ ...prev, kitap_adi: e.target.value }))}
+                    />
+
+                    <TextField
+                        label="Yazar Adı"
+                        value={filterbooks.yazar_adi || ""}
+                        onChange={(e) => setFilterBooks(prev => ({ ...prev, yazar_adi: e.target.value }))}
+                    />
+
+                    <TextField
+                        label="Yazar Soyadı"
+                        value={filterbooks.yazar_soyadi || ""}
+                        onChange={(e) => setFilterBooks(prev => ({ ...prev, yazar_soyadi: e.target.value }))}
+                    />
+
+                    <TextField
+                        label="ISBN"
+                        value={filterbooks.isbn || ""}
+                        onChange={(e) => setFilterBooks(prev => ({ ...prev, isbn: e.target.value }))}
+                    />
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={filterbooks.durum || false}
+                                onChange={(e) => setFilterBooks(prev => ({ ...prev, durum: e.target.checked }))}
+                            />
+                        }
+                        label="Durum"
+                    />
+
+                    <Select
+                        value={filterbooks.kitap_tur_kodu ?? ""}
+                        onChange={(e) =>
+                            setFilterBooks((prev) => ({
+                                ...prev,
+                                kitap_tur_kodu: e.target.value,
+                            }))
+                        }
+                    >
+                        {Array.isArray(typeofFilterbook) && typeofFilterbook.map((type) => (
+                            <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                {type.aciklama}
+                            </MenuItem>
+                        ))}
+
+                    </Select>
+                </Box>
+                <IconButton aria-label="delete" size="large" onClick={() => { searchbooks() }}>
+                    <SearchIcon />
+                </IconButton>
+                <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
+                    <DeleteIcon />
+                </IconButton>
+            </Paper>
+
             <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
                 <Box sx={{ height: 600, width: '100%' }}>
                     <DataGrid

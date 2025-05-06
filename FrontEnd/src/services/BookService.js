@@ -2,8 +2,8 @@ import axios from '../utils/axiosConfig';
 
 
 export default class BookService {
-    async getBooks() {
-        const response = await axios.get('/Book/GetBook');
+    async getBooks(data) {
+        const response = await axios.post('/Book/GetBook', data);
         return response.data;
     }
 
