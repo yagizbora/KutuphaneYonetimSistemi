@@ -19,7 +19,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
 
         [HttpPost("GetBook")]
-        public async Task<IActionResult> GetBook([FromBody] ListBookModels models)
+        public async Task<IActionResult> GetBook([FromBody] BookFilterModel models)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);

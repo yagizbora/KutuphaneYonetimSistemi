@@ -14,7 +14,18 @@ namespace KutuphaneYonetimSistemi.Models
         public bool? Durum { get; set; }
         public string? kitap_tur { get; set; }
         public int? kitap_tur_kodu { get; set; }
-     }
+    }
+
+    public class BookFilterModel
+    {
+        public string? kitap_adi { get; set; }
+        public string? yazar_adi { get; set; }
+        public string? yazar_soyadi { get; set; }
+        public string? ISBN { get; set; }
+        public bool? Durum { get; set; }
+        public int? kitap_tur_kodu { get; set; }
+    }
+
     public class CreateBook
     {
         public required string kitap_adi { get; set; }
