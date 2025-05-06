@@ -65,7 +65,7 @@ const LendingBook = () => {
     }
     const getBookList = async () => {
         try {
-            const response = await bookService.getBooks();
+            const response = await bookService.getBooks({});
             if (response) {
                 setBookList(response.data);
             }
