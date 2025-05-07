@@ -1,4 +1,5 @@
 ﻿using KutuphaneYonetimSistemi.Common;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using System.Data;
@@ -130,7 +131,19 @@ namespace KutuphaneYonetimSistemi
             }
             app.UseHttpsRedirection();
 
-            //app.UseStaticFiles();
+
+            if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Upload")))
+            {
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
+            }
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Upload")),
+                RequestPath = new PathString ("/" + "Upload")
+            });
+
+                
 
             app.UseCors("MyPolicy");
 
