@@ -142,8 +142,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Şifre Hashlenemedi!"));
                     }
 
-                    string query = "UPDATE table_users SET hashedpassword = @passwordHash, token = NULL, login_date = NULL, is_login = false WHERE id = @id";
-                    int result = await connection.ExecuteAsync(query, new { hashedpassword = passwordHash,id = useridvalue });
+                    string query = "UPDATE table_users SET hashedpassword = @hashedpassword, token = NULL, login_date = NULL, is_login = false WHERE id = @id";
+                    int result = await connection.ExecuteAsync(query, new { hashedpassword = passwordHash,id = userid });
                     if(result == 1)
                     {
                         return Ok(ResponseHelper.ActionResponse($@"Kullanıcı şifresi başarıyla güncellendi!"));
