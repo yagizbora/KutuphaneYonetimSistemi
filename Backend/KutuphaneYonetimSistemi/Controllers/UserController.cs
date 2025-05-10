@@ -66,7 +66,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
-        [HttpPost("EditUser")]
+        [HttpPost("Edit User")]
         public async Task<IActionResult> EditUser(EditUser model)
         {
             TokenController g = new TokenController(_dbHelper);
@@ -109,6 +109,60 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePassword model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            using (var connection = _dbHelper.GetConnection())
+            {
+                try
+                {
+                    ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+                    if (StringValues.IsNullOrEmpty(useridvalue))
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    }
+                    if (!int.TryParse(useridvalue, out int userid))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    }
+
+
+
+
+                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
+                    if (string.IsNullOrEmpty(passwordHash))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Şifre Hashlenemedi!"));
+                    }
+
+                    string query = "UPDATE table_users SET hashedpassword = @passwordHash, token = NULL, login_date = NULL, is_login = false WHERE id = @id";
+                    int result = await connection.ExecuteAsync(query, new { hashedpassword = passwordHash,id = useridvalue });
+                    if(result == 1)
+                    {
+                        return Ok(ResponseHelper.ActionResponse($@"Kullanıcı şifresi başarıyla güncellendi!"));
+                    }
+                    else
+                    {
+                        return BadRequest($@"Kullanıcı Şifresi güncellenemedi!");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+                }
+            }
+        }
+
+
+
 
         [HttpPost("ChangeUsername")]
         public IActionResult ChangeUsername([FromBody] ChangeUsername model)

@@ -24,6 +24,11 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public required string username { get; set; }
     }
+    public class ChangePassword
+    {
+        public required string password { get; set; }
+
+    }
     public class EditUser
     {
         public required int id { get; set; }
