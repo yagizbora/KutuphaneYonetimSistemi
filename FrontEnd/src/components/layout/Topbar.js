@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Menu, MenuItem, Box, Typography, Paper, TextField } from '@mui/material';
+import {
+  Button, Menu, MenuItem, Box, Typography, Paper, TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import Modal from '@mui/material/Modal';
 import userService from '../../services/UserService';
 import Swal from 'sweetalert2';
@@ -8,11 +14,24 @@ const userservice = new userService();
 const Topbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userchangemodal, setUserChangeModal] = useState(false);
+  const [userchangepasswordmodal, setUserChangePasswordModal] = useState(false);
+  const openuserchangepasswordmodal = () => {
+    setPassword({
+      password: "",
+      confirmpassword: ""
+    });
+    setUserChangePasswordModal(true)
+
+
+  }
   const [username, setUsername] = useState({
     username: "",
     confirmusername: ""
   });
-
+  const [password, setPassword] = useState({
+    password: "",
+    confirmpassword: ""
+  });
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -24,7 +43,7 @@ const Topbar = () => {
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '2px solid',
     boxShadow: 24,
     p: 4,
   };
@@ -56,7 +75,7 @@ const Topbar = () => {
   const handlechangeusername = async () => {
 
 
-    if (username.username !== username.confirmusername) {
+    if (username.username.Trim() !== username.confirmusername.Trim()) {
       Swal.fire({
         icon: 'error',
         title: 'Username uyuşmazlığı',
@@ -79,7 +98,7 @@ const Topbar = () => {
     }
 
     try {
-      const payload = { username: username.username };
+      const payload = { username: username.username.Trim() };
 
       const response = await userservice.changeusername(payload);
 
@@ -103,6 +122,54 @@ const Topbar = () => {
       setUserChangeModal(false);
     }
   };
+
+
+  const handlechangepassword = async () => {
+    if (password.password === '') {
+      setUserChangePasswordModal(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Please enter a new password.',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    if (password.password !== password.confirmpassword) {
+      setUserChangePasswordModal(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Passwords do not match.',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    try {
+      const payload = { username: username.username, password: password.password };
+      const response = await userservice.changepassword(payload)
+      if (response.status === 200 || response) {
+        setUserChangePasswordModal(false);
+        Swal.fire({
+          icon: 'success',
+          title: 'Password Changed Successfully!' || response.data.message,
+          text: response.data.message,
+          confirmButtonText: 'OK'
+        }).then(() => {
+          localStorage.clear();
+          window.location.href = '/login';
+        });
+      }
+
+    }
+    catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Change Password Failed',
+        text: error?.response?.data?.message || 'An error occurred while changing password. Please try again.',
+        confirmButtonText: 'OK'
+      });
+      setUserChangeModal(false);
+    }
+  }
 
   return (
     <div className="topbar">
@@ -128,6 +195,7 @@ const Topbar = () => {
             >
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
               <MenuItem onClick={() => setUserChangeModal(true)}>Change Username</MenuItem>
+              <MenuItem onClick={() => openuserchangepasswordmodal()}>Change Password</MenuItem>
             </Menu>
           </div>
         </div>
@@ -137,6 +205,7 @@ const Topbar = () => {
         onClose={() => setUserChangeModal(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        maxWidth="md"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -167,6 +236,32 @@ const Topbar = () => {
           </Typography>
         </Box>
       </Modal>
+      <Dialog
+        open={userchangepasswordmodal}
+        onClose={() => setUserChangePasswordModal(false)}
+      >
+        <DialogTitle> Change Password </DialogTitle>
+        <DialogContent>
+          <p>Enter your new password:</p>
+          <TextField
+            variant="outlined"
+            fullWidth
+            onChange={(e) => setPassword({ ...password, password: e.target.value })}
+            value={password.password}
+          />
+
+          <p>Enter your new password:</p>
+          <TextField
+            variant="outlined"
+            fullWidth
+            onChange={(e) => setPassword({ ...password, confirmpassword: e.target.value })}
+            value={password.confirmpassword}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handlechangepassword()}>Save</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
