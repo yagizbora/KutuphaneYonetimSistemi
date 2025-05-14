@@ -128,6 +128,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpDelete("DeleteRequest/{id}")]
         public async Task<IActionResult> DeleteRequest(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())

@@ -13,6 +13,7 @@ import User from './pages/User/User.js';
 import CreateUser from './pages/User/CreateUser.js';
 import Edituser from './pages/User/EditUser.js';
 import PaymentLogs from './pages/PaymentLogs/PaymentLogs.js';
+import RequestBook from './pages/RequestBook/RequestBook.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -58,7 +59,7 @@ function App() {
                 <Route path="/user/create" element={<CreateUser />} />
                 <Route path="/user/edit-user/:id" element={<Edituser />} />
                 <Route path="/logs/payment-logs" element={<PaymentLogs />} />
-
+                <Route path="/request/request-book" element={<RequestBook />} />
               </Routes>
             </Layout>
           </ProtectedRoute>

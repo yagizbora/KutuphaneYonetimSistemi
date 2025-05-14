@@ -47,6 +47,15 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       ]
     },
     {
+      text: 'Request',
+      icon: 'fas fa-plus',
+      items: [
+        {
+          path: '/request/request-book', text: 'Kitap istekleri'
+        }
+      ]
+    },
+    {
       text: 'Loglar',
       icon: 'fas fa-history',
       items: [
@@ -54,7 +63,8 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
           path: '/logs/payment-logs', text: 'Ödeme Logları'
         }
       ]
-    }
+    },
+
   ];
 
   const handleDropdownClick = (index) => {
