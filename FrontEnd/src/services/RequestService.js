@@ -10,6 +10,14 @@ export default class RequestService {
         catch (error) {
             throw error;
         }
-
+    }
+    async createbookrequest(data) {
+        try {
+            const response = await axios.post('BookRequest/CreateRequest', data)
+            return response
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
