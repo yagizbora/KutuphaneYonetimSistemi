@@ -20,4 +20,13 @@ export default class RequestService {
             throw error;
         }
     }
+    async deletebookrequest(data) {
+        try {
+            const response = await axios.delete(`BookRequest/DeleteRequest/${data.id}`)
+            return response
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 }

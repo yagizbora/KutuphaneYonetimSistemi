@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
     Container,
     FormControlLabel,
@@ -15,8 +15,10 @@ import {
     Alert,
     Stack,
     Grid,
+    IconButton
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -41,49 +43,9 @@ const RequestBook = () => {
         is_complated: false,
     });
 
-    const getrequests = async () => {
-        try {
-            const response = await requestservice.getbookrequest();
-            if (response) {
-                Setdata(response)
-            }
-        }
-        catch (error) {
-
-        }
-    }
-
-    const createrequest = async () => {
-        try {
-            const response = await requestservice.createbookrequest(createRequest);
-
-            if (response) {
-                Swal.fire({
-                    title: 'Başarılı',
-                    text: response.data.message,
-                    icon: 'success',
-                    showConfirmButton: true,
-                });
-                getrequests();
-                setCreateRequest({
-                    book_name: '',
-                    request_start_time: '',
-                    request_deadline: '',
-                    comment: '',
-                    is_complated: false,
-                });
-            }
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
 
 
-    useEffect(() => {
-        getrequests();
-    }, [])
-    const columns = [
+    var columns = [
         {
             field: 'id',
             headerName: 'ID',
@@ -131,9 +93,97 @@ const RequestBook = () => {
                     disabled
                 />
             )
+        },
+        {
+            field: 'operations',
+            headerName: 'Operasyonlar',
+            width: 150,
+            renderCell: (params) => (
+                <Stack>
+                    <IconButton color="error" onClick={() => handledeleterequest(params)}>
+                        <DeleteOutlineIcon />
+                    </IconButton>
+                </Stack>
+            )
+        }
+    ];
+
+
+    const getrequests = async () => {
+        try {
+            const response = await requestservice.getbookrequest();
+            if (response) {
+                Setdata(response);
+            }
+        } catch (error) {
+            console.error("An error occurred while fetching book requests:", error);
+        }
+    };
+
+    const handledeleterequest = async (data) => {
+        try {
+            Swal.fire({
+                icon: "question",
+                title: 'Silmek istediğinize emin misiniz?',
+                text: "Bu işlem geri alınamaz!",
+                showCancelButton: true,
+                confirmButtonText: "Evet, sil",
+                cancelButtonText: "Hayır",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await requestservice.deletebookrequest(data);
+                    if (response) {
+                        Swal.fire({
+                            title: 'Başarılı',
+                            text: response.data.message,
+                            icon: 'success',
+                            showConfirmButton: true,
+                        }).then(() => {
+                            getrequests();
+                        })
+                    }
+                }
+            })
+        }
+        catch (error) {
+            console.error(error)
         }
 
-    ];
+    }
+
+
+
+
+    const createrequest = async () => {
+        try {
+            const response = await requestservice.createbookrequest(createRequest);
+
+            if (response) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: response.data.message,
+                    icon: 'success',
+                    showConfirmButton: true,
+                });
+                getrequests();
+                setCreateRequest({
+                    book_name: '',
+                    request_start_time: '',
+                    request_deadline: '',
+                    comment: '',
+                    is_complated: false,
+                });
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+
+    useEffect(() => {
+        getrequests();
+    }, [])
 
     return (
         <Container spacing={2}>
@@ -203,6 +253,7 @@ const RequestBook = () => {
 
             <Stack direction="row" justifyContent="center" alignItems="center">
                 <Paper elevation={3} sx={{ width: '100%', padding: 2 }}>
+
                     <DataGrid
                         rows={data}
                         columns={columns}
@@ -210,7 +261,10 @@ const RequestBook = () => {
                         rowsPerPageOptions={[10, 25, 50]}
                         disableSelectionOnClick
                         disableColumnSorting
+                    // isRowSelectable={false}
                     />
+
+
                 </Paper>
             </Stack>
         </Container>
