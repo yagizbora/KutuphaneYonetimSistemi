@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -99,9 +101,17 @@ const RequestBook = () => {
             headerName: 'Operasyonlar',
             width: 150,
             renderCell: (params) => (
-                <Stack>
+                <Stack direction="row">
                     <IconButton color="error" onClick={() => handledeleterequest(params)}>
                         <DeleteOutlineIcon />
+                    </IconButton>
+                    <IconButton>
+                        {params.row.is_complated ? (
+                            <ToggleOffIcon />
+                        ) : (
+                            <ToggleOnIcon />
+                        )}
+
                     </IconButton>
                 </Stack>
             )
