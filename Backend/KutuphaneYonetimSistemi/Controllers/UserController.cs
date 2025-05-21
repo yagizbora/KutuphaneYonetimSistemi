@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
+using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
+
 using System.Reflection;
 
 
@@ -213,6 +215,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserModel model)
         {
+            UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -241,6 +244,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                         username = userdata.username,
                         token = token,
                     };
+                    //LOGIN LOGS
+                    userLoginLogs.LoginLogs(userdata.username, (DateTime)login_date, token);
+                    //LOGIN LOGS END
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }
             }
