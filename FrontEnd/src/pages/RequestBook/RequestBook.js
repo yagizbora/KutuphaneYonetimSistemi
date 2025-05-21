@@ -18,6 +18,7 @@ import {
     IconButton
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import Switch from '@mui/material/Switch';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
@@ -44,6 +45,7 @@ const RequestBook = () => {
         comment: '',
         is_complated: false,
     });
+
 
 
 
@@ -99,26 +101,70 @@ const RequestBook = () => {
         {
             field: 'operations',
             headerName: 'Operasyonlar',
-            width: 150,
+            width: 350,
             renderCell: (params) => (
-                <Stack direction="row">
+                <Stack direction="row" alignItems="center" spacing={2}>
                     <IconButton color="error" onClick={() => handledeleterequest(params)}>
                         <DeleteOutlineIcon />
                     </IconButton>
-                    <IconButton>
-                        {params.row.is_complated ? (
-                            <ToggleOffIcon />
-                        ) : (
-                            <ToggleOnIcon />
-                        )}
 
-                    </IconButton>
+                    <Stack direction="column" spacing={1} alignItems="flex-start">
+                        <p style={{ margin: 0 }}>Durum Değiştirme!</p>
+
+                        <Switch
+                            checked={params.row.is_complated}
+                            onChange={async (e) => {
+                                const newValue = e.target.checked;
+
+                                try {
+                                    // Backend'e istek at
+                                    await iscomplatedrequest(params, newValue);
+
+                                    // ResizeObserver hatasını önlemek için requestAnimationFrame kullan
+                                    requestAnimationFrame(() => {
+                                        Setdata((prevData) =>
+                                            prevData.map((row) =>
+                                                row.id === params.row.id
+                                                    ? { ...row, is_complated: newValue }
+                                                    : row
+                                            )
+                                        );
+                                    });
+                                } catch (error) {
+                                    console.error("Durum güncelleme hatası:", error);
+                                }
+                            }}
+                        />
+                    </Stack>
                 </Stack>
             )
         }
+
     ];
 
+    const iscomplatedrequest = async (data, switchvalue) => {
+        try {
+            const response = await requestservice.complatedbookrequest({
+                id: data.id,
+                is_complated: switchvalue
+            });
+            if (response) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: response.data.message,
+                    icon: 'success',
+                    showConfirmButton: true,
+                }).then(() => {
 
+                    setTimeout(() => getrequests(), 0);
+                });
+
+            }
+        }
+        catch (error) {
+
+        }
+    }
     const getrequests = async () => {
         try {
             const response = await requestservice.getbookrequest();
@@ -268,6 +314,7 @@ const RequestBook = () => {
                         rows={data}
                         columns={columns}
                         pageSize={10}
+                        getRowHeight={() => 'auto'}
                         rowsPerPageOptions={[10, 25, 50]}
                         disableSelectionOnClick
                         disableColumnSorting

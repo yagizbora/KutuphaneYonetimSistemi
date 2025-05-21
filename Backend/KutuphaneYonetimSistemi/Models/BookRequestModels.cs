@@ -20,5 +20,6 @@
     public class ComplateRequest
     {
         public required int id { get; set; }
+        public required Boolean is_complated { get; set; }
     }
 }

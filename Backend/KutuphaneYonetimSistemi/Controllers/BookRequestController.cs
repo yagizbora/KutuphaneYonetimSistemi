@@ -83,14 +83,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string requestisdeleted = "SELECT COUNT(*) FROM table_request_books WHERE is_deleted = true and id = @id";
 
                     int checkrequestisdeleted = await connection.QueryFirstOrDefaultAsync<int>(requestisdeleted, new { id = models.id });
-                    if(checkrequestisdeleted == 0)
+                    if(checkrequestisdeleted == 1)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Bu istek zaten silinmiş!"));
                     }
 
 
 
-                    string query = "UPDATE table_request_books SET is_complated = true WHERE id = @id";
+                    string query = "UPDATE table_request_books SET is_complated = @is_complated WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, models);
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                 }

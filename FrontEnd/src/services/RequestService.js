@@ -29,4 +29,13 @@ export default class RequestService {
             console.log(error);
         }
     }
+    async complatedbookrequest(data) {
+        try {
+            const response = await axios.post(`BookRequest/ComplateRequest`, data)
+            return response
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 }
