@@ -33,7 +33,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     using (var connection = _dbHelper.GetConnection())
                     {
-                        string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false";
+                        string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false ORDER BY id ASC";
                         var result = await connection.QueryAsync<BookRequestModels>(query);
                         return Ok(result);
                     }
