@@ -8,6 +8,7 @@ using Microsoft.Extensions.Primitives;
 using System.Globalization;
 
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 
 namespace KutuphaneYonetimSistemi.Controllers
@@ -359,6 +360,8 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
             try
             {
                 ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
@@ -382,6 +385,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(query, new { user_id = userid });
                     if (result > 0)
                     {
+                        //LOGOUT LOGS
+                        userLoginLogs.LogoutLogs(userid);
+                        //LOGOUT LOGS END
+
                         return Ok(ResponseHelper.ActionResponse("User logout successfully"));
                     }
                     else

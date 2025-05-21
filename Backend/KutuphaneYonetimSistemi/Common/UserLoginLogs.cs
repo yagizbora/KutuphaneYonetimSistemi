@@ -22,6 +22,24 @@ namespace KutuphaneYonetimSistemi.Common
                 var sql = "INSERT INTO table_login_logs(event, event_name) VALUES(@event, @event_name);";
                 connection.Execute(sql, new { @event = "Login", event_name = eventName });
             }
-        }     }
+        }
+
+        public void LogoutLogs(int user_id)
+        {
+            using (var connection = _dbHelper.GetConnection())
+            {
+                string findUsernameQuery = "SELECT username FROM table_users WHERE id = @user_id";
+                var username = connection.QueryFirstOrDefault<string>(findUsernameQuery, new { user_id });
+
+                
+                var logoutDate = DateTime.Now;
+
+                var eventName = $@"Bu ( {username} ) adlı kullanıcı bu ( {logoutDate} ) bu zamanda çıkış yapmıştır";
+
+                var sql = "INSERT INTO table_login_logs(event, event_name) VALUES(@event, @event_name);";
+                connection.Execute(sql, new { @event = "Logout", event_name = eventName });
+            }
+        }
+    }
 }
 
