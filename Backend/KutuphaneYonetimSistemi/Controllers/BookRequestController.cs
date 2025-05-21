@@ -22,29 +22,29 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
-        [HttpGet("GetBookRequest")]
-        public async Task<IActionResult> GetBookRequest()
-        {
-            TokenController g = new TokenController(_dbHelper);
-            var login = g.GetUserByToken(ControllerContext);
-            if (!login.Status)
-                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
-            try
+            [HttpGet("GetBookRequest")]
+            public async Task<IActionResult> GetBookRequest()
             {
-                using (var connection = _dbHelper.GetConnection())
+                TokenController g = new TokenController(_dbHelper);
+                var login = g.GetUserByToken(ControllerContext);
+                if (!login.Status)
+                    return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                try
                 {
-                    string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false";
-                    var result = await connection.QueryAsync<BookRequestModels>(query);
-                    return Ok(result);
+                    using (var connection = _dbHelper.GetConnection())
+                    {
+                        string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false";
+                        var result = await connection.QueryAsync<BookRequestModels>(query);
+                        return Ok(result);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
                 }
             }
-            catch(Exception ex)
-            {
-                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
-            }
-        }
         [HttpGet("GetBookRequest/{id}")]
-        public async Task <IActionResult> GetBookRequestByid( int id)
+        public async Task <IActionResult> GetBookRequestByid(int id)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
