@@ -80,7 +80,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string requestisdeleted = "SELECT COUNT(*) FROM table_request_books WHERE is_deleted = false and id = @id";
+                    string requestisdeleted = "SELECT COUNT(*) FROM table_request_books WHERE is_deleted = true and id = @id";
 
                     int checkrequestisdeleted = await connection.QueryFirstOrDefaultAsync<int>(requestisdeleted, new { id = models.id });
                     if(checkrequestisdeleted == 0)
