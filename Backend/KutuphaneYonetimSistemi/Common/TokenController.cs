@@ -2,6 +2,9 @@
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 using static KutuphaneYonetimSistemi.Common.ResponseHelper;
+using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
+
+
 namespace KutuphaneYonetimSistemi.Common
 {
     public class TokenController
@@ -15,6 +18,7 @@ namespace KutuphaneYonetimSistemi.Common
 
         public ApiResponse<UserLoginModels> GetUserByToken(ControllerContext context)
         {
+            UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
             string? token = null;
 
             if (context?.HttpContext?.Request?.Headers != null)
@@ -48,17 +52,25 @@ namespace KutuphaneYonetimSistemi.Common
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
                             if (timeout > 0)
                             {
+                                if (!string.IsNullOrEmpty(user.username))
+                                {
+                                    userLoginLogs.LoginTimeOutLog(user.username, DateTime.Now);
+                                }
                                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Oturum süresi doldu!" };
                             }
                         }
-                        if(user.login_date.Value > DateTime.Now)
+                        if (user.login_date.Value > DateTime.Now)
                         {
                             var timeoutsql = "UPDATE table_users SET token = NULL,login_date = NULL,is_login = FALSE WHERE id = @id";
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
                             if (timeout > 0)
                             {
-                                return new ApiResponse<UserLoginModels>() { Status = false, Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz" +
-                                    $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!" };
+                                return new ApiResponse<UserLoginModels>()
+                                {
+                                    Status = false,
+                                    Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz" +
+                                    $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!"
+                                };
                             }
                         }
                     }

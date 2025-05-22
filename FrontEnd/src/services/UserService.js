@@ -46,7 +46,7 @@ export default class userService {
     }
     async createuser(data) {
         try {
-            const response = await axiosConfig.post('/auth/User/CreateUser', data);
+            const response = await axiosConfig.post('/auth/User/EditUser    ', data);
             return response;
         }
         catch (error) {

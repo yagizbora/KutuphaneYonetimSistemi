@@ -40,6 +40,15 @@ namespace KutuphaneYonetimSistemi.Common
                 connection.Execute(sql, new { @event = "Logout", event_name = eventName });
             }
         }
+        public void LoginTimeOutLog(string username, DateTime login_date)
+        {
+            using (var connection = _dbHelper.GetConnection())
+            {
+                var eventName = $@"Bu ( {username} ) adlı kullanıcsı bu zamanda ( {login_date} ) oturum süresi dolduğu için çıkış yaptırılmıştır!";
+                var sql = "INSERT INTO table_login_logs(event, event_name) VALUES(@event, @event_name);";
+                connection.Execute(sql, new { @event = "Login Time out", event_name = eventName });
+            }
+        }
     }
 }
 

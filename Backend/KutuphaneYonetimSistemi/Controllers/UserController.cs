@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
-
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 
@@ -69,7 +68,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
-        [HttpPost("Edit User")]
+        [HttpPost("EditUser")]
         public async Task<IActionResult> EditUser(EditUser model)
         {
             TokenController g = new TokenController(_dbHelper);
