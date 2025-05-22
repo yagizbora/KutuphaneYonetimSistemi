@@ -102,7 +102,7 @@ const user = () => {
                     return 'Giriş yapılmadı';
 
                 }
-                return dayjs(params.value).format('DD/MM/YYYY HH:mm:ss');
+                return dayjs(params).format('DD/MM/YYYY HH:mm:ss');
             }
         },
         {
