@@ -87,7 +87,7 @@ const edituser = () => {
 
     const edituser = async () => {
         try {
-            Swal.fire({
+            const result = await Swal.fire({
                 title: 'Kullanıcıyı güncellemek istediğinize emin misiniz?',
                 text: 'Sorma sebebimiz eğer kullanıcı güncellenirse kullanıcı giriş yapmışsa kullanıcıyı çıkış yaptırmak zorunda kalacaksınız.',
                 icon: 'warning',
@@ -96,34 +96,35 @@ const edituser = () => {
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Evet, güncelle!',
                 cancelButtonText: 'Hayır, iptal et!'
-            })
-                .then(async (result) => {
-                    if (result.isConfirmed) {
-                        const response = await userservice.edituser({
-                            "id": data.id,
-                            "username": data.username,
-                            "password": data.password
-                        });
-                        if (response) {
-                            Swal.fire({
-                                title: 'Başarılı',
-                                text: response?.data?.message || 'Kullanıcı başarıyla güncellendi.',
-                                icon: 'success'
-                            }).then(() => {
-                                window.history.back();
-                            });
-                        }
-                    }
+            });
+
+            if (result.isConfirmed) {
+                const response = await userservice.edituser({
+                    id: data.id,
+                    username: data.username,
+                    password: data.password
                 });
-        }
-        catch (error) {
+
+                if (response) {
+                    await Swal.fire({
+                        title: 'Başarılı',
+                        text: response?.data?.message || 'Kullanıcı başarıyla güncellendi.',
+                        icon: 'success'
+                    });
+                    window.history.back();
+                }
+            }
+
+        } catch (error) {
             Swal.fire({
                 title: 'Hata',
-                text: error?.response?.data?.message || 'Kullanıcılar yüklenirken bir hata oluştu.',
+                text: error?.response?.data?.message,
                 icon: 'error'
-            })
+            });
+
         }
-    }
+    };
+
 
 
     return (

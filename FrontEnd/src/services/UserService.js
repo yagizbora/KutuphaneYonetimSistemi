@@ -40,7 +40,6 @@ export default class userService {
             return response;
         }
         catch (error) {
-            console.error('Error editing user:', error);
             throw error;
         }
     }
