@@ -75,7 +75,7 @@ const Topbar = () => {
   const handlechangeusername = async () => {
 
 
-    if (username.username.Trim() !== username.confirmusername.Trim()) {
+    if (username.username.trim() !== username.confirmusername.trim()) {
       Swal.fire({
         icon: 'error',
         title: 'Username uyuşmazlığı',
@@ -98,7 +98,7 @@ const Topbar = () => {
     }
 
     try {
-      const payload = { username: username.username.Trim() };
+      const payload = { username: username.username.trim() };
 
       const response = await userservice.changeusername(payload);
 
@@ -116,7 +116,7 @@ const Topbar = () => {
       Swal.fire({
         icon: 'error',
         title: 'Change Username Failed',
-        text: error?.response?.data?.message || 'An error occurred while changing username. Please try again.',
+        text: error?.response?.data?.message || `An error occurred while changing username. Please try again. ${error}`,
         confirmButtonText: 'OK'
       });
       setUserChangeModal(false);
