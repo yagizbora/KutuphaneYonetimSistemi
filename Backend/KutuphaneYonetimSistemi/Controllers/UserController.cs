@@ -79,12 +79,15 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string usernameisexistquery = "SELECT COUNT(*) FROM table_users where username = @username";
-                    int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, new { username = model.username });
-                    if (usernameisexist > 0)
+                    string usernameisexistquery = "SELECT id FROM table_users WHERE username = @username";
+                    var existingUserId = connection.QueryFirstOrDefault<int?>(usernameisexistquery, new { username = model.username });
+
+                    if (existingUserId != null && existingUserId != model.id)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist username couldn't change"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Username already exists. Username can't be changed."));
                     }
+
+
 
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
 
