@@ -87,6 +87,20 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Username already exists. Username can't be changed."));
                     }
 
+                    ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+                    if (StringValues.IsNullOrEmpty(useridvalue))
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    }
+                    if (!int.TryParse(useridvalue, out int userid))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    }
+                    if(userid == model.id)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Kendi kullanıcı bilgilerinizi güncelleyemezsiniz!"));
+
+                    }
 
 
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
