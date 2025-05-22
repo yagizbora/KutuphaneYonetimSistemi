@@ -292,6 +292,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            UserOperationLogs userOperationLogs = new UserOperationLogs(_dbHelper);
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -307,6 +308,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Token boş."));
                     }
+
+                    string fetcholdusernamesql = "SELECT username FROM table_users where id = @id";
+                    string fetcholdusername = connection.QueryFirstOrDefault<string>(fetcholdusernamesql, new { id = id });
+
+
 
                     string useridisexist = "SELECT COUNT(*) FROM table_users WHERE id = @id";
                     int useridisexistresult = connection.QueryFirstOrDefault<int>(useridisexist, new { id });
@@ -333,6 +339,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(query, new { id });
                     if (result > 0)
                     {
+                        //LOGS
+                        userOperationLogs.deleteuserlog(fetcholdusername);
+                        //LOGS END
                         return Ok(ResponseHelper.ActionResponse("User deleted successfully"));
                     }
                     else
