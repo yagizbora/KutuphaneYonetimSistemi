@@ -2,12 +2,14 @@
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
+using static KutuphaneYonetimSistemi.Common.UserOperationLogs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+
 
 
 namespace KutuphaneYonetimSistemi.Controllers
@@ -193,6 +195,9 @@ namespace KutuphaneYonetimSistemi.Controllers
 
             try
             {
+                UserOperationLogs userOperationLogs = new UserOperationLogs(_dbHelper);
+
+
                 using (var connection = _dbHelper.GetConnection())
                 {
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
@@ -204,6 +209,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
                     }
+
+                    //FOR LOGS
+                    string fetcholdusernamesql = "SELECT username FROM table_users where id = @userid";
+                    string fetcholdusername = connection.QueryFirstOrDefault<string>(fetcholdusernamesql, new { userid = userid });
+                    //
+
                     string usernameisexistquery = "SELECT COUNT(*) FROM table_users where username = @username";
                     int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, new { username = model.username });
                     if (usernameisexist > 0)
@@ -215,6 +226,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if(result == 1)
                     {
+                        userOperationLogs.changeusernamelog(fetcholdusername, model.username);
                         return Ok(ResponseHelper.ActionResponse($@"Kullanıcı adı başarıyla güncellendi!"));
                     }
                     else
