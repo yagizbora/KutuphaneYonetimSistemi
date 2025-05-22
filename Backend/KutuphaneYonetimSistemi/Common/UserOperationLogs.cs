@@ -19,7 +19,7 @@ namespace KutuphaneYonetimSistemi.Common
             {
                 var eventName = $@"( {oldUsername} ) adlı kullanıcı ismini ( {newUsername} ) ile değiştirmiştir";
                 var sql = "INSERT INTO table_user_operation_logs(event, event_name) VALUES(@event, @event_name);";
-                connection.Execute(sql, new { @event = "Login Time out", event_name = eventName });
+                connection.Execute(sql, new { @event = "Change Username", event_name = eventName });
             }
         }
     }
