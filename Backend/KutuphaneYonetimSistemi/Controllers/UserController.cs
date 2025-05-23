@@ -79,6 +79,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
+                UserOperationLogs userOperationLogs = new UserOperationLogs(_dbHelper);
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string usernameisexistquery = "SELECT id FROM table_users WHERE username = @username";
@@ -104,6 +105,11 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     }
 
+                    //FOR LOGS
+                    string fetcholdusernamesql = "SELECT username FROM table_users where id = @userid";
+                    string? fetcholdusername = connection.QueryFirstOrDefault<string>(fetcholdusernamesql, new { userid = model.id });
+                    //
+
 
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
 
@@ -116,6 +122,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     });
                     if (result > 0)
                     {
+                        userOperationLogs.edituserlog(userid, fetcholdusername, model.id);
                         return Ok(ResponseHelper.ActionResponse("Kullanıcı bilgileri değiştirildi"));
                     }
                     else
