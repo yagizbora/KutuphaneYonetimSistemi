@@ -132,8 +132,8 @@ const RequestBook = () => {
     const getRequests = async (index) => {
         try {
             let status = null;
-            if (index === 0) status = false; // aktif
-            else if (index === 1) status = true; // tamamlanmış
+            if (index === 0) status = false;
+            else if (index === 1) status = true;
 
             const response = await requestservice.getbookrequest({ status });
             if (response) {

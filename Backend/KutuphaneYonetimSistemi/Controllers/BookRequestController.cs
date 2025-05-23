@@ -65,12 +65,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         if (model.status.Value)
                         {
-                            // TAMAMLANMIŞLAR
+                            
                             filtersql += " AND (is_complated = true OR request_deadline < @Now)";
                         }
                         else
                         {
-                            // DEVAM EDENLER
+                            
                             filtersql += " AND (is_complated = false AND request_deadline >= @Now)";
                         }
                     }
