@@ -416,73 +416,83 @@ const Book = () => {
             >
                 <DialogTitle>Yeni Kitap Ekle</DialogTitle>
                 <DialogContent>
-                    <Grid container flex spacing={2}>
-                        <Grid container flex spacing={2}>
-                            {/* İlk Satır: Kitap Türü, Kitap Adı ve Yazar Adı */}
-                            <Grid item xs={12} md={4}>
-                                <p>Kitap Türü</p>
+                    <Container spacing={2}>
+                        {/* İlk Satır: Kitap Türü, Kitap Adı ve Yazar Adı */}
+                        <Grid item xs={12} md={4}>
+                            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
+                                <InputLabel id="kitap-turu-label">Kitap Türü</InputLabel>
                                 <Select
+                                    labelId="kitap-turu-label"
                                     value={typeofbook.kitap_tur_kodu}
-
-                                    onChange={(e) => setTypeofbook({ ...typeofbook, kitap_tur_kodu: e.target.value })}>
+                                    onChange={(e) =>
+                                        setTypeofbook({ ...typeofbook, kitap_tur_kodu: e.target.value })
+                                    }
+                                    label="Kitap Türü"
+                                >
                                     {bookTypes.map((type) => (
                                         <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
                                             {type.aciklama}
                                         </MenuItem>
                                     ))}
                                 </Select>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <p>Kitap Adı</p>
-                                <TextField
-                                    fullWidth
-                                    label="Kitap Adı"
-                                    name="kitap_adi"
-                                    value={createofbook.kitap_adi || ''}
-                                    onChange={(e) => setCreateofbook({ ...createofbook, kitap_adi: e.target.value })}
-                                    variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <p>Yazar Adı</p>
-                                <TextField
-                                    fullWidth
-                                    label="Yazar Adı"
-                                    name="yazar_adi"
-                                    value={createofbook.yazar_adi || ''}
-                                    onChange={(e) => setCreateofbook({ ...createofbook, yazar_adi: e.target.value })}
-                                    variant="outlined"
-                                />
-                            </Grid>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                fullWidth
+                                label="Kitap Adı"
+                                name="kitap_adi"
+                                value={createofbook.kitap_adi || ''}
+                                onChange={(e) =>
+                                    setCreateofbook({ ...createofbook, kitap_adi: e.target.value })
+                                }
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                fullWidth
+                                label="Yazar Adı"
+                                name="yazar_adi"
+                                value={createofbook.yazar_adi || ''}
+                                onChange={(e) =>
+                                    setCreateofbook({ ...createofbook, yazar_adi: e.target.value })
+                                }
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                            />
                         </Grid>
 
-                        <Grid container flex spacing={2}>
-                            {/* İkinci Satır: Yazar Soyadı ve ISBN */}
-                            <Grid item xs={12} md={4}>
-                                <p>Yazar Soyadı</p>
-                                <TextField
-                                    fullWidth
-                                    label="Yazar Soyadı"
-                                    name="yazar_soyadi"
-                                    value={createofbook.yazar_soyadi || ''}
-                                    onChange={(e) => setCreateofbook({ ...createofbook, yazar_soyadi: e.target.value })}
-                                    variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <p>ISBN</p>
-                                <TextField
-                                    fullWidth
-                                    label="ISBN"
-                                    name="isbn"
-                                    value={createofbook.isbn || ''}
-                                    onChange={(e) => setCreateofbook({ ...createofbook, isbn: e.target.value })}
-                                    variant="outlined"
-                                />
-                            </Grid>
+                        {/* İkinci Satır: Yazar Soyadı ve ISBN */}
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                fullWidth
+                                label="Yazar Soyadı"
+                                name="yazar_soyadi"
+                                value={createofbook.yazar_soyadi || ''}
+                                onChange={(e) =>
+                                    setCreateofbook({ ...createofbook, yazar_soyadi: e.target.value })
+                                }
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                            />
                         </Grid>
-                    </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                fullWidth
+                                label="ISBN"
+                                name="isbn"
+                                value={createofbook.isbn || ''}
+                                onChange={(e) =>
+                                    setCreateofbook({ ...createofbook, isbn: e.target.value })}
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                            />
+                        </Grid>
+                    </Container>
                 </DialogContent>
+
                 <DialogActions>
                     <Button
                         onClick={() => createbook()}
