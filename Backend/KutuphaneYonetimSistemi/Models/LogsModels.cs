@@ -11,4 +11,10 @@
         public DateTime payment_date { get; set; }
         public string? payment_failed_subject { get; set; }
     }
+    public class UserLoginOperationLogs
+    {
+        public int id { get; set; }
+        public string? Event { get; set; }
+        public string event_description { get; set; }
+    }
 }

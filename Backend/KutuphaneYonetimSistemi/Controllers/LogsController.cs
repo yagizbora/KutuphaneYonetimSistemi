@@ -38,5 +38,28 @@ namespace KutuphaneYonetimSistemi.Controllers
 
             }
         }
+        [HttpGet("UserLoginOperationLogs")]
+        public async Task<IActionResult> UserLoginOperationLogs()
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string datasql = $@"SELECT * FROM table_user_operation_logs ORDER BY id DESC";
+                    var List = connection.Query<UserLoginOperationLogs>(datasql, connection);
+                    return Ok(List);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+
+            }
+        }
     }
 }

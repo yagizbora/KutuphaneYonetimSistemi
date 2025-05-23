@@ -242,9 +242,9 @@ const RequestBook = () => {
                     <DataGrid
                         rows={data}
                         columns={tabIndex === 0 ? columnsActive : columnsCompleted}
-                        autoHeight
                         pageSize={10}
                         rowsPerPageOptions={[10]}
+                        sx={{ height: 900, width: '100%' }}
                     />
                 </Box>
             </Paper>

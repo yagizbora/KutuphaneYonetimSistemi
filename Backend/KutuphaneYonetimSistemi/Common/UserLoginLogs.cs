@@ -17,10 +17,10 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var eventName = $@"Bu ( {username} ) adlı kullanıcı bu zamanda {login_date} bu token ( {token} ) ile giriş yaptı!";
+                var event_description = $@"Bu ( {username} ) adlı kullanıcı bu zamanda {login_date} bu token ( {token} ) ile giriş yaptı!";
 
-                var sql = "INSERT INTO table_user_operation_logs(event, event_name) VALUES(@event, @event_name);";
-                connection.Execute(sql, new { @event = "Login", event_name = eventName });
+                var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
+                connection.Execute(sql, new { @event = "Login", event_description = event_description });
             }
         }
 
@@ -34,19 +34,19 @@ namespace KutuphaneYonetimSistemi.Common
                 
                 var logoutDate = DateTime.Now;
 
-                var eventName = $@"Bu ( {username} ) adlı kullanıcı bu ( {logoutDate} ) bu zamanda çıkış yapmıştır";
+                var event_description = $@"Bu ( {username} ) adlı kullanıcı bu ( {logoutDate} ) bu zamanda çıkış yapmıştır";
 
-                var sql = "INSERT INTO table_user_operation_logs(event, event_name) VALUES(@event, @event_name);";
-                connection.Execute(sql, new { @event = "Logout", event_name = eventName });
+                var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
+                connection.Execute(sql, new { @event = "Logout", event_description = event_description });
             }
         }
         public void LoginTimeOutLog(string username, DateTime login_date)
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var eventName = $@"Bu ( {username} ) adlı kullanıcsı bu zamanda ( {login_date} ) oturum süresi dolduğu için çıkış yaptırılmıştır!";
-                var sql = "INSERT INTO table_user_operation_logs(event, event_name) VALUES(@event, @event_name);";
-                connection.Execute(sql, new { @event = "Login Time out", event_name = eventName });
+                var event_description = $@"Bu ( {username} ) adlı kullanıcsı bu zamanda ( {login_date} ) oturum süresi dolduğu için çıkış yaptırılmıştır!";
+                var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
+                connection.Execute(sql, new { @event = "Login Time out", event_description = event_description });
             }
         }
         
