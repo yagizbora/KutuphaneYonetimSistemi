@@ -30,6 +30,7 @@ const booktypeservice = new BookTypeService();
 const BookType = () => {
 
     const [data, setData] = useState([]);
+    const [createbooktype, setcreatebooktype] = useState([]);
     const [openeditdialog, setOpeneditdialog] = useState(false);
     const [editdata, setEditdata] = useState({
         id: null,
@@ -163,6 +164,40 @@ const BookType = () => {
         }
     };
 
+    const createbooktyperequest = async () => {
+        if (!createbooktype.aciklama) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: 'Açıklama alanı boş olamaz',
+            });
+            return;
+        }
+        try {
+            const response = await booktypeservice.createbooktype({
+                aciklama: createbooktype.aciklama
+            })
+            if (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı',
+                    text: response?.message || 'Kitap türü başarıyla eklendi',
+                });
+                setcreatebooktype({
+                    aciklama: ''
+                });
+                getbooktype();
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Kitap türü eklenirken bir hata oluştu',
+            });
+        }
+    }
+
     const getbooktype = async () => {
         try {
             const response = await booktypeservice.getbooktypes();
@@ -185,36 +220,49 @@ const BookType = () => {
 
 
     return (
-        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-            <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Kitap Türü Listesi
-                </Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                    Kütüphanedeki tüm kitap türlerini buradan yönetebilirsiniz.
-                </Typography>
-            </Box>
-
-            <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
-                <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-                    <Box sx={{ height: 600, width: '100%' }}>
-                        <DataGrid
-                            rows={data}
-                            columns={columns}
-                            pageSize={10}
-                            rowsPerPageOptions={[10, 25, 50]}
-                            disableSelectionOnClick
-                            resize
-                            disableColumnSorting
-
-                            components={{
-                                Toolbar: GridToolbar,
-                            }}
+        <>
+            <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+                <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Kitap Türü Listesi
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        Kütüphanedeki tüm kitap türlerini buradan yönetebilirsiniz.
+                    </Typography>
+                </Box>
+                <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
+                    <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
+                        <TextField
+                            label="Açıklama"
+                            variant="outlined"
+                            value={createbooktype.aciklama}
+                            onChange={(e) => setcreatebooktype({ ...createbooktype, aciklama: e.target.value })}
+                            sx={{ width: '100%' }}
                         />
-                    </Box>
-                </Stack>
-            </Paper>
+                    </Stack>
+                    <Button variant="contained" onClick={createbooktyperequest}>Kitap Türü Ekle</Button>
+                </Paper>
 
+                <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
+                    <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+                        <Box sx={{ height: 600, width: '100%' }}>
+                            <DataGrid
+                                rows={data}
+                                columns={columns}
+                                pageSize={10}
+                                rowsPerPageOptions={[10, 25, 50]}
+                                disableSelectionOnClick
+                                resize
+                                disableColumnSorting
+
+                                components={{
+                                    Toolbar: GridToolbar,
+                                }}
+                            />
+                        </Box>
+                    </Stack>
+                </Paper>
+            </Container>
 
             <Dialog
                 open={openeditdialog}
@@ -243,7 +291,7 @@ const BookType = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Container>
+        </>
     )
 }
 

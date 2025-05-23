@@ -7,7 +7,10 @@ export default class BookTypeService {
         const response = await axios.get('/BookType/ListBookType')
         return response;
     }
-
+    async createbooktype(data) {
+        const response = await axios.post('/BookType/CreateBookType', data);
+        return response;
+    }
     async deletebooktype(id) {
         const response = await axios.delete(`/BookType/DeleteTypeOfBook/${id}`);
         return response;
