@@ -64,6 +64,9 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
         },
         {
           path: '/logs/user-login-operation-logs', text: 'Kullanıcı Giriş Logları'
+        },
+        {
+          path: '/logs/user-operation-logs', text: 'Kullanıcı Operasyon Logları'
         }
       ]
     },
