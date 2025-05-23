@@ -46,7 +46,7 @@ namespace KutuphaneYonetimSistemi.Common
                     {
                         TimeSpan loginTimeDiff = DateTime.Now - user.login_date.Value;
 
-                        if (loginTimeDiff.TotalMinutes >= 90)
+                        if (loginTimeDiff.TotalMinutes >= 270)
                         {
                             var timeoutsql = "UPDATE table_users SET token = NULL,login_date = NULL,is_login = FALSE WHERE id = @id";
                             int timeout = connection.Execute(timeoutsql, new { id = user.id });
