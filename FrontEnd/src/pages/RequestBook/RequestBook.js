@@ -92,6 +92,27 @@ const RequestBook = () => {
             field: 'closed_subject_details',
             headerName: 'Kapanış Notu',
             width: 250,
+        },
+        {
+            field: 'operations',
+            headerName: 'Operasyonlar',
+            width: 300,
+            renderCell: (params) => (
+                <Stack direction="row" spacing={2}>
+                    <IconButton color="error" onClick={() => handleDelete(params.row)}>
+                        <DeleteOutlineIcon />
+                    </IconButton>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={params.row.is_complated}
+                                onChange={(e) => toggleCompleted(params.row, e.target.checked)}
+                            />
+                        }
+                        label="Tamamla"
+                    />
+                </Stack>
+            )
         }
     ];
 

@@ -118,7 +118,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false AND id = @id";
+                    string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated,closed_subject_details FROM table_request_books WHERE is_deleted = false AND id = @id";
                     var result = await connection.QueryFirstOrDefaultAsync<BookRequestModels>(query,new {id = id});
                     if(result == null)
                     {
@@ -154,7 +154,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
 
 
-                    string query = "UPDATE table_request_books SET is_complated = @is_complated WHERE id = @id";
+                    string query = "UPDATE table_request_books SET is_complated = @is_complated,closed_subject_details = @closed_subject_details WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, models);
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                 }

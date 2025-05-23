@@ -45,5 +45,6 @@
     {
         public required int id { get; set; }
         public required Boolean is_complated { get; set; }
+        public required string closed_subject_details { get; set; }
     }
 }
