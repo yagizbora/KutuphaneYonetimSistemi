@@ -59,14 +59,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     else
                     {
-                        eventFilterSql = "AND event IN ('Login', 'Login Time Out', 'Logout')";
+                        eventFilterSql = "AND event IN ('Login', 'Login Time out', 'Logout')";
                     }
 
                     string datasql = $@"
-                SELECT * FROM table_user_operation_logs 
-                WHERE 1=1
-                {eventFilterSql}
-                ORDER BY id ASC";
+                    SELECT * FROM table_user_operation_logs 
+                    WHERE 1=1
+                    {eventFilterSql}
+                    ORDER BY id ASC";
 
                     var list = await connection.QueryAsync<UserLoginOperationLogs>(datasql, parameters);
                     return Ok(list);
