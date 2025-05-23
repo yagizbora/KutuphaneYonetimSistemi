@@ -44,9 +44,10 @@
     public class ComplateRequest
     {
         public required int id { get; set; }
-        public required Boolean is_complated { get; set; }
+        public required string book_name { get; set; }
         public required DateTime request_start_time { get; set; }
         public required DateTime request_deadline { get; set; }
-        public required string closed_subject_details { get; set; }
+        public string? comment { get; set; }
+        public required Boolean is_complated { get; set; }
     }
 }
