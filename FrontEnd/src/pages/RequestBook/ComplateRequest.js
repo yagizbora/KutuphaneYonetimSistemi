@@ -133,7 +133,7 @@ const ComplateRequest = () => {
                         />
                     </Grid>
 
-                    <Grid item xs={12}>
+                    <Grid item xs={12} width="100%">
                         <TextField
                             label="Kapanış Notu"
                             fullWidth
@@ -147,13 +147,16 @@ const ComplateRequest = () => {
                         />
                     </Grid>
                 </Grid>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSave}
-                >
-                    Kaydet
-                </Button>
+                <Box mt={3}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSave}
+                    >
+                        Kaydet
+                    </Button>
+                </Box>
+
 
             </Box>
         </Container>
