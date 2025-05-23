@@ -38,8 +38,8 @@ namespace KutuphaneYonetimSistemi.Controllers
 
             }
         }
-        [HttpGet("UserLoginOperationLogs")]
-        public async Task<IActionResult> UserLoginOperationLogs()
+        [HttpPost("UserLoginOperationLogs")]
+        public async Task<IActionResult> UserLoginOperationLogs([FromBody] UserLoginOperationLogsFilter models)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -49,17 +49,34 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string datasql = $@"SELECT * FROM table_user_operation_logs ORDER BY id DESC";
-                    var List = connection.Query<UserLoginOperationLogs>(datasql, connection);
-                    return Ok(List);
-                }
+                    var parameters = new DynamicParameters();
 
+                    string eventFilterSql;
+                    if (!string.IsNullOrEmpty(models.Event))
+                    {
+                        eventFilterSql = "AND event = @event";
+                        parameters.Add("@event", models.Event);
+                    }
+                    else
+                    {
+                        eventFilterSql = "AND event IN ('Login', 'Login Time Out', 'Logout')";
+                    }
+
+                    string datasql = $@"
+                SELECT * FROM table_user_operation_logs 
+                WHERE 1=1
+                {eventFilterSql}
+                ORDER BY id ASC";
+
+                    var list = await connection.QueryAsync<UserLoginOperationLogs>(datasql, parameters);
+                    return Ok(list);
+                }
             }
             catch (Exception ex)
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
-
             }
         }
+
     }
 }

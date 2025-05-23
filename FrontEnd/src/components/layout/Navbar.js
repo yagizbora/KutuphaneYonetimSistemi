@@ -61,6 +61,9 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       items: [
         {
           path: '/logs/payment-logs', text: 'Ödeme Logları'
+        },
+        {
+          path: '/logs/user-login-operation-logs', text: 'Kullanıcı Giriş Logları'
         }
       ]
     },

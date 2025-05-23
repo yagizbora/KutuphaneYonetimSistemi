@@ -15,6 +15,7 @@ import Edituser from './pages/User/EditUser.js';
 import PaymentLogs from './pages/PaymentLogs/PaymentLogs.js';
 import RequestBook from './pages/RequestBook/RequestBook.js';
 import ComplateRequest from './pages/RequestBook/ComplateRequest.js';
+import UserLoginOperationLogs from './pages/UserLoginOperationLogs/UserLoginOperationLogs.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/logs/payment-logs" element={<PaymentLogs />} />
                 <Route path="/request/request-book" element={<RequestBook />} />
                 <Route path="/request/complate-request/:id" element={<ComplateRequest />} />
+                <Route path="/logs/user-login-operation-logs" element={<UserLoginOperationLogs />} />
               </Routes>
             </Layout>
           </ProtectedRoute>

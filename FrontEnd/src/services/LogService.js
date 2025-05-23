@@ -12,4 +12,13 @@ export default class LogService {
             throw error;
         }
     }
+    async UserLoginOperationLogs(data) {
+        try {
+            const response = await axios.post("/Logs/UserLoginOperationLogs", data)
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 }

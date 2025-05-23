@@ -16,5 +16,9 @@
         public int id { get; set; }
         public string? Event { get; set; }
         public string event_description { get; set; }
+    }  
+    public class UserLoginOperationLogsFilter
+    {
+        public string? Event { get; set; }   
     }
 }
