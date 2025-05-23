@@ -58,45 +58,43 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var parameters = new DynamicParameters();
                     parameters.Add("@Now", DateTime.Now);
 
-                    string filtersql = "";
+                    string filtersql = "WHERE is_deleted = false";
                     string selectFields = "id, book_name, request_start_time, request_deadline, comment, is_complated, closed_subject_details";
-                    string query = "";
-                   
+
                     if (model.status.HasValue)
-                    { 
-                        if (model.status.Value) 
+                    {
+                        if (model.status.Value)
                         {
-                            filtersql = " AND is_complated = true OR request_deadline < @Now";
+                            // TAMAMLANMIŞLAR
+                            filtersql += " AND (is_complated = true OR request_deadline < @Now)";
                         }
-                        else 
+                        else
                         {
-                            filtersql = " AND is_complated = false";
+                            // DEVAM EDENLER
+                            filtersql += " AND (is_complated = false AND request_deadline >= @Now)";
                         }
                     }
 
-                   
-                    query = $@"
+                    string query = $@"
                 SELECT {selectFields}
                 FROM table_request_books
-                WHERE is_deleted = false {filtersql}
+                {filtersql}
                 ORDER BY id ASC";
 
-                    
                     if (model.status.HasValue)
                     {
-                        if (model.status.Value) 
+                        if (model.status.Value)
                         {
                             var result = await connection.QueryAsync<BookRequestWithClosedDetailsModel>(query, parameters);
                             return Ok(result);
                         }
-                        else 
+                        else
                         {
                             var result = await connection.QueryAsync<BookRequestBasicModel>(query, parameters);
                             return Ok(result);
                         }
                     }
 
-                    
                     var allResult = await connection.QueryAsync<BookRequestWithClosedDetailsModel>(query, parameters);
                     return Ok(allResult);
                 }
@@ -106,6 +104,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
 
 
         [HttpGet("GetBookRequest/{id}")]

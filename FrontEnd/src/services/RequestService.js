@@ -2,9 +2,9 @@ import axios from '../utils/axiosConfig';
 
 
 export default class RequestService {
-    async getbookrequest() {
+    async getbookrequest(data) {
         try {
-            const response = await axios.get('BookRequest/GetBookRequest')
+            const response = await axios.post('BookRequest/GetBookRequest', data)
             return response.data;
         }
         catch (error) {
