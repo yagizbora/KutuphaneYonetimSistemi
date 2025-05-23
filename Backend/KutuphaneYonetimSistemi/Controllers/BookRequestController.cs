@@ -22,27 +22,92 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
-            [HttpGet("GetBookRequest")]
-            public async Task<IActionResult> GetBookRequest()
+        //[HttpGet("GetBookRequest")]
+        //public async Task<IActionResult> GetBookRequest()
+        //{
+        //    TokenController g = new TokenController(_dbHelper);
+        //    var login = g.GetUserByToken(ControllerContext);
+        //    if (!login.Status)
+        //        return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+        //    try
+        //    {
+        //        using (var connection = _dbHelper.GetConnection())
+        //        {
+        //            string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false ORDER BY id ASC";
+        //            var result = await connection.QueryAsync<BookRequestModels>(query);
+        //            return Ok(result);
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+        //    }
+        //}
+        [HttpPost("GetBookRequest")]
+        public async Task<IActionResult> GetBookRequest([FromBody] BookRequest model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            try
             {
-                TokenController g = new TokenController(_dbHelper);
-                var login = g.GetUserByToken(ControllerContext);
-                if (!login.Status)
-                    return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
-                try
+                using (var connection = _dbHelper.GetConnection())
                 {
-                    using (var connection = _dbHelper.GetConnection())
-                    {
-                        string query = "SELECT id,book_name,request_start_time,request_deadline,comment,is_complated FROM table_request_books WHERE is_deleted = false ORDER BY id ASC";
-                        var result = await connection.QueryAsync<BookRequestModels>(query);
-                        return Ok(result);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Now", DateTime.Now);
+
+                    string filtersql = "";
+                    string selectFields = "id, book_name, request_start_time, request_deadline, comment, is_complated, closed_subject_details";
+                    string query = "";
+                   
+                    if (model.status.HasValue)
+                    { 
+                        if (model.status.Value) 
+                        {
+                            filtersql = " AND is_complated = true OR request_deadline < @Now";
+                        }
+                        else 
+                        {
+                            filtersql = " AND is_complated = false";
+                        }
                     }
-                }
-                catch(Exception ex)
-                {
-                    return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+
+                   
+                    query = $@"
+                SELECT {selectFields}
+                FROM table_request_books
+                WHERE is_deleted = false {filtersql}
+                ORDER BY id ASC";
+
+                    
+                    if (model.status.HasValue)
+                    {
+                        if (model.status.Value) 
+                        {
+                            var result = await connection.QueryAsync<BookRequestWithClosedDetailsModel>(query, parameters);
+                            return Ok(result);
+                        }
+                        else 
+                        {
+                            var result = await connection.QueryAsync<BookRequestBasicModel>(query, parameters);
+                            return Ok(result);
+                        }
+                    }
+
+                    
+                    var allResult = await connection.QueryAsync<BookRequestWithClosedDetailsModel>(query, parameters);
+                    return Ok(allResult);
                 }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+
         [HttpGet("GetBookRequest/{id}")]
         public async Task <IActionResult> GetBookRequestByid(int id)
         {
