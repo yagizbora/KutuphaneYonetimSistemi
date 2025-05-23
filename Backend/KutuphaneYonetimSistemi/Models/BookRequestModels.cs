@@ -49,5 +49,6 @@
         public required DateTime request_deadline { get; set; }
         public string? comment { get; set; }
         public required Boolean is_complated { get; set; }
+        public string? closed_subject_details { get; set; }
     }
 }

@@ -151,10 +151,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Bu istek zaten silinmiş!"));
                     }
-
-
-
-                    string query = "UPDATE table_request_books SET is_complated = @is_complated,closed_subject_details = @closed_subject_details,request_start_time = @request_start_time,request_deadline,book_name = @book_name = @request_deadline,comment = @comment WHERE id = @id";
+                    string query = "UPDATE table_request_books SET is_complated = @is_complated, closed_subject_details = @closed_subject_details, request_start_time = @request_start_time, request_deadline = @request_deadline, book_name = @book_name, comment = @comment WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, models);
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                 }

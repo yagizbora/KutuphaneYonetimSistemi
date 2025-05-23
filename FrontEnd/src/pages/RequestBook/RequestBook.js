@@ -41,14 +41,14 @@ const RequestBook = () => {
             headerName: 'İstek Başlangıç',
             width: 180,
             type: 'dateTime',
-            valueFormatter: (params) => dayjs(params.value).format('DD.MM.YYYY')
+            valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
         {
             field: 'request_deadline',
             headerName: 'Son Tarih',
             width: 180,
             type: 'dateTime',
-            valueFormatter: (params) => dayjs(params.value).format('DD.MM.YYYY')
+            valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
         { field: 'comment', headerName: 'Yorum', width: 200 },
         {

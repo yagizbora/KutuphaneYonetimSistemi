@@ -44,6 +44,8 @@ const ComplateRequest = () => {
         try {
             const response = await requestservice.complatedbookrequest({
                 id: request.id,
+                book_name: request.book_name,
+                comment: request.comment,
                 is_complated: request.is_complated,
                 closed_subject_details: request.closed_subject_details,
                 request_start_time: request.request_start_time,
@@ -80,8 +82,9 @@ const ComplateRequest = () => {
                             fullWidth
                             label="Kitap Adı"
                             value={request.book_name}
-                            InputProps={{ readOnly: true }}
-                            disabled
+                            onChange={(e) =>
+                                setRequest(prev => ({ ...prev, book_name: e.target.value }))
+                            }
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -89,8 +92,9 @@ const ComplateRequest = () => {
                             fullWidth
                             label="Yorum"
                             value={request.comment}
-                            InputProps={{ readOnly: true }}
-                            disabled
+                            onChange={(e) =>
+                                setRequest(prev => ({ ...prev, comment: e.target.value }))
+                            }
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
