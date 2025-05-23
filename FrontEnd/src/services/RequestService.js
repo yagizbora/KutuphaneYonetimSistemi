@@ -11,6 +11,15 @@ export default class RequestService {
             throw error;
         }
     }
+    async getbookrequestbyid(data) {
+        try {
+            const response = await axios.get(`BookRequest/GetBookRequest/${data}`)
+            return response.data;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async createbookrequest(data) {
         try {
             const response = await axios.post('BookRequest/CreateRequest', data)

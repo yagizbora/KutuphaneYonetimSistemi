@@ -72,15 +72,13 @@ const RequestBook = () => {
                     <IconButton color="error" onClick={() => handleDelete(params.row)}>
                         <DeleteOutlineIcon />
                     </IconButton>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={params.row.is_complated}
-                                onChange={(e) => toggleCompleted(params.row, e.target.checked)}
-                            />
-                        }
-                        label="Tamamla"
-                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        href={`/request/complate-request/${params.row.id}`}
+                    >
+                        Tamamlama sayfasına git
+                    </Button>
                 </Stack>
             )
         }
@@ -102,34 +100,17 @@ const RequestBook = () => {
                     <IconButton color="error" onClick={() => handleDelete(params.row)}>
                         <DeleteOutlineIcon />
                     </IconButton>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={params.row.is_complated}
-                                onChange={(e) => toggleCompleted(params.row, e.target.checked)}
-                            />
-                        }
-                        label="Tamamla"
-                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        href={`/request/complate-request/${params.row.id}`}
+                    >
+                        Tamamlama sayfasına git
+                    </Button>
                 </Stack>
             )
         }
     ];
-
-    const toggleCompleted = async (row, value) => {
-        try {
-            const response = await requestservice.complatedbookrequest({
-                id: row.id,
-                is_complated: value
-            });
-            if (response) {
-                Swal.fire('Başarılı', response.data.message, 'success');
-                getRequests(tabIndex);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    };
 
     const handleDelete = async (row) => {
         Swal.fire({
