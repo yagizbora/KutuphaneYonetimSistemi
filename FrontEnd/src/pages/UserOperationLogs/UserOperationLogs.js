@@ -70,7 +70,7 @@ const UserOperationLogs = () => {
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                    Kullanıcı Giriş Logları
+                    Kullanıcı Operasyon Logları
                 </Typography>
                 <FormControl sx={{ m: 1, width: 300 }}>
                     <InputLabel id="demo-multiple-name-label">Event</InputLabel>
