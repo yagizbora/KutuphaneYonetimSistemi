@@ -78,5 +78,44 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
+        [HttpPost("UserOperationLogs")]
+        public async Task<IActionResult> UserOperationLogs([FromBody] UserLoginOperationLogsFilter models)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    var parameters = new DynamicParameters();
+
+                    string eventFilterSql;
+                    if (!string.IsNullOrEmpty(models.Event))
+                    {
+                        eventFilterSql = "AND event = @event";
+                        parameters.Add("@event", models.Event);
+                    }
+                    else
+                    {
+                        eventFilterSql = "AND event IN ('Change Username', 'Edit User')";
+                    }
+
+                    string datasql = $@"
+                    SELECT * FROM table_user_operation_logs 
+                    WHERE 1=1
+                    {eventFilterSql}
+                    ORDER BY id ASC";
+
+                    var list = await connection.QueryAsync<UserLoginOperationLogs>(datasql, parameters);
+                    return Ok(list);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
     }
 }
