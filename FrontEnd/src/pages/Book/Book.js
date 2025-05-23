@@ -9,6 +9,8 @@ import {
     Button,
     TextField,
     Checkbox,
+    FormControl,
+    InputLabel,
     FormControlLabel,
     Typography,
     Paper,
@@ -344,33 +346,42 @@ const Book = () => {
                             />
                         }
                         label="Durum"
+                        sx={{ alignItems: 'center', display: 'flex' }}
                     />
 
-                    <Select
-                        value={filterbooks.kitap_tur_kodu ?? ""}
-                        onChange={(e) =>
-                            setFilterBooks((prev) => ({
-                                ...prev,
-                                kitap_tur_kodu: e.target.value,
-                            }))
-                        }
-                    >
-                        {Array.isArray(typeofFilterbook) && typeofFilterbook.map((type) => (
-                            <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
-                                {type.aciklama}
-                            </MenuItem>
-                        ))}
+                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                        <InputLabel id="demo-multiple-name-label">Kitap Türü</InputLabel>
+                        <Select
+                            labelId="demo-multiple-name-label"
+                            id="demo-multiple-name"
+                            label="Kitap Türü"
+                            value={filterbooks.kitap_tur_kodu ?? ""}
+                            onChange={(e) =>
+                                setFilterBooks((prev) => ({
+                                    ...prev,
+                                    kitap_tur_kodu: e.target.value,
+                                }))
+                            }
+                        >
+                            {Array.isArray(typeofFilterbook) && typeofFilterbook.map((type) => (
+                                <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                    {type.aciklama}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                    </Select>
-                    <IconButton aria-label="delete" size="large" onClick={() => { searchbooks() }}>
+                    <IconButton aria-label="search" size="large" onClick={() => { searchbooks() }}>
                         <SearchIcon />
                     </IconButton>
+
                     <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
                         <DeleteIcon />
                     </IconButton>
-                </Box>
 
+                </Box>
             </Paper>
+
 
             <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
                 <Box sx={{ height: 600, width: '100%' }}>
