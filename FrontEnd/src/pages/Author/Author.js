@@ -10,6 +10,8 @@ import {
 import Swal from 'sweetalert2';
 import { DataGrid } from '@mui/x-data-grid';
 import AuthorService from "../../services/AuthorService.js";
+import { useNavigate } from 'react-router-dom';
+
 
 const authorService = new AuthorService();
 
@@ -18,6 +20,8 @@ const Author = () => {
     const [loading, setLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
     const [selectedAuthor, setSelectedAuthor] = useState({ name_surname: '', biography: '' });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchAuthors();
@@ -66,7 +70,22 @@ const Author = () => {
                     Detay
                 </Button>
             )
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 120,
+            renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => navigate(`/author/edit/${params.row.id}`)}
+                >
+                    Düzenle
+                </Button>
+            ),
         }
+
     ];
 
     return (

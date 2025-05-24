@@ -12,6 +12,8 @@ export default class AuthorService {
             throw error;
         }
     }
+
+
     async getAllAuthors() {
         try {
             const response = await axios.get('/Author/GetAuthor');
@@ -20,6 +22,21 @@ export default class AuthorService {
             throw error;
         }
     }
+    async getAllAuthorsbyid(id) {
+        try {
+            const response = await axios.get(`/Author/GetAuthor/${id}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 
-
+    async EditAuthor(data) {
+        try {
+            const response = await axios.put('Author/EditAuthor', data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

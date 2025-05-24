@@ -100,7 +100,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using(var connection = _dbHelper.GetConnection())
                 {
-                    string query = "UPDATE table_authors SET = name_surname = @name_surname,biography = @biography,birthday_date = @birthday_date WHERE id = @id";
+                    string query = "UPDATE table_authors SET name_surname = @name_surname,biography = @biography,birthday_date = @birthday_date WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, model);
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated)); 
                 }
