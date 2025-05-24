@@ -1,31 +1,117 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Container,
     Typography,
     Paper,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
+    TextField,
+    Button,
+    Box,
+    IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-
 import Swal from 'sweetalert2';
-import LogService from "../../services/LogService.js";
-import { DataGrid } from '@mui/x-data-grid';
+import AuthorService from "../../services/AuthorService.js";
 
+const authorService = new AuthorService();
 
 const AuthorCreate = () => {
+    const [author, setAuthor] = useState({
+        name_surname: "",
+        birthday_date: "",
+        biography: ""
+    });
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setAuthor((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!author.name_surname || !author.birthday_date || !author.biography) {
+            Swal.fire('Error', 'All fields are required!', 'error');
+            return;
+        }
+
+        try {
+            const response = await authorService.createauthor(author);
+            if (response) {
+                Swal.fire('Success', 'Author created successfully!' || response.data.message, 'success');
+                setAuthor({
+                    name_surname: "",
+                    birthday_date: "",
+                    biography: ""
+                });
+            }
+
+        } catch (error) {
+            Swal.fire('Error', 'Something went wrong!' || error.response.data.message, 'error');
+        }
+    };
+
+    const handleReset = () => {
+        setAuthor({
+            name_surname: "",
+            birthday_date: "",
+            biography: ""
+        });
+    };
 
     return (
-        <Container>
-
+        <Container sx={{ mt: 4 }}>
+            <Typography variant="h5" align="left" gutterBottom>
+                Create Author
+            </Typography>
+            <Paper sx={{ p: 3 }}>
+                <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit}>
+                    <TextField
+                        label="Name Surname"
+                        name="name_surname"
+                        value={author.name_surname}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        required
+                    />
+                    <TextField
+                        label="Birthday"
+                        name="birthday_date"
+                        type="date"
+                        value={author.birthday_date}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        required
+                    />
+                    <TextField
+                        label="Biography"
+                        name="biography"
+                        value={author.biography}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={4}
+                        required
+                    />
+                    <Box mt={2} display="flex" justifyContent="space-between">
+                        <Button variant="contained" color="primary" type="submit">
+                            Save
+                        </Button>
+                        <IconButton onClick={handleReset} color="error">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+            </Paper>
         </Container>
-    )
-}
-
+    );
+};
 
 export default AuthorCreate;

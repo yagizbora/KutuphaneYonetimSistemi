@@ -13,8 +13,9 @@ import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 
 import Swal from 'sweetalert2';
-import LogService from "../../services/LogService.js";
-import { DataGrid } from '@mui/x-data-grid';
+import AuthorService from "../../services/AuthorService.js";
+const authorService = new AuthorService();
+
 
 
 
@@ -23,7 +24,6 @@ const AuthorEdit = () => {
 
     return (
         <Container>
-
         </Container>
     )
 }
