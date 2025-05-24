@@ -20,14 +20,18 @@ namespace KutuphaneYonetimSistemi.Common
         {
             UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
             string? token = null;
+            string? user_id_str = null;
+            int user_id;
 
             if (context?.HttpContext?.Request?.Headers != null)
             {
                 context.HttpContext.Request.Headers.TryGetValue("token", out var tokenValue);
+                context.HttpContext.Request.Headers.TryGetValue("user_id", out var useridValue);
                 token = tokenValue.FirstOrDefault();
+                user_id_str = useridValue.FirstOrDefault();
             }
 
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(user_id_str) || !int.TryParse(user_id_str, out user_id))
             {
                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
             }
@@ -36,8 +40,8 @@ namespace KutuphaneYonetimSistemi.Common
             {
                 try
                 {
-                    var sql = @"SELECT * FROM table_users WHERE token = @token AND is_deleted = false";
-                    var user = connection.QuerySingleOrDefault<UserLoginModels>(sql, new { token = token });
+                    var sql = @"SELECT * FROM table_users WHERE token = @token and id = @user_id AND is_deleted = false";
+                    var user = connection.QuerySingleOrDefault<UserLoginModels>(sql, new { token = token,user_id = user_id });
                     if (user == null)
                     {
                         return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token doğrulanamadı!" };

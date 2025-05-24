@@ -38,7 +38,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE ORDER BY id ASC";
+                    string query = "SELECT id,username,login_date,is_login FROM table_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
                     var List = connection.Query<ListAllUsers>(query, connection);
                     return Ok(List);
                 }
