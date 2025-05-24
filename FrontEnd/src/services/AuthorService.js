@@ -39,4 +39,13 @@ export default class AuthorService {
             throw error;
         }
     }
+    async DeleteAuthor(data) {
+        try {
+            const response = await axios.delete(`Author/DeleteAuthor/${data.id}`);
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 }

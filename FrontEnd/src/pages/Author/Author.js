@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import {
     Container,
+    Stack,
     Typography,
     Paper,
     Box,
     Button,
-    Modal
+    Modal,
+    IconButton
+
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import { DataGrid } from '@mui/x-data-grid';
 import AuthorService from "../../services/AuthorService.js";
 import { useNavigate } from 'react-router-dom';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const authorService = new AuthorService();
 
@@ -37,6 +40,31 @@ const Author = () => {
             setLoading(false);
         }
     };
+
+    const deleteAuthor = async (data) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            })
+            if (result.isConfirmed) {
+                const response = await authorService.DeleteAuthor(data);
+                if (response) {
+                    Swal.fire('Deleted!', response.data.message || 'Author has been deleted.', 'success');
+                    fetchAuthors();
+                }
+            }
+
+        }
+        catch (error) {
+            Swal.fire('Error', error.response.data.message || 'Failed to delete author', 'error');
+        }
+    }
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -74,15 +102,26 @@ const Author = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 120,
+            width: 160,
             renderCell: (params) => (
-                <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => navigate(`/author/edit/${params.row.id}`)}
-                >
-                    Düzenle
-                </Button>
+                <Stack direction="row" spacing={4}>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => navigate(`/author/edit/${params.row.id}`)}
+                    >
+                        Düzenle
+                    </Button>
+                    <IconButton
+                        variant="contained"
+
+                        color="error"
+                        onClick={() => deleteAuthor(params)}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Stack>
+
             ),
         }
 
