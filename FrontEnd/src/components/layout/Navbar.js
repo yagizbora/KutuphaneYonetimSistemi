@@ -56,6 +56,18 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       ]
     },
     {
+      text: 'Yazarlar',
+      icon: 'fas fa-pen',
+      items: [
+        {
+          path: '/author', text: 'Yazar Listesi'
+        },
+        {
+          path: '/author/create', text: 'Yazar Ekle'
+        }
+      ]
+    },
+    {
       text: 'Loglar',
       icon: 'fas fa-history',
       items: [

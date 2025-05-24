@@ -16,6 +16,12 @@ namespace KutuphaneYonetimSistemi.Models
         public required string biography { get; set; }
     }
 
-
+    public class EditAuthor
+    {
+        public required int id { get; set; }
+        public required string name_surname { get; set; }
+        public required DateTime birthday_date { get; set; }
+        public required string biography { get; set; }
+    }
 
 }

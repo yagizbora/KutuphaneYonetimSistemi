@@ -17,6 +17,9 @@ import RequestBook from './pages/RequestBook/RequestBook.js';
 import ComplateRequest from './pages/RequestBook/ComplateRequest.js';
 import UserLoginOperationLogs from './pages/UserLoginOperationLogs/UserLoginOperationLogs.js';
 import UserOperationLogs from './pages/UserOperationLogs/UserOperationLogs.js';
+import Author from './pages/Author/Author.js';
+import AuthorCreate from './pages/Author/AuthorCreate.js';
+import AuthorEdit from './pages/Author/AuthorEdit.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -66,6 +69,12 @@ function App() {
                 <Route path="/request/complate-request/:id" element={<ComplateRequest />} />
                 <Route path="/logs/user-login-operation-logs" element={<UserLoginOperationLogs />} />
                 <Route path="/logs/user-operation-logs" element={<UserOperationLogs />} />
+                <Route path="/author" element={<Author />} />
+                <Route path="/author/create" element={<AuthorCreate />} />
+                <Route path="/author/edit/:id" element={<AuthorEdit />} />
+
+                <Route path="*" element={<NotFound />} />
+                {/* Redirect to 404 for any unmatched routes */}
               </Routes>
             </Layout>
           </ProtectedRoute>
