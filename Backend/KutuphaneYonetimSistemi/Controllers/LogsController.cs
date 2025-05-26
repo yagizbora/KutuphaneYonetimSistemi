@@ -32,12 +32,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var parameters = new DynamicParameters();
                     if (models.payment_is_success.HasValue)
                     {
-                        filtersql += " WHERE tbl.payment_is_success = @durum";
+                        filtersql += " AND tbl.payment_is_success = @durum";
                         parameters.Add("durum", models.payment_is_success.Value);
                     }
 
 
-                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" {filtersql} ORDER BY tbl.payment_date DESC;";
+                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" WHERE 1=1 {filtersql} ORDER BY tbl.payment_date DESC;";
                     var List = connection.Query<PaymentLogs>(datasql, parameters);
                     return Ok(List);
                 }
