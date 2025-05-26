@@ -16,6 +16,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         {
             _dbHelper = dbHelper;
         }
+        Helper helper = new Helper();
 
         [HttpGet("GetAuthor")]
         public async Task<IActionResult> Getauthor()
@@ -84,6 +85,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
+               var checkdate = helper.IsDateCheck(model.birthday_date);
+                if (!checkdate.status)
+                {
+                    return BadRequest(ResponseHelper.ErrorResponse(checkdate.message));
+                };
+
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string checkauthor = "SELECT name_surname, id FROM table_authors WHERE name_surname = @name_surname";
