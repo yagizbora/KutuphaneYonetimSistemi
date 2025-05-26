@@ -2,6 +2,7 @@
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.X509Certificates;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -16,8 +17,8 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
-        [HttpGet("PaymentLogs")]
-        public IActionResult PaymentLogs()
+        [HttpPost("PaymentLogs")]
+        public IActionResult PaymentLogs([FromBody]FilterPaymentLogs models)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -27,8 +28,17 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" ORDER BY tbl.payment_date DESC;";
-                    var List = connection.Query<PaymentLogs>(datasql, connection);
+                    string filtersql = "";
+                    var parameters = new DynamicParameters();
+                    if (models.payment_is_success.HasValue)
+                    {
+                        filtersql += " WHERE tbl.payment_is_success = @durum";
+                        parameters.Add("durum", models.payment_is_success.Value);
+                    }
+
+
+                    string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" {filtersql} ORDER BY tbl.payment_date DESC;";
+                    var List = connection.Query<PaymentLogs>(datasql, parameters);
                     return Ok(List);
                 }
             }

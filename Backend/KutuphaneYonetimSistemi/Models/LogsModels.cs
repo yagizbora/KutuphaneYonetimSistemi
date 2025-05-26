@@ -1,5 +1,9 @@
 ﻿namespace KutuphaneYonetimSistemi.Models
 {
+    public class FilterPaymentLogs
+    {
+        public bool? payment_is_success { get; set; }
+    }
     public class PaymentLogs
     {
         public int id { get; set; }
