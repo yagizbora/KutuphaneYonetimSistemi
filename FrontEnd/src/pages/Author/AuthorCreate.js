@@ -39,7 +39,7 @@ const AuthorCreate = () => {
         try {
             const response = await authorService.createauthor(author);
             if (response) {
-                Swal.fire('Success', 'Author created successfully!' || response.data.message, 'success');
+                Swal.fire('Success', response.data.message || 'Author created successfully!', 'success');
                 setAuthor({
                     name_surname: "",
                     birthday_date: "",
@@ -48,7 +48,8 @@ const AuthorCreate = () => {
             }
 
         } catch (error) {
-            Swal.fire('Error', 'Something went wrong!' || error.response.data.message, 'error');
+            Swal.fire('Error', error.response.data.message || 'Something went wrong!', 'error');
+            console.log(error.response.data.message);
         }
     };
 
