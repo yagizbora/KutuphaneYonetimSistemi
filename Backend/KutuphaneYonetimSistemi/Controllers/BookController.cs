@@ -38,15 +38,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                         filtersql += " AND tk.kitap_adi ILIKE @kitap_adi";
                         parameters.Add("kitap_adi", $"%{models.kitap_adi}%");
                     }
-                    if (!string.IsNullOrEmpty(models.yazar_adi))
+                    if (models.author_id.HasValue)
                     {
-                        filtersql += " AND tk.yazar_adi ILIKE @yazar_adi";
-                        parameters.Add("yazar_adi", $"%{models.yazar_adi}%");
-                    }
-                    if (!string.IsNullOrEmpty(models.yazar_soyadi))
-                    {
-                        filtersql += " AND tk.yazar_soyadi ILIKE @yazar_soyadi";
-                        parameters.Add("yazar_soyadi", $"%{models.yazar_soyadi}%");
+                        filtersql += " AND au.author_id = @author_id";
+                        parameters.Add("author_id", $"%{models.author_id}%");
                     }
                     if (!string.IsNullOrEmpty(models.ISBN))
                     {
@@ -72,10 +67,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                     tk.yazar_soyadi,
                     tk.isbn,
                     tk.durum,
+                    au.name_surname as author_name,
+                    au.id AS author_id, 
                     tkt.kitap_tur_kodu AS kitap_tur_kodu,
                     tkt.aciklama AS kitap_tur
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
+                    FULL OUTER JOIN table_authors au ON au.id = tk.author_id
                     WHERE tk.is_deleted = false {filtersql}
                     ORDER BY tk.id ASC;";
                     var books = await connection.QueryAsync<ListBookModels>(query, parameters);
@@ -99,10 +97,22 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = @"SELECT tk.id, tk.kitap_adi, tk.yazar_adi, tk.yazar_soyadi, tk.isbn, tk.durum, tkt.kitap_tur_kodu, tkt.aciklama as kitap_tur 
-                                     FROM table_kitaplar tk 
-                                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
-                                     WHERE tk.id = @id AND tk.is_deleted = false;";
+                    string query = @"SELECT 
+                    tk.id, 
+                    tk.kitap_adi,
+                    tk.yazar_adi,
+                    tk.yazar_soyadi,
+                    tk.isbn,
+                    tk.durum,
+                    au.name_surname as author_name,
+                    au.id AS author_id, 
+                    tkt.kitap_tur_kodu AS kitap_tur_kodu,
+                    tkt.aciklama AS kitap_tur
+                    FROM table_kitaplar tk
+                    JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
+                    FULL OUTER JOIN table_authors au ON au.id = tk.author_id
+                    WHERE tk.is_deleted = false AND where tk.id = @id
+                    ORDER BY tk.id ASC;";
                     var List = connection.Query<ListBookModels>(query, new { id }).ToList();
                     if (List.Count == 0)
                     {
@@ -174,7 +184,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string query = "INSERT INTO table_kitaplar (kitap_adi,yazar_adi,yazar_soyadi,isbn,kitap_tur_kodu,is_deleted) VALUES (@kitap_adi,@yazar_adi,@yazar_soyadi,@isbn,@kitap_tur_kodu,false)";
+                    string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,false)";
                     //var parameters = new { models };
                     connection.Execute(query, models);
                     return Ok(ResponseHelper.ResponseSuccesfully<object>("Book Created Succesfully"));
@@ -205,8 +215,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,yazar_adi = @yazar_adi " +
-                        ",yazar_soyadi = @yazar_soyadi,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu WHERE id = @id";
+                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu WHERE id = @id";
                     var result = connection.Execute(datasql, models);
                     if (result > 0 || result == 1)
                     {
