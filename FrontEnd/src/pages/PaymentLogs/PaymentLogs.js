@@ -36,8 +36,8 @@ const PaymentLogs = () => {
     const getdata = async (index) => {
         try {
             let status = null;
-            if (index === 0) status = false;
-            else if (index === 1) status = true;
+            if (index === 0) status = true;
+            else if (index === 1) status = false;
 
             const response = await logservice.PaymentLogs({
                 payment_is_success: status
@@ -69,7 +69,7 @@ const PaymentLogs = () => {
                     <Tab label="Tamamlanmamış Ödemeler" />
                 </Tabs>
 
-                <PaymentLogsDataTable data={data} />
+                <PaymentLogsDataTable data={data} index={tabIndex} />
             </Paper>
         </Container>
     )

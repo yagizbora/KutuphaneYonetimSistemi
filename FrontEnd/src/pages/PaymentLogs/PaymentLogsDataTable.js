@@ -24,7 +24,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
 
-const PaymentLogsDataTable = ({ data }) => {
+const PaymentLogsDataTable = ({ data, index }) => {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -63,14 +63,20 @@ const PaymentLogsDataTable = ({ data }) => {
                 return date.format('DD.MM.YYYY');
             }
         },
-        { field: 'payment_failed_subject', headerName: 'Hata Mesajı', width: 250 },
     ];
+
+    const activecolumns = [
+        ...columns,
+        { field: 'payment_failed_subject', headerName: 'Hata Mesajı', width: 250 },
+
+    ]
 
 
     return (
         <DataGrid
             rows={data}
-            columns={columns}
+            columns={index === 0 ? columns : activecolumns}
+
         >
         </DataGrid>
     )
