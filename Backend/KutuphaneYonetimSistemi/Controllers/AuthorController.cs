@@ -20,6 +20,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("GetAuthor")]
         public async Task<IActionResult> Getauthor()
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -45,6 +49,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("GetAuthor/{id}")]
         public async Task<IActionResult> Getauthorbyid(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -70,6 +78,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("CreateAuthor")]
         public async Task<IActionResult> CreateAuthor(CreateAuthor model)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -96,6 +108,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPut("EditAuthor")]
         public async Task<IActionResult> EditAuthor(EditAuthor model)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using(var connection = _dbHelper.GetConnection())
@@ -114,6 +130,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpDelete("DeleteAuthor/{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
