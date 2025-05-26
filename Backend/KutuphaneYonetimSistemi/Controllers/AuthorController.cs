@@ -88,7 +88,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                var checkdate = helper.IsDateCheck(model.birthday_date);
                 if (!checkdate.status)
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse(checkdate.message));
+                    return BadRequest(ResponseHelper.ErrorResponse((string?)message: checkdate.message));
                 };
 
                 using (var connection = _dbHelper.GetConnection())
