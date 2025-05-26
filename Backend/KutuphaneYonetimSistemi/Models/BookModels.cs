@@ -8,8 +8,6 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public int? id { get; set; }
         public string? kitap_adi { get; set; }
-        public string? yazar_adi { get; set; }
-        public string? yazar_soyadi { get; set; }
         public string? ISBN { get; set; }
         public bool? Durum { get; set; }
         public string? kitap_tur { get; set; }

@@ -28,7 +28,8 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-
+import AuthorService from "../../services/AuthorService.js";
+const authorService = new AuthorService();
 const bookService = new BookService();
 const bookTypeService = new BookTypeService();
 
@@ -36,6 +37,7 @@ const Book = () => {
     const [data, setBooks] = useState([]);
 
     const [loading, setLoading] = useState(true);
+    const [authors, setAuthors] = useState([]);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [createbookmodal, setCreateBookModal] = useState(false);
@@ -62,6 +64,7 @@ const Book = () => {
     useEffect(() => {
         getBooks();
         getbooktypesfilter();
+        fetchAuthors();
     }, []);
 
     const getbooktypesfilter = async () => {
@@ -101,6 +104,19 @@ const Book = () => {
         }
     };
 
+
+
+    const fetchAuthors = async () => {
+        try {
+            const response = await authorService.getAllAuthors();
+            setAuthors(response.data);
+        } catch (error) {
+            Swal.fire('Error', 'Failed to fetch authors', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const searchbooks = async () => {
         try {
             const response = await bookService.getBooks(filterbooks);
@@ -131,6 +147,7 @@ const Book = () => {
                 setBookTypes(response.data.data);
             }
             const bookDetails = await bookService.getbooksbyid(bookData.id);
+            await fetchAuthors();
             const selectedBookData = bookDetails[0];
             setSelectedBook(selectedBookData);
             setEditedBook(selectedBookData);
@@ -148,34 +165,38 @@ const Book = () => {
         const response = await bookTypeService.getbooktypes();
         if (response) {
             setBookTypes(response.data.data);
+            await fetchAuthors();
             setCreateBookModal(true);
         }
     }
 
     const createbook = async () => {
-        const response = await bookService.createbook({
-            "kitap_adi": createofbook.kitap_adi,
-            "yazar_adi": createofbook.yazar_adi,
-            "yazar_soyadi": createofbook.yazar_soyadi,
-            "isbn": createofbook.isbn,
-            "kitap_tur_kodu": typeofbook.kitap_tur_kodu,
-        })
+        const payload = {
+            kitap_adi: createofbook.kitap_adi || "",
+            author_id: createofbook.author_id ?? 0,   // id mutlaka int
+            isbn: createofbook.isbn || "",
+            kitap_tur_kodu: Number(createofbook.kitap_tur_kodu) || 0  // int olmalı
+        };
+
+        const response = await bookService.createbook(payload);
+
         if (response) {
             Swal.fire({
-                title: 'Başarılı',
-                text: response?.message || 'Kitap başarıyla eklendi!',
-                icon: 'success'
+                title: "Başarılı",
+                text: response?.message || "Kitap başarıyla eklendi!",
+                icon: "success",
             });
             await getBooks();
             setCreateBookModal(false);
             setCreateofbook({
-                "kitap_adi": "",
-                "yazar_adi": "",
-                "yazar_soyadi": "",
-                "isbn": 0,
-            })
+                kitap_adi: "",
+                author_id: null,
+                isbn: "",
+                kitap_tur_kodu: null,
+            });
         }
-    }
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -243,8 +264,7 @@ const Book = () => {
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
-        { field: 'yazar_adi', headerName: 'Yazar Adı', width: 150, flex: 1 },
-        { field: 'yazar_soyadi', headerName: 'Yazar Soyadı', width: 150, flex: 1 },
+        { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 130 },
         {
             field: 'durum',
@@ -313,24 +333,34 @@ const Book = () => {
             </Typography>
             <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-
                     <TextField
                         label="Kitap Adı"
                         value={filterbooks.kitap_adi || ""}
                         onChange={(e) => setFilterBooks(prev => ({ ...prev, kitap_adi: e.target.value }))}
                     />
 
-                    <TextField
-                        label="Yazar Adı"
-                        value={filterbooks.yazar_adi || ""}
-                        onChange={(e) => setFilterBooks(prev => ({ ...prev, yazar_adi: e.target.value }))}
-                    />
+                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                        <InputLabel id="demo-multiple-name-label">Yazarlar</InputLabel>
+                        <Select
+                            labelId="demo-multiple-name-label"
+                            id="demo-multiple-name"
+                            label="Yazarlar"
+                            value={filterbooks.author_id ?? ""}
+                            onChange={(e) =>
+                                setFilterBooks((prev) => ({
+                                    ...prev,
+                                    author_id: e.target.value,
+                                }))
+                            }
+                        >
+                            {Array.isArray(authors) && authors.map((author) => (
+                                <MenuItem key={author.id} value={author.id}>
+                                    {author.name_surname}
+                                </MenuItem>
+                            ))}
 
-                    <TextField
-                        label="Yazar Soyadı"
-                        value={filterbooks.yazar_soyadi || ""}
-                        onChange={(e) => setFilterBooks(prev => ({ ...prev, yazar_soyadi: e.target.value }))}
-                    />
+                        </Select>
+                    </FormControl>
 
                     <TextField
                         label="ISBN"
@@ -411,99 +441,94 @@ const Book = () => {
             <Dialog
                 open={createbookmodal}
                 onClose={() => setCreateBookModal(false)}
-                maxWidth="md"
+                maxWidth="sm"
                 fullWidth
             >
                 <DialogTitle>Yeni Kitap Ekle</DialogTitle>
                 <DialogContent>
-                    <Container spacing={2}>
-                        {/* İlk Satır: Kitap Türü, Kitap Adı ve Yazar Adı */}
-                        <Grid item xs={12} md={4}>
-                            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                                <InputLabel id="kitap-turu-label">Kitap Türü</InputLabel>
-                                <Select
-                                    labelId="kitap-turu-label"
-                                    value={typeofbook.kitap_tur_kodu}
-                                    onChange={(e) =>
-                                        setTypeofbook({ ...typeofbook, kitap_tur_kodu: e.target.value })
-                                    }
-                                    label="Kitap Türü"
-                                >
-                                    {bookTypes.map((type) => (
-                                        <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
-                                            {type.aciklama}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
+                    <Box component="form" sx={{ mt: 2 }}>
+                        <Stack spacing={3}>
+
+                            {/* Kitap Adı */}
                             <TextField
                                 fullWidth
                                 label="Kitap Adı"
                                 name="kitap_adi"
                                 value={createofbook.kitap_adi || ''}
                                 onChange={(e) =>
-                                    setCreateofbook({ ...createofbook, kitap_adi: e.target.value })
+                                    setCreateofbook(prev => ({ ...prev, kitap_adi: e.target.value }))
                                 }
                                 variant="outlined"
-                                sx={{ mt: 2 }}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                fullWidth
-                                label="Yazar Adı"
-                                name="yazar_adi"
-                                value={createofbook.yazar_adi || ''}
-                                onChange={(e) =>
-                                    setCreateofbook({ ...createofbook, yazar_adi: e.target.value })
-                                }
-                                variant="outlined"
-                                sx={{ mt: 2 }}
-                            />
-                        </Grid>
 
-                        {/* İkinci Satır: Yazar Soyadı ve ISBN */}
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                fullWidth
-                                label="Yazar Soyadı"
-                                name="yazar_soyadi"
-                                value={createofbook.yazar_soyadi || ''}
-                                onChange={(e) =>
-                                    setCreateofbook({ ...createofbook, yazar_soyadi: e.target.value })
-                                }
-                                variant="outlined"
-                                sx={{ mt: 2 }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
+                            {/* Yazarlar Select */}
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel id="author-select-label">Yazarlar</InputLabel>
+                                <Select
+                                    labelId="demo-multiple-name-label"
+                                    id="demo-multiple-name"
+                                    label="Yazarlar"
+                                    value={createofbook.author_id ?? ""}
+                                    onChange={(e) => {
+                                        setCreateofbook((prev) => ({
+                                            ...prev,
+                                            author_id: Number(e.target.value),
+                                        }));
+                                    }}
+                                >
+                                    {Array.isArray(authors) &&
+                                        authors.map((author) => (
+                                            <MenuItem key={author.id} value={author.id}>
+                                                {author.name_surname}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+                            </FormControl>
+
+                            {/* ISBN */}
                             <TextField
                                 fullWidth
                                 label="ISBN"
                                 name="isbn"
                                 value={createofbook.isbn || ''}
                                 onChange={(e) =>
-                                    setCreateofbook({ ...createofbook, isbn: e.target.value })}
+                                    setCreateofbook(prev => ({ ...prev, isbn: e.target.value }))
+                                }
                                 variant="outlined"
-                                sx={{ mt: 2 }}
                             />
-                        </Grid>
-                    </Container>
-                </DialogContent>
 
-                <DialogActions>
-                    <Button
-                        onClick={() => createbook()}
-                        color="inherit"
-                        sx={{ margin: 2 }}
-                    >
-                        Kitap oluştur
+                            {/* Kitap Türü Select */}
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel id="kitap-tur-select-label">Kitap Türü</InputLabel>
+                                <Select
+                                    labelId="kitap-tur-select-label"
+                                    id="kitap-tur-select"
+                                    value={createofbook.kitap_tur_kodu || ""}
+                                    label="Kitap Türü"
+                                    onChange={(e) =>
+                                        setCreateofbook(prev => ({
+                                            ...prev,
+                                            kitap_tur_kodu: e.target.value,
+                                        }))
+                                    }
+                                >
+                                    {bookTypes.map(type => (
+                                        <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                            {type.aciklama}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                        </Stack>
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ pr: 3, pb: 2 }}>
+                    <Button onClick={createbook} variant="contained" color="primary">
+                        Kitap Oluştur
                     </Button>
                 </DialogActions>
             </Dialog>
-
 
             <Dialog
                 open={showModal}
@@ -525,23 +550,28 @@ const Book = () => {
                                     variant="outlined"
                                 />
 
-                                <TextField
-                                    fullWidth
-                                    label="Yazar Adı"
-                                    name="yazar_adi"
-                                    value={editedBook.yazar_adi || ''}
-                                    onChange={handleInputChange}
-                                    variant="outlined"
-                                />
-
-                                <TextField
-                                    fullWidth
-                                    label="Yazar Soyadı"
-                                    name="yazar_soyadi"
-                                    value={editedBook.yazar_soyadi || ''}
-                                    onChange={handleInputChange}
-                                    variant="outlined"
-                                />
+                                <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                                    <InputLabel id="demo-multiple-name-label">Yazarlar</InputLabel>
+                                    <Select
+                                        labelId="demo-multiple-name-label"
+                                        id="demo-multiple-name"
+                                        label="Yazarlar"
+                                        value={editedBook.author_id ?? ""}
+                                        onChange={(e) => {
+                                            const selectedAuthorId = parseInt(e.target.value);
+                                            setEditedBook((prev) => ({
+                                                ...prev,
+                                                author_id: selectedAuthorId,
+                                            }));
+                                        }}
+                                    >
+                                        {Array.isArray(authors) && authors.map((author) => (
+                                            <MenuItem key={author.id} value={author.id}>
+                                                {author.name_surname}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
 
                                 <TextField
                                     fullWidth

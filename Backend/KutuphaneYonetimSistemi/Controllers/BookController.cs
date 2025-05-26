@@ -40,9 +40,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     if (models.author_id.HasValue)
                     {
-                        filtersql += " AND au.author_id = @author_id";
-                        parameters.Add("author_id", $"%{models.author_id}%");
+                        filtersql += " AND au.id = @author_id";
+                        parameters.Add("author_id", models.author_id.Value); 
                     }
+
                     if (!string.IsNullOrEmpty(models.ISBN))
                     {
                         filtersql += " AND tk.isbn ILIKE @isbn";
@@ -63,8 +64,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                     SELECT 
                     tk.id, 
                     tk.kitap_adi,
-                    tk.yazar_adi,
-                    tk.yazar_soyadi,
                     tk.isbn,
                     tk.durum,
                     au.name_surname as author_name,
@@ -100,8 +99,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = @"SELECT 
                     tk.id, 
                     tk.kitap_adi,
-                    tk.yazar_adi,
-                    tk.yazar_soyadi,
                     tk.isbn,
                     tk.durum,
                     au.name_surname as author_name,
@@ -111,7 +108,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id
-                    WHERE tk.is_deleted = false AND where tk.id = @id
+                    WHERE tk.is_deleted = false AND tk.id = @id
                     ORDER BY tk.id ASC;";
                     var List = connection.Query<ListBookModels>(query, new { id }).ToList();
                     if (List.Count == 0)
