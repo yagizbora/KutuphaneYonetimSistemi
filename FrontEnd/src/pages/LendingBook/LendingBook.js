@@ -112,8 +112,7 @@ const LendingBook = () => {
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
-        { field: 'yazar_adi', headerName: 'Yazar Adı', width: 150, flex: 1 },
-        { field: 'yazar_soyadi', headerName: 'Yazar Soyadı', width: 150, flex: 1 },
+        { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
         {
