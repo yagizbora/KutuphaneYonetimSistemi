@@ -127,7 +127,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                             return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
                         }
 
-                        // Pass 'fetcholdusername' to the 'edituserlog' method after ensuring it is not null
+                        
                         userOperationLogs.edituserlog(userid, fetcholdusername, model.id);
                         return Ok(ResponseHelper.ActionResponse("Kullanıcı bilgileri değiştirildi"));
                     }
