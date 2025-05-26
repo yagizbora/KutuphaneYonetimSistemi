@@ -122,6 +122,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                     });
                     if (result > 0)
                     {
+                        if (fetcholdusername == null)
+                        {
+                            return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                        }
+
+                        // Pass 'fetcholdusername' to the 'edituserlog' method after ensuring it is not null
                         userOperationLogs.edituserlog(userid, fetcholdusername, model.id);
                         return Ok(ResponseHelper.ActionResponse("Kullanıcı bilgileri değiştirildi"));
                     }
@@ -219,7 +225,11 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     //FOR LOGS
                     string fetcholdusernamesql = "SELECT username FROM table_users where id = @userid";
-                    string fetcholdusername = connection.QueryFirstOrDefault<string>(fetcholdusernamesql, new { userid = userid });
+                    string? fetcholdusername = connection.QueryFirstOrDefault<string?>(fetcholdusernamesql, new { userid = userid });
+                    if (fetcholdusername == null)
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                    }
                     //
 
                     string usernameisexistquery = "SELECT COUNT(*) FROM table_users where username = @username";
@@ -267,8 +277,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var token = Guid.NewGuid().ToString("N");
 
                     string format = "yyyy-MM-dd HH:mm:ss";
-                    DateTime? login_date = DateTime.ParseExact(DateTime.Now.ToString(), format, CultureInfo.InvariantCulture);
-                    if (!string.IsNullOrEmpty(token) && login_date != null)
+                    DateTime login_date = DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture);
+
+                    if (!string.IsNullOrEmpty(token))
                     {
                         string inserttokenquery = "UPDATE table_users SET token = @token, login_date = @login_date,is_login = true WHERE id = @id";
                         var inserttoken = await connection.ExecuteAsync(inserttokenquery, new { token = token, id = userdata.id, login_date = login_date });
@@ -281,7 +292,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         token = token,
                     };
                     //LOGIN LOGS
-                    userLoginLogs.LoginLogs(userdata.username, (DateTime)login_date, token);
+                    userLoginLogs.LoginLogs(userdata.username, login_date, token);
                     //LOGIN LOGS END
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }
@@ -317,8 +328,17 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     string fetcholdusernamesql = "SELECT username FROM table_users where id = @id";
-                    string fetcholdusername = connection.QueryFirstOrDefault<string>(fetcholdusernamesql, new { id = id });
 
+
+                    string? fetcholdusername = connection.QueryFirstOrDefault<string?>(fetcholdusernamesql, new { id = id });
+                    if (fetcholdusername == null)
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                    }
+                    if (!ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue))
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    }
 
 
                     string useridisexist = "SELECT COUNT(*) FROM table_users WHERE id = @id";

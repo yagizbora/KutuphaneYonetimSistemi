@@ -85,11 +85,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
-               var checkdate = helper.IsDateCheck(model.birthday_date);
+                var checkdate = helper.IsDateCheck(model.birthday_date);
                 if (!checkdate.status)
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse((string?)message: checkdate.message));
-                };
+                    
+                    var errorMessage = checkdate.message ?? "Geçersiz tarih formatı.";
+                    return BadRequest(ResponseHelper.ErrorResponse(errorMessage));
+                }
+                ;
 
                 using (var connection = _dbHelper.GetConnection())
                 {
