@@ -71,9 +71,7 @@ const PaymentLogsDataTable = ({ data }) => {
         <DataGrid
             rows={data}
             columns={columns}
-
         >
-
         </DataGrid>
     )
 
