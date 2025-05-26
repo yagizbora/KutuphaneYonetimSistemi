@@ -2,9 +2,9 @@ import axios from '../utils/axiosConfig';
 
 
 export default class LogService {
-    async PaymentLogs() {
+    async PaymentLogs(data) {
         try {
-            const response = await axios.get("/Logs/PaymentLogs")
+            const response = await axios.post("/Logs/PaymentLogs", data)
             return response;
         }
         catch (error) {

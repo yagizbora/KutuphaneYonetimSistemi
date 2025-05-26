@@ -6,6 +6,8 @@ import {
     Paper,
     Checkbox,
     Table,
+    Tabs,
+    Tab,
     TableHead,
     TableRow,
     TableCell,
@@ -29,9 +31,17 @@ const logservice = new LogService();
 const PaymentLogs = () => {
 
     const [data, setPaymentLogs] = useState([]);
-    const getdata = async () => {
+    const [tabIndex, setTabIndex] = useState(0);
+
+    const getdata = async (index) => {
         try {
-            const response = await logservice.PaymentLogs();
+            let status = null;
+            if (index === 0) status = false;
+            else if (index === 1) status = true;
+
+            const response = await logservice.PaymentLogs({
+                payment_is_success: status
+            });
             if (response) {
                 setPaymentLogs(response.data);
             }
@@ -45,14 +55,20 @@ const PaymentLogs = () => {
         }
     }
     useEffect(() => {
-        getdata();
-    }, []);
+        getdata(tabIndex);
+    }, [tabIndex]);
+
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
                     Ödeme Logları
                 </Typography>
+                <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)} centered>
+                    <Tab label="Tamamlanmış Ödemeler" />
+                    <Tab label="Tamamlanmamış Ödemeler" />
+                </Tabs>
+
                 <PaymentLogsDataTable data={data} />
             </Paper>
         </Container>
