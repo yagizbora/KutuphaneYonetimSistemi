@@ -4,6 +4,7 @@ import {
     Typography,
     Paper,
     FormControl,
+    Pagination,
     InputLabel,
     Select,
     MenuItem,
@@ -22,13 +23,43 @@ const UserLoginOperationLogs = () => {
     const [data, setData] = useState([]);
     const [eventdata, setEventData] = useState([]);
     const [event, setEvent] = useState('');
+    const [pagination, setPagination] = useState({
+        totalPages: 0,
+        currentPage: 1
+    });
 
     const getdata = async () => {
         try {
-            const response = await logservice.UserLoginOperationLogs({});
-            if (response && Array.isArray(response.data)) {
-                setData(response.data);
-                setEventData(response.data);
+            const response = await logservice.UserLoginOperationLogs({
+                count: 10,
+                page: 0
+            });
+            if (response && Array.isArray(response.data.data)) {
+                setData(response.data.data);
+                setEventData(response.data.data);
+                setPagination({
+                    totalPages: Math.ceil(response.data.count / 10),
+                    currentPage: 1
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
+    const handlePageChange = async (e, value) => {
+        setPagination(prev => ({ ...prev, currentPage: value }));
+        try {
+            const response = await logservice.UserLoginOperationLogs({
+                event,
+                count: 10,
+                page: value
+            });
+            if (response && Array.isArray(response.data.data)) {
+                setData(response.data.data);
             }
         } catch (error) {
             Swal.fire({
@@ -39,11 +70,12 @@ const UserLoginOperationLogs = () => {
         }
     }
 
+
     const getfilterdata = async (event) => {
         try {
             const response = await logservice.UserLoginOperationLogs({ event });
-            if (response && Array.isArray(response.data)) {
-                setData(response.data);
+            if (response && Array.isArray(response.data.data)) {
+                setData(response.data.data);
             }
         } catch (error) {
             Swal.fire({
@@ -99,20 +131,26 @@ const UserLoginOperationLogs = () => {
                         </IconButton>
                     </Box>
                 </FormControl>
-
-
-                <DataGrid
-                    rows={data}
-                    columns={[
-                        { field: 'id', headerName: 'ID', width: 70 },
-                        { field: 'event', headerName: 'Olay', width: 200 },
-                        { field: 'event_description', headerName: 'Olay Açıklaması', width: 1000 },
-                    ]}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    autoHeight
-                    getRowId={(row) => row.id}
-                />
+                <Box>
+                    <DataGrid
+                        rows={data}
+                        columns={[
+                            { field: 'id', headerName: 'ID', width: 70 },
+                            { field: 'event', headerName: 'Olay', width: 200 },
+                            { field: 'event_description', headerName: 'Olay Açıklaması', width: 1000 },
+                        ]}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        autoHeight
+                        hideFooter
+                        getRowId={(row) => row.id}
+                    />
+                    <Pagination
+                        count={pagination.totalPages}
+                        page={pagination.currentPage}
+                        onChange={handlePageChange}
+                    />
+                </Box>
             </Paper>
         </Container>
     )
