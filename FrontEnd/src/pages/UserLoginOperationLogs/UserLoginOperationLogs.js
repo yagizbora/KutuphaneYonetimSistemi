@@ -25,7 +25,8 @@ const UserLoginOperationLogs = () => {
     const [event, setEvent] = useState('');
     const [pagination, setPagination] = useState({
         totalPages: 0,
-        currentPage: 1
+        currentPage: 1,
+        count: 0
     });
 
     const getdata = async () => {
@@ -38,7 +39,8 @@ const UserLoginOperationLogs = () => {
                 setEventData(response.data.data);
                 setPagination({
                     totalPages: Math.ceil(response.data.count / 10),
-                    currentPage: 1
+                    currentPage: 1,
+                    count: response.data.count
                 });
             }
         } catch (error) {
@@ -131,6 +133,9 @@ const UserLoginOperationLogs = () => {
                     </Box>
                 </FormControl>
                 <Box>
+                    <Typography variant="subtitle1" gutterBottom>
+                        Toplam Kayıt: {pagination.count}
+                    </Typography>
                     <DataGrid
                         rows={data}
                         columns={[
@@ -144,11 +149,16 @@ const UserLoginOperationLogs = () => {
                         hideFooter
                         getRowId={(row) => row.id}
                     />
-                    <Pagination
-                        count={pagination.totalPages}
-                        page={pagination.currentPage}
-                        onChange={handlePageChange}
-                    />
+                    <Box row="auto" display="flex" justifyContent="center" mt={2}>
+                        <Pagination
+                            count={pagination.totalPages}
+                            page={pagination.currentPage}
+                            onChange={handlePageChange}
+                            size="large"
+                            showFirstButton
+                            showLastButton
+                        />
+                    </Box>
                 </Box>
             </Paper>
         </Container>
