@@ -32,7 +32,6 @@ const UserLoginOperationLogs = () => {
         try {
             const response = await logservice.UserLoginOperationLogs({
                 count: 10,
-                page: 0
             });
             if (response && Array.isArray(response.data.data)) {
                 setData(response.data.data);
