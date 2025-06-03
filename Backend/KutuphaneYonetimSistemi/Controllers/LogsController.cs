@@ -18,7 +18,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
 
         [HttpPost("PaymentLogs")]
-        public IActionResult PaymentLogs([FromBody]FilterPaymentLogs models)
+        public async Task <IActionResult> PaymentLogs([FromBody]FilterPaymentLogs models)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -38,7 +38,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
 
                     string datasql = $@"SELECT tbl.*, tk.kitap_adi FROM table_payment_logs AS tbl JOIN table_kitaplar AS tk ON tk.""id"" = tbl.""book_id"" WHERE 1=1 {filtersql} ORDER BY tbl.payment_date DESC;";
-                    var List = connection.Query<PaymentLogs>(datasql, parameters);
+                    var List = await connection.QueryAsync<PaymentLogs>(datasql, parameters);
                     return Ok(List);
                 }
             }

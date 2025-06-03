@@ -22,7 +22,7 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public int id { get; set; }
         public string? Event { get; set; }
-        public string event_description { get; set; }
+        public string? event_description { get; set; }
     }  
     public class LogsFilter
     {
@@ -39,6 +39,6 @@ namespace KutuphaneYonetimSistemi.Models
         [JsonPropertyOrder(1)]
         public int Count { get; set; }
         [JsonPropertyOrder(2)]
-        public List <UserLoginOperationLogs> data { get; set; }
+        public List <UserLoginOperationLogs>? data { get; set; }
     }
 }
