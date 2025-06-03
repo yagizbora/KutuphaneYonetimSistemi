@@ -49,57 +49,55 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
-        [HttpPost("UserLoginOperationLogs")]
-        public async Task<IActionResult> UserLoginOperationLogs([FromBody] UserLoginOperationLogsPagination models)
-        {
-            try
-            {
-                using (var connection = _dbHelper.GetConnection())
+                [HttpPost("UserLoginOperationLogs")]
+                public async Task<IActionResult> UserLoginOperationLogs([FromBody] UserLoginOperationLogsPagination models)
                 {
-                    var parameters = new DynamicParameters();
-                    string filtersql = "";
-
-                    
-                    if (!string.IsNullOrEmpty(models.Event))
+                    try
                     {
-                        filtersql += " AND event = @event";
-                        parameters.Add("@event", models.Event);
+                        using (var connection = _dbHelper.GetConnection())
+                        {
+                            var parameters = new DynamicParameters();
+                            string filtersql = "";
+
+                            if (!string.IsNullOrEmpty(models.Event))
+                            {
+                                filtersql += " AND event = @event";
+                                parameters.Add("event", models.Event);
+                            }
+                            else
+                            {
+                                filtersql += " AND event IN ('Login', 'Login Time out', 'Logout')"; 
+                            }
+
+                            string paginationsql = "";
+                            if (models.count.HasValue && models.page.HasValue)
+                            {
+                                int? offset = (models.page - 1) * models.count;
+                                paginationsql += " LIMIT @count OFFSET @offset";
+                                parameters.Add("count", models.count.Value); 
+                                parameters.Add("offset", offset); 
+                            }
+
+                            string countsql = $"SELECT COUNT(*) FROM table_user_operation_logs WHERE 1=1 {filtersql}";
+                            string datasql = $"SELECT id, event, event_description FROM table_user_operation_logs WHERE 1=1 {filtersql} ORDER BY id ASC {paginationsql}";
+
+                            var count = await connection.QuerySingleAsync<int>(countsql, parameters);
+                            var data = (await connection.QueryAsync<UserLoginOperationLogs>(datasql, parameters)).ToList();
+
+                            var result = new UserLoginOperationLogsResponse
+                            {
+                                Count = count,
+                                data = data 
+                            };
+
+                            return Ok(result);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        filtersql += "AND event IN ('Login', 'Login Time out', 'Logout')";
+                        return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
                     }
-
-                    string paginationsql = "";
-                    if (models.count.HasValue || models.page.HasValue)
-                    {
-                        int? offset = models.page * models.count;
-                        paginationsql += " LIMIT @count OFFSET @offset";
-                        parameters.Add("@count", models.count);
-                        parameters.Add("@offset", offset);
-                    }
-
-                    string countsql = $"SELECT COUNT(*) FROM table_user_operation_logs WHERE 1=1 {filtersql}";
-                    string datasql = $"SELECT id, event, event_description FROM table_user_operation_logs WHERE 1=1 {filtersql} ORDER BY id ASC {paginationsql}";
-
-                    var count = await connection.QuerySingleAsync<int>(countsql, parameters);
-                    var data = await connection.QueryAsync<UserLoginOperationLogs>(datasql, parameters);
-
-                    var result = new UserLoginOperationLogsResponse
-                    {
-                        Count = count,
-                        page = models.page + 1,
-                        data = (List<UserLoginOperationLogs>)data
-                    };
-
-                    return Ok(result);
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
-            }
-        }
 
 
         [HttpPost("UserOperationLogs")]

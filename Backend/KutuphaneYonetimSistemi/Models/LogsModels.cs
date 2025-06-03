@@ -39,8 +39,6 @@ namespace KutuphaneYonetimSistemi.Models
         [JsonPropertyOrder(1)]
         public int Count { get; set; }
         [JsonPropertyOrder(2)]
-        public int? page { get; set; }
-        [JsonPropertyOrder(3)]
         public List <UserLoginOperationLogs> data { get; set; }
     }
 }
