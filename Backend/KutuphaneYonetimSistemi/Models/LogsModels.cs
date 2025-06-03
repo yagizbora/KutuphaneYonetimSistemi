@@ -1,4 +1,6 @@
-﻿namespace KutuphaneYonetimSistemi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace KutuphaneYonetimSistemi.Models
 {
     public class FilterPaymentLogs
     {
@@ -15,14 +17,30 @@
         public DateTime payment_date { get; set; }
         public string? payment_failed_subject { get; set; }
     }
+
     public class UserLoginOperationLogs
     {
         public int id { get; set; }
         public string? Event { get; set; }
         public string event_description { get; set; }
     }  
-    public class UserLoginOperationLogsFilter
+    public class LogsFilter
     {
         public string? Event { get; set; }   
+    }  
+    public class UserLoginOperationLogsPagination
+    {
+        public string? Event { get; set; }   
+        public int? count { get; set; }
+        public int? page { get; set; }
+    }
+    public class UserLoginOperationLogsResponse
+    {
+        [JsonPropertyOrder(1)]
+        public int Count { get; set; }
+        [JsonPropertyOrder(2)]
+        public int? page { get; set; }
+        [JsonPropertyOrder(3)]
+        public List <UserLoginOperationLogs> data { get; set; }
     }
 }
