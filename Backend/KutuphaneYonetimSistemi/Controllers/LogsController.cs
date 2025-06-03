@@ -71,10 +71,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     string paginationsql = "";
-                    if (models.count.HasValue && models.page.HasValue)
+                    if (models.count.HasValue || models.page.HasValue)
                     {
                         int? offset = models.page * models.count;
-                        paginationsql = " LIMIT @count OFFSET @offset";
+                        paginationsql += " LIMIT @count OFFSET @offset";
                         parameters.Add("@count", models.count);
                         parameters.Add("@offset", offset);
                     }
