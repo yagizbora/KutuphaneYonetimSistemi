@@ -10,19 +10,23 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+
+      // Mobil moda geçildiğinde dropdown'u kapat
+      if (mobile) {
+        setActiveDropdown(null);
+      }
     };
 
     window.addEventListener('resize', handleResize);
+
+    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const menuItems = [
-    {
-      path: '/',
-      icon: 'fas fa-home',
-      text: 'Dashboard'
-    },
+    { path: '/', icon: 'fas fa-home', text: 'Dashboard' },
     {
       text: 'Kitaplar',
       icon: 'fas fa-book',
@@ -43,71 +47,60 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       text: 'Üyeler',
       icon: 'fas fa-users',
       items: [
-        { path: '/user', text: 'Üye Listesi' },
+        { path: '/user', text: 'Üye Listesi' }
       ]
     },
     {
       text: 'Request',
       icon: 'fas fa-plus',
       items: [
-        {
-          path: '/request/request-book', text: 'Kitap istekleri'
-        }
+        { path: '/request/request-book', text: 'Kitap istekleri' }
       ]
     },
     {
       text: 'Yazarlar',
       icon: 'fas fa-pen',
       items: [
-        {
-          path: '/author', text: 'Yazar Listesi'
-        },
-        {
-          path: '/author/create', text: 'Yazar Ekle'
-        }
+        { path: '/author', text: 'Yazar Listesi' },
+        { path: '/author/create', text: 'Yazar Ekle' }
       ]
     },
     {
       text: 'Loglar',
       icon: 'fas fa-history',
       items: [
-        {
-          path: '/logs/payment-logs', text: 'Ödeme Logları'
-        },
-        {
-          path: '/logs/user-login-operation-logs', text: 'Kullanıcı Giriş Logları'
-        },
-        {
-          path: '/logs/user-operation-logs', text: 'Kullanıcı Operasyon Logları'
-        }
+        { path: '/logs/payment-logs', text: 'Ödeme Logları' },
+        { path: '/logs/user-login-operation-logs', text: 'Kullanıcı Giriş Logları' },
+        { path: '/logs/user-operation-logs', text: 'Kullanıcı Operasyon Logları' }
       ]
-    },
-
+    }
   ];
 
   const handleDropdownClick = (index) => {
-    if (activeDropdown === index) {
-      setActiveDropdown(null);
-    } else {
-      setActiveDropdown(index);
-    }
+    setActiveDropdown((prevIndex) => (prevIndex === index ? null : index));
   };
 
   const renderMenuItem = (item, index) => {
     if (item.items) {
+      const isActive = activeDropdown === index;
+
       return (
-        <div className="nav-item-container" key={item.text}>
+        <div className="nav-item-container" key={item.text + index}>
           <div
-            className={`nav-item ${activeDropdown === index ? 'active' : ''}`}
+            className={`nav-item ${isActive ? 'active' : ''}`}
             onClick={() => handleDropdownClick(index)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleDropdownClick(index); }}
           >
             <i className={item.icon}></i>
             <span className={`nav-text ${!isOpen ? 'hidden' : ''}`}>
               {item.text}
             </span>
+            {!isMobile && <i className={`fas fa-chevron-${isActive ? 'up' : 'down'} dropdown-icon`}></i>}
           </div>
-          <div className={`submenu ${activeDropdown === index ? 'show' : ''}`}>
-            {item.items.map((subItem) => (
+          <div className={`submenu ${isActive ? 'show' : ''}`}>
+            {item.items.map(subItem => (
               <Link
                 key={subItem.path}
                 to={subItem.path}
@@ -136,33 +129,45 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   };
 
   return (
-    <div className={`main-navbar ${!isOpen ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}>
-      <div className="navbar-content">
-        {!isMobile && (
-          <>
-            <div className="navbar-brand-container">
-              <i className="fas fa-book-reader brand-icon"></i>
-              <span className={`brand-text ${!isOpen ? 'hidden' : ''}`}>
-                Library System
-              </span>
-            </div>
+    <>
+      {isMobile && (
+        <button
+          className="mobile-toggle-button"
+          onClick={toggleNavbar}
+          aria-label="Toggle navigation"
+        >
+          <i className={`fas fa-${isOpen ? 'times' : 'bars'}`}></i>
+        </button>
+      )}
 
-            <button
-              className="toggle-button"
-              onClick={toggleNavbar}
-              aria-label="Toggle navigation"
-            >
-              <i className={`fas fa-chevron-${isOpen ? 'left' : 'right'}`}></i>
-            </button>
-          </>
-        )}
+      <div className={`main-navbar ${!isOpen ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}>
+        <div className="navbar-content">
+          {!isMobile && (
+            <>
+              <div className="navbar-brand-container">
+                <i className="fas fa-book-reader brand-icon"></i>
+                <span className={`brand-text ${!isOpen ? 'hidden' : ''}`}>
+                  Library System
+                </span>
+              </div>
 
-        <nav className="nav-links">
-          {menuItems.map((item, index) => renderMenuItem(item, index))}
-        </nav>
+              <button
+                className="toggle-button"
+                onClick={toggleNavbar}
+                aria-label="Toggle navigation"
+              >
+                <i className={`fas fa-chevron-${isOpen ? 'left' : 'right'}`}></i>
+              </button>
+            </>
+          )}
+
+          <nav className="nav-links">
+            {menuItems.map((item, index) => renderMenuItem(item, index))}
+          </nav>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default Navbar; 
+export default Navbar;

@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     padding: 1rem 0;
-    margin-left: 0
+    margin-left: 0;
 }
 
 .navbar-brand-container {
@@ -122,13 +122,17 @@
 }
 
 .submenu {
-    display: none;
-    background-color: rgba(0, 0, 0, 0.1);
+    max-height: 0;
+    opacity: 0;
     overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
 .submenu.show {
     display: block;
+    max-height: 500px;
+    /* ihtiyaca göre ayarla */
+    opacity: 1;
 }
 
 .submenu-item {
@@ -144,6 +148,21 @@
     color: white;
     background-color: rgba(255, 255, 255, 0.1);
     text-decoration: none;
+}
+
+.nav-item:focus,
+.nav-item:hover,
+.submenu-item:focus,
+.submenu-item:hover {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.main-navbar.collapsed .nav-item-container:hover .submenu {
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #005bb5;
+    z-index: 1100;
 }
 
 /* Collapsed state hover */
@@ -305,4 +324,33 @@ body.nav-collapsed {
     background-color: #0066cc !important;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
+}
+
+/* Mobilde hamburger toggle butonu */
+.mobile-toggle-button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1101;
+    background-color: #0066cc;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobilde navbar kapandığında tamamen gizle */
+.main-navbar.mobile.collapsed {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
 }
