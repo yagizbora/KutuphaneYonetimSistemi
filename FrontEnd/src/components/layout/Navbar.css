@@ -354,3 +354,11 @@ body.nav-collapsed {
     bottom: 0;
     left: 0;
 }
+
+.dropdown-icon {
+    position: absolute;
+    right: 1.5rem;
+    transform: translateY(0);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
