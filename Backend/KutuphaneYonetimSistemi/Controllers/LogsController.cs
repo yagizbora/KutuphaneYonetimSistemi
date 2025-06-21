@@ -52,6 +52,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                 [HttpPost("UserLoginOperationLogs")]
                 public async Task<IActionResult> UserLoginOperationLogs([FromBody] UserLoginOperationLogsPagination models)
                 {
+                    TokenController g = new TokenController(_dbHelper);
+                    var login = g.GetUserByToken(ControllerContext);
+                    if (!login.Status)
+                        return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
                     try
                     {
                         using (var connection = _dbHelper.GetConnection())
