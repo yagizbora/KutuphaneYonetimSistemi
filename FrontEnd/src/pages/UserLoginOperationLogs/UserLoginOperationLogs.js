@@ -74,9 +74,15 @@ const UserLoginOperationLogs = () => {
 
     const getfilterdata = async (event) => {
         try {
-            const response = await logservice.UserLoginOperationLogs({ event });
+            const response = await logservice.UserLoginOperationLogs({ event, count: 10, });
             if (response && Array.isArray(response.data.data)) {
                 setData(response.data.data);
+                setEventData(response.data.data);
+                setPagination({
+                    totalPages: Math.ceil(response.data.count / 10),
+                    currentPage: 1,
+                    count: response.data.count
+                });
             }
         } catch (error) {
             Swal.fire({
