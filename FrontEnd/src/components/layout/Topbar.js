@@ -9,6 +9,7 @@ import {
 import Modal from '@mui/material/Modal';
 import userService from '../../services/UserService';
 import Swal from 'sweetalert2';
+import Clock from './Clock';
 const userservice = new userService();
 
 const Topbar = () => {
@@ -177,6 +178,7 @@ const Topbar = () => {
         <h1 className="welcome-text">Welcome to Library System</h1>
         <div className="topbar-right">
           <div className="user-profile">
+            <Clock />
             <Button
               id="user-profile-button"
               aria-controls="user-profile-menu"
