@@ -17,6 +17,7 @@ const Clock = () => {
         setTime(time)
     }
     setInterval(UpdateTime)
+    setInterval(UpdateDate, 1000 * 60 * 60 * 24)
     return (
         <>
             <div className="clock-container">
