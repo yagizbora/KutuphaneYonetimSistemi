@@ -229,9 +229,5 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
-
-
-       
-        
     }
 }

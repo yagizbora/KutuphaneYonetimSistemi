@@ -10,6 +10,7 @@ import Modal from '@mui/material/Modal';
 import userService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import Clock from './Clock';
+import Date from './Date';
 const userservice = new userService();
 
 const Topbar = () => {
@@ -175,7 +176,10 @@ const Topbar = () => {
   return (
     <div className="topbar">
       <div className="topbar-container">
-        <h1 className="welcome-text">Welcome to Library System</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h1 className="welcome-text">Welcome to Library System</h1>
+          <Date />
+        </div>
         <div className="topbar-right">
           <div className="user-profile">
             <Clock />
