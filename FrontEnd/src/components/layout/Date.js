@@ -15,7 +15,7 @@ const CurrentDate = () => {
     setInterval(UpdateDate, 1000 * 60 * 60 * 24)
     return (
         <>
-            <div className="clock-container">
+            <div className="time-container">
                 <p className="date-text">{cdate}</p>
             </div>
         </>

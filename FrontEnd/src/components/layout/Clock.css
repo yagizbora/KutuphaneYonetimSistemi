@@ -5,7 +5,7 @@
     margin: 0;
 }
 
-.clock-container {
+.time-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
 
 }
 
-.clock-container:hover {
+.time-container:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     transform: translateY(-4px);

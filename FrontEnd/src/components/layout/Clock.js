@@ -14,7 +14,7 @@ const Clock = () => {
     setInterval(UpdateTime)
     return (
         <>
-            <div className="clock-container">
+            <div className="time-container">
                 <p className="time-text">{ctime}</p>
             </div>
         </>
