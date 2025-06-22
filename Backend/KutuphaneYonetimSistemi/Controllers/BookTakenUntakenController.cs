@@ -20,7 +20,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("LendingBooksGet")]
         public async Task<IActionResult> LendingBooksGet()
         {
-            TokenController g = new TokenController(_dbHelper);
+            TokenController g = new (_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
@@ -47,7 +47,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("LendingBooksGetbyid/{id}")]
         public async Task<IActionResult> LendingBooksGetbyid(int id)
         {
-            TokenController g = new TokenController(_dbHelper);
+            TokenController g = new (_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
@@ -73,7 +73,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("LendingBooks")]
         public async Task<IActionResult> LendingBooks([FromBody] LendingBooks models)
         {
-            TokenController g = new TokenController(_dbHelper);
+            TokenController g = new(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
@@ -125,7 +125,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("TakenBooksGet")]
             public async Task<IActionResult> TakenBooksGet()
             {
-                TokenController g = new TokenController(_dbHelper);
+                TokenController g = new(_dbHelper);
                 var login = g.GetUserByToken(ControllerContext);
                 if (!login.Status)
                     return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
@@ -150,7 +150,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("CalculateBookLending")]
         public async Task<IActionResult> CalculateBook(CalculateBook model)
         {
-            TokenController g = new TokenController(_dbHelper);
+            TokenController g = new(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
@@ -211,7 +211,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("ReturnBook")]
         public async Task<IActionResult> ReturnBook([FromBody] ReturnBook models)
         {
-            TokenController g = new TokenController(_dbHelper);
+            TokenController g = new (_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
