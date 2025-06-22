@@ -7,6 +7,12 @@
         public Boolean? status { get; set; }
     }
 
+
+    public class CalculateBook
+    {
+        public required int id { get; set; }
+        public DateTime? odunc_alma_tarihi { get; set; }
+    }
     public class BookRequestModels
     {
         public int id {  get; set; }

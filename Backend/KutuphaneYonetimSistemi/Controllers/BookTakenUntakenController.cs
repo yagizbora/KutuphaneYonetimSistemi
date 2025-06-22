@@ -147,8 +147,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
             }
 
-        [HttpGet("CalculateBookLending/{id}")]
-        public async Task<IActionResult> CalculateBook(int id)
+        [HttpPost("CalculateBookLending")]
+        public async Task<IActionResult> CalculateBook(CalculateBook model)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -159,19 +159,30 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string checkbooksisavaible = "SELECT Durum FROM table_kitaplar WHERE id = @id";
-                    bool checkbooksisavaibleresponse = await connection.QueryFirstOrDefaultAsync<bool>(checkbooksisavaible, new { id = id });
+                    bool checkbooksisavaibleresponse = await connection.QueryFirstOrDefaultAsync<bool>(checkbooksisavaible, new { id = model.id });
 
                     if (checkbooksisavaibleresponse)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
                     }
-
+                    DateTime date_of_taken_book;
+                    if (!model.odunc_alma_tarihi.HasValue)
+                    {
                     string findbook = "SELECT odunc_alma_tarihi FROM table_kitaplar WHERE id = @id";
-                    DateTime findbookresponse = await connection.QueryFirstOrDefaultAsync<DateTime>(findbook, new { id = id });
+                    DateTime findbookresponse = await connection.QueryFirstOrDefaultAsync<DateTime>(findbook, new { id = model.id });
+                    if (findbookresponse == default(DateTime))
+                    {
+                            return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alma tarihi sistemde bulunamadı."));
+                    }
+                    date_of_taken_book = findbookresponse;
+                    }
+                    else
+                    {
+                        date_of_taken_book = (DateTime)model.odunc_alma_tarihi;
+                    }
 
                     DateTime todaydate = DateTime.Now;
-
-                    int calculateday = (int)(todaydate - findbookresponse).TotalDays;
+                    int calculateday = (int)(todaydate - date_of_taken_book).TotalDays;
 
                     if (calculateday > 10)
                     {
