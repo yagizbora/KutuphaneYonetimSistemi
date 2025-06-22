@@ -12,7 +12,7 @@ export default class ReturnBookService {
         return response;
     }
     async CalculateBookLending(data) {
-        const response = await axios.get(`/BookTakenUntaken/CalculateBookLending/${data}`);
+        const response = await axios.post(`/BookTakenUntaken/CalculateBookLending/`, data);
         return response;
     }
     async ReturnBook(data) {

@@ -151,7 +151,6 @@ const ReturnBook = () => {
     const calculateFine = async (data) => {
         try {
             setPaymentdata({
-
                 id: null,
                 "calculatedDelayAllowance": "",
                 "geri_verme_tarihi": null,
@@ -160,7 +159,9 @@ const ReturnBook = () => {
                 "receipt_no": ""
             })
 
-            const response = await returnbookservice.CalculateBookLending(data.id);
+            const response = await returnbookservice.CalculateBookLending({
+                id: data.id
+            });
             if (response) {
 
                 setPaymentdata((prevData) => ({
@@ -188,11 +189,11 @@ const ReturnBook = () => {
     const returnbook = async () => {
         try {
             const response = await returnbookservice.ReturnBook({ ...paymentdata });
-            if (response) {
+            if (response.data.status || response) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Başarılı',
-                    text: response.messsage || 'Kitap başarıyla iade edildi.',
+                    text: response.data.messsage || 'Kitap başarıyla iade edildi.',
                 });
                 setOpeneditdialog(false);
                 getreturnbook();
@@ -211,6 +212,30 @@ const ReturnBook = () => {
 
     }
 
+    const recalculateFine = async (data) => {
+        try {
+            const response = await returnbookservice.CalculateBookLending({
+                id: data.id,
+                "odunc_alma_tarihi": data.odunc_alma_tarihi
+            });
+            if (response) {
+
+                setPaymentdata((prevData) => ({
+                    ...prevData,
+                    calculatedDelayAllowance: response.data.data.calculatedDelayAllowance,
+                }))
+
+            }
+        }
+        catch (error) {
+            console.error('Error fetching data:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+            });
+        }
+    }
 
     useEffect(() => {
         getreturnbook();
@@ -294,12 +319,19 @@ const ReturnBook = () => {
                                         <DatePicker
                                             label="Tarih Seç"
                                             value={paymentdata.geri_verme_tarihi}
-                                            onChange={(newValue) =>
-                                                setPaymentdata({
+                                            onChange={async (newValue) => {
+                                                const updatedData = {
                                                     ...paymentdata,
                                                     geri_verme_tarihi: newValue,
-                                                })
-                                            }
+                                                };
+                                                setPaymentdata(updatedData);
+
+                                                const recalculateFinedata = {
+                                                    id: paymentdata.id,
+                                                    odunc_alma_tarihi: newValue
+                                                };
+                                                recalculateFine(recalculateFinedata);
+                                            }}
                                         />
                                     </DemoContainer>
                                 </LocalizationProvider>
