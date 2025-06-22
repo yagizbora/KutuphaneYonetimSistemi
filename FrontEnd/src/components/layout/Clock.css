@@ -16,8 +16,14 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease-in-out;
     overflow: hidden;
     text-align: center;
 
+}
+
+.clock-container:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transform: translateY(-4px);
 }
