@@ -17,6 +17,7 @@ import {
     Grid,
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -153,7 +154,7 @@ const ReturnBook = () => {
             setPaymentdata({
                 id: null,
                 "calculatedDelayAllowance": "",
-                "geri_verme_tarihi": null,
+                "geri_verme_tarihi": dayjs(),
                 "payment_amount": "",
                 "payment_type": "",
                 "receipt_no": ""
