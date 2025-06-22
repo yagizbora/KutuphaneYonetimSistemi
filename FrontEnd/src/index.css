@@ -227,8 +227,15 @@ body {
 .dashboard-card {
   background-color: var(--white);
   border-radius: 8px;
+  border: 1px solid rgba(107, 78, 255, 0.2);
   padding: 24px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 .card-header h3 {
