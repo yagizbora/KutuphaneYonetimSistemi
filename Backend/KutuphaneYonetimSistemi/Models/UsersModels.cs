@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
+﻿
 namespace KutuphaneYonetimSistemi.Models
 {
     public class UserModel
