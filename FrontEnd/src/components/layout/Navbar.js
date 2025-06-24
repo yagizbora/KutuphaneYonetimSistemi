@@ -51,6 +51,13 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       ]
     },
     {
+      text: 'Kütüphaneler',
+      icon: 'fas fa-building',
+      items: [
+        { path: '/libraries', text: 'Kütüphane Listesi' }
+      ]
+    },
+    {
       text: 'Request',
       icon: 'fas fa-plus',
       items: [
