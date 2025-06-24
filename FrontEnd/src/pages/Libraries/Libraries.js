@@ -39,6 +39,34 @@ const Libraries = () => {
         { field: 'library_name', headerName: 'Kütüphane Adı', width: 150 },
         { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date' },
         { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date' },
+        {
+            field: 'actions',
+            headerName: 'İşlemler',
+            width: 150,
+            renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                        Swal.fire({
+                            title: 'Kütüphane Sil',
+                            text: "Bu kütüphaneyi silmek istediğinize emin misiniz?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Evet, sil!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                deletedata(params.row.id);
+                            }
+                        });
+                    }}
+                >
+                    Sil
+                </Button>
+            )
+        }
     ];
     const libraryService = new LibraryService();
     const [data, setData] = useState([]);
@@ -59,6 +87,34 @@ const Libraries = () => {
                 icon: 'error',
                 title: 'Hata',
                 text: 'Kütüphaneler alınırken bir hata oluştu.',
+            });
+        }
+    }
+
+    const deletedata = async (data) => {
+        try {
+            const response = await libraryService.deletelibrary(data);
+            if (response.status === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı',
+                    text: response.data.message || 'Kütüphane başarıyla silindi.',
+                });
+                getdata();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: response.data.message || 'Kütüphane silinirken bir hata oluştu.',
+                });
+            }
+        }
+        catch (error) {
+            console.error("Error deleting library:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata',
+                text: error.response.data.message || 'Kütüphane silinirken bir hata oluştu.',
             });
         }
     }

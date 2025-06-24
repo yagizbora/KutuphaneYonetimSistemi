@@ -10,5 +10,9 @@ export default class LibraryService {
         const response = await axios.post('Library/CreateLibraries', data);
         return response;
     }
+    async deletelibrary(data) {
+        const response = await axios.delete(`Library/DeleteLibrary/${data}`);
+        return response;
+    }
 
 }
