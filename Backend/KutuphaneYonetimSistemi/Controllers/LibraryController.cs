@@ -39,6 +39,33 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+        [HttpGet("GetAllLibraries/{id}")]
+        public async Task<IActionResult> GetLibrariesbyid(int id)
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+
+                    string query = "SELECT id,library_name,library_working_start_time,library_working_end_time FROM table_libraries WHERE is_deleted = false AND id = @id";
+                    var result = (await connection.QueryAsync<LibraryModels>(query, new { id = id})).ToList();
+                    if(result.Count == 1)
+                    {
+                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, result));
+                    }
+                    else
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
         [HttpPost("CreateLibraries")]
         public async Task<IActionResult> CreateLibraries(CreateLibrary model)
         {
@@ -64,7 +91,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using(var connection = _dbHelper.GetConnection())
                 {
-                    string query = "UPDATE table_libraries SET is_deleted = false WHERE id = @id";
+                    string query = "UPDATE table_libraries SET is_deleted = true WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, new { id = id });
                     if(result == 1)
                     {
