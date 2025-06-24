@@ -36,6 +36,7 @@ const LibraryTable = ({ data, columns }) => {
                 columns={columns}
                 checkboxSelection={false}
                 autoHeight
+                hideFooter
                 disableRowSelectionOnClick
                 components={{
                     Toolbar: GridToolbar,

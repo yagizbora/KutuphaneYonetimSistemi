@@ -56,7 +56,30 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
-
+        }
+        [HttpDelete("DeleteLibrary/{id}")]
+        public async Task<IActionResult> DeleteLibrary(int id)
+        {
+            try
+            {
+                using(var connection = _dbHelper.GetConnection())
+                {
+                    string query = "UPDATE table_libraries SET is_deleted = false WHERE id = @id";
+                    var result = await connection.ExecuteAsync(query, new { id = id });
+                    if(result == 1)
+                    {
+                        return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordDeleted));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Bi şeyler ters gitti"));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
         }
         
     }
