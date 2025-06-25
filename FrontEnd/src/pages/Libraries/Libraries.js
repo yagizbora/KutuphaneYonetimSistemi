@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Box,
@@ -18,7 +19,8 @@ import {
     Select,
     MenuItem,
     FormControl,
-    InputLabel
+    InputLabel,
+    Stack
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -34,37 +36,54 @@ import CreateLibrary from './CreateLibrary/CreateLibrary.js';
 
 
 const Libraries = () => {
+    const navigate = useNavigate();
+
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'library_name', headerName: 'Kütüphane Adı', width: 150 },
-        { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date' },
-        { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date' },
+        { field: 'id', headerName: 'ID', width: 90, sortable: false, },
+        { field: 'library_name', headerName: 'Kütüphane Adı', width: 150, sortable: false, },
+        { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date', sortable: false, },
+        { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date', sortable: false, },
         {
             field: 'actions',
             headerName: 'İşlemler',
-            width: 150,
+            minWidth: 150,
+            flex: 1,
+            sortable: false,
             renderCell: (params) => (
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                        Swal.fire({
-                            title: 'Kütüphane Sil',
-                            text: "Bu kütüphaneyi silmek istediğinize emin misiniz?",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Evet, sil!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                deletedata(params.row.id);
-                            }
-                        });
-                    }}
-                >
-                    Sil
-                </Button>
+                <>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => {
+                                Swal.fire({
+                                    title: 'Kütüphane Sil',
+                                    text: "Bu kütüphaneyi silmek istediğinize emin misiniz?",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Evet, sil!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        deletedata(params.row.id);
+                                    }
+                                });
+                            }}
+                        >
+                            Sil
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                navigate(`/libraries/edit/${params.row.id}`);
+                            }}
+                        >
+                            Düzenle
+                        </Button>
+                    </Stack>
+                </>
             )
         }
     ];

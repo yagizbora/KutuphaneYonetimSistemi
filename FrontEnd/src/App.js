@@ -21,6 +21,7 @@ import Author from './pages/Author/Author.js';
 import AuthorCreate from './pages/Author/AuthorCreate.js';
 import AuthorEdit from './pages/Author/AuthorEdit.js';
 import Libraries from './pages/Libraries/Libraries.js';
+import EditLibraries from './pages/Libraries/EditLibraries/EditLibraries.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -74,6 +75,7 @@ function App() {
                 <Route path="/author/create" element={<AuthorCreate />} />
                 <Route path="/author/edit/:id" element={<AuthorEdit />} />
                 <Route path="/libraries" element={<Libraries />} />
+                <Route path="/libraries/edit/:id" element={<EditLibraries />} />
 
                 <Route path="*" element={<NotFound />} />
                 {/* Redirect to 404 for any unmatched routes */}
