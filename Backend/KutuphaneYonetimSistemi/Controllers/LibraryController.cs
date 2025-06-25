@@ -28,7 +28,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using(var connection = _dbHelper.GetConnection())
                 {
 
-                 string query = "SELECT id,library_name,library_working_start_time,library_working_end_time FROM table_libraries WHERE is_deleted = false";
+                 string query = "SELECT id,library_name,library_working_start_time,library_working_end_time FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
                     var result = await connection.QueryAsync<LibraryModels>(query,connection);
                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, result));
                 }
