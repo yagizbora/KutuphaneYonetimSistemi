@@ -108,8 +108,8 @@ const editLibraries = () => {
     }
     return (
         <>
-            <Container>
-                <Box sx={{ mt: 4, alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+            <Container sx={{ mt: 4 }}>
+                <Box sx={{ mt: 4, alignItems: 'center', display: 'flex' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
