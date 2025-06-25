@@ -65,6 +65,32 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+        [HttpPut("EditLibrary")]
+        public async Task<IActionResult> EditLibrary(EditLibraryModels models)
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string updatesql = "UPDATE table_libraries SET library_name = @library_name,library_working_start_time = @library_working_start_time,library_working_end_time = @library_working_end_time WHERE id = @id ";
+                    var result = await connection.ExecuteAsync(updatesql, models);
+                    if(result > 1 || result == 1)
+                    {
+                        return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordUpdated));
+                    }
+                    else
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.Exception));
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
 
         [HttpPost("CreateLibraries")]
         public async Task<IActionResult> CreateLibraries(CreateLibrary model)
