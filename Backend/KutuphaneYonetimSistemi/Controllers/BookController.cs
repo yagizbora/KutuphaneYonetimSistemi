@@ -61,7 +61,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     if (models.library_id.HasValue)
                     {
-                        filtersql += " AND li.library_id = @library_id";
+                        filtersql += " AND li.id = @library_id";
                         parameters.Add("library_id", models.library_id);
                     }
 
