@@ -1,20 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace KutuphaneYonetimSistemi.Models
 {
 
     public class ListBookModels
     {
+        [JsonPropertyOrder(1)]
         public int? id { get; set; }
+        [JsonPropertyOrder(2)]
         public string? kitap_adi { get; set; }
+        [JsonPropertyOrder(3)]
         public string? ISBN { get; set; }
+        [JsonPropertyOrder(4)]
         public bool? Durum { get; set; }
+        [JsonPropertyOrder(5)]
         public string? kitap_tur { get; set; }
+        [JsonPropertyOrder(6)]
         public int? kitap_tur_kodu { get; set; }
+        [JsonPropertyOrder(7)]
         public string? author_name { get; set; }
+        [JsonPropertyOrder(8)]
         public int? author_id { get; set; }
+        [JsonPropertyOrder(9)]
         public string? library_name { get; set; }
+        [JsonPropertyOrder(10)]
         public int? library_id { get; set; }
 
     }
