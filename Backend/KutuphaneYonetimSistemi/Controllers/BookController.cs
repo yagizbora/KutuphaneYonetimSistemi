@@ -59,6 +59,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                         filtersql += " AND tkt.kitap_tur_kodu = @kitap_tur_kodu";
                         parameters.Add("kitap_tur_kodu", models.kitap_tur_kodu.Value);
                     }
+                    if (models.library_id.HasValue)
+                    {
+                        filtersql += " AND li.library_id = @library_id";
+                        parameters.Add("library_id", models.library_id);
+                    }
 
                     string query = $@"
                     SELECT 
@@ -68,11 +73,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                     tk.durum,
                     au.name_surname as author_name,
                     au.id AS author_id, 
+                    li.library_name,
                     tkt.kitap_tur_kodu AS kitap_tur_kodu,
                     tkt.aciklama AS kitap_tur
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id
+                    FULL OUTER JOIN table_libraries li ON li.id = library_id
                     WHERE tk.is_deleted = false {filtersql}
                     ORDER BY tk.id ASC;";
                     var books = await connection.QueryAsync<ListBookModels>(query, parameters);

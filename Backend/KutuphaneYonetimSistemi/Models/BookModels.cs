@@ -14,6 +14,7 @@ namespace KutuphaneYonetimSistemi.Models
         public int? kitap_tur_kodu { get; set; }
         public string? author_name { get; set; }
         public int? author_id { get; set; }
+        public string? library_name { get; set; }
     }
 
     public class BookFilterModel
@@ -23,6 +24,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string? ISBN { get; set; }
         public bool? Durum { get; set; }
         public int? kitap_tur_kodu { get; set; }
+        public int? library_id { get; set; }
     }
 
     public class CreateBook
