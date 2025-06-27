@@ -29,6 +29,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import AuthorService from "../../services/AuthorService.js";
+import LibraryService from '../../services/LibraryService.js';
+const libraryService = new LibraryService();
 const authorService = new AuthorService();
 const bookService = new BookService();
 const bookTypeService = new BookTypeService();
@@ -52,7 +54,7 @@ const Book = () => {
         kitap_tur_kodu: "",
         aciklama: ""
     });
-
+    const [libraries, setLibraries] = useState([]);
     const [bookTypes, setBookTypes] = useState([]);
     const [createofbook, setCreateofbook] = useState({
         "kitap_adi": "",
@@ -65,6 +67,7 @@ const Book = () => {
         getBooks();
         getbooktypesfilter();
         fetchAuthors();
+        getlibrariesfilter();
     }, []);
 
     const getbooktypesfilter = async () => {
@@ -75,6 +78,16 @@ const Book = () => {
             }
         } catch (error) {
             console.error("Kitap türleri yüklenirken bir hata oluştu:", error);
+        }
+    }
+    const getlibrariesfilter = async () => {
+        try {
+            const response = await libraryService.GetLibraries();
+            if (response) {
+                setLibraries(response.data.data);
+            }
+        } catch (error) {
+            console.error("Kütüphaneler yüklenirken bir hata oluştu:", error);
         }
     }
 
@@ -277,6 +290,12 @@ const Book = () => {
                 />
             )
         },
+        {
+            field: 'library_name', headerName: 'Kütüphane Adı', width: 150, flex: 1,
+            renderCell: (params) => {
+                return params.value ? params.value : "Kütüphane Atanmamış";
+            }
+        },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
         {
             field: 'actions',
@@ -400,7 +419,27 @@ const Book = () => {
                             ))}
                         </Select>
                     </FormControl>
-
+                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                        <InputLabel id="library-select-label">Kütüphane</InputLabel>
+                        <Select
+                            labelId="library-select-label"
+                            id="library-select"
+                            label="Kütüphane"
+                            value={filterbooks.library_id ?? ""}
+                            onChange={(e) =>
+                                setFilterBooks((prev) => ({
+                                    ...prev,
+                                    library_id: e.target.value,
+                                }))
+                            }
+                        >
+                            {Array.isArray(libraries) && libraries.map((library) => (
+                                <MenuItem key={library.id} value={library.id}>
+                                    {library.library_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <IconButton aria-label="search" size="large" onClick={() => { searchbooks() }}>
                         <SearchIcon />
                     </IconButton>
