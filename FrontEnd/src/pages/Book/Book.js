@@ -161,6 +161,7 @@ const Book = () => {
             }
             const bookDetails = await bookService.getbooksbyid(bookData.id);
             await fetchAuthors();
+            await getlibrariesfilter();
             const selectedBookData = bookDetails[0];
             setSelectedBook(selectedBookData);
             setEditedBook(selectedBookData);
@@ -634,6 +635,27 @@ const Book = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                                    <InputLabel id="library-select-label">Kütüphane</InputLabel>
+                                    <Select
+                                        labelId="library-select-label"
+                                        id="library-select"
+                                        label="Kütüphane"
+                                        value={editedBook.library_id || ''}
+                                        onChange={(e) =>
+                                            setEditedBook((prev) => ({
+                                                ...prev,
+                                                library_id: e.target.value,
+                                            }))
+                                        }
+                                    >
+                                        {Array.isArray(libraries) && libraries.map((library) => (
+                                            <MenuItem key={library.id} value={library.id}>
+                                                {library.library_name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                                 <FormControlLabel
                                     control={
                                         <Checkbox

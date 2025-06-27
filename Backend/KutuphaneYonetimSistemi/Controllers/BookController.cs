@@ -74,6 +74,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     au.name_surname as author_name,
                     au.id AS author_id, 
                     li.library_name,
+                    li.id as library_id,
                     tkt.kitap_tur_kodu AS kitap_tur_kodu,
                     tkt.aciklama AS kitap_tur
                     FROM table_kitaplar tk
@@ -111,10 +112,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                     au.name_surname as author_name,
                     au.id AS author_id, 
                     tkt.kitap_tur_kodu AS kitap_tur_kodu,
-                    tkt.aciklama AS kitap_tur
+                    tkt.aciklama AS kitap_tur,
+                    li.library_name,
+                    li.id as library_id
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id
+                    FULL OUTER JOIN table_libraries li ON li.id = library_id
                     WHERE tk.is_deleted = false AND tk.id = @id
                     ORDER BY tk.id ASC;";
                     var List = connection.Query<ListBookModels>(query, new { id }).ToList();
@@ -219,7 +223,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu WHERE id = @id";
+                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu,library_id = @library_id WHERE id = @id";
                     var result = connection.Execute(datasql, models);
                     if (result > 0 || result == 1)
                     {
