@@ -12,7 +12,7 @@ const AccessDenied = () => {
             Go to Home
           </Link>
           <Link to="/login" className="login-link">
-            Login with Different Account
+            Login with Different Account or go to Dashboard
           </Link>
         </div>
       </div>
