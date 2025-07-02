@@ -419,10 +419,27 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser(UserModel model)
         {
-            TokenController g = new TokenController(_dbHelper);
-            var login = g.GetUserByToken(ControllerContext);
-            if (!login.Status)
-                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            using (var connection = _dbHelper.GetConnection())
+            {
+
+                string query = "SELECT count(*) FROM table_users WHERE is_deleted = false";
+                int userisexist = await connection.QueryFirstOrDefaultAsync<int>(query, connection);
+                if (userisexist > 0)
+                {
+                    TokenController g = new TokenController(_dbHelper);
+                    var login = g.GetUserByToken(ControllerContext);
+                    if (!login.Status)
+                        return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        message = "ahahahaha"
+                    });
+                }
+            }
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
