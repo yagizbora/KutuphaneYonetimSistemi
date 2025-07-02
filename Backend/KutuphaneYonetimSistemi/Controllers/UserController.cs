@@ -384,6 +384,38 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
 
 
+        [HttpGet("FirstRegisterController")]
+        public async Task<IActionResult> FirstRegisterController()
+        {
+            try
+            {
+                using(var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT count(*) FROM table_users WHERE is_deleted = false";
+                    int userisexist = await connection.QueryFirstOrDefaultAsync<int>(query, connection);
+                    if (userisexist > 0)
+                    {
+                        return Ok(new
+                        {
+                            status = true,
+                        });
+                    }
+                    else
+                    {
+                        return Ok(new
+                        {
+                            status = false,
+                            message = "Sistemde kullanıcı mevcut değildir!"
+                        });
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser(UserModel model)
         {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
 import axios from '../../utils/axiosConfig';
 import './Login.css';
@@ -11,10 +12,12 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userbuttoncontrol, setUserbuttoncontrol] = useState(false);
   const navigate = useNavigate();
 
 
   useEffect(() => {
+    checkuserinsystem();
     const token = localStorage.getItem('token');
     if (token) {
       navigate('/');
@@ -31,6 +34,24 @@ const Login = () => {
       [name]: value
     }));
   };
+
+
+  const checkuserinsystem = async () => {
+    try {
+      const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
+      const response = await axios.get(`${API_URL}/auth/User/FirstRegisterController`);
+      if (response.data.status === false) {
+        Swal.fire({
+          title: 'User Not Found',
+          text: response.data.message || 'The user does not exist in the system. Please register first.',
+          icon: 'warning',
+        });
+        setUserbuttoncontrol(true);
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,23 +135,36 @@ const Login = () => {
                 </Alert>
               )}
 
-              <Button
-                type="submit"
-                className="w-100 login-button py-2"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin me-2"></i>
-                    Logging in...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-sign-in-alt me-2"></i>
-                    Login
-                  </>
-                )}
-              </Button>
+              {userbuttoncontrol ? (
+                <Button
+                  className="w-100 mb-3"
+                  variant="secondary"
+                  disabled={true}
+                >
+                  <i className="fas fa-user-plus me-2"></i>
+                  Login
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="w-100 login-button py-2"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <i className="fas fa-spinner fa-spin me-2"></i>
+                      Logging in...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-sign-in-alt me-2"></i>
+                      Login
+                    </>
+                  )}
+                </Button>
+              )
+              }
+
             </Form>
           </Card.Body>
         </Card>
