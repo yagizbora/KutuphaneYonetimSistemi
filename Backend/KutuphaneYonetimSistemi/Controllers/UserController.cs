@@ -431,13 +431,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (!login.Status)
                         return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
                 }
-                else
-                {
-                    return Ok(new
-                    {
-                        message = "ahahahaha"
-                    });
-                }
             }
 
             try
