@@ -61,13 +61,14 @@ const Book = () => {
         "yazar_adi": "",
         "yazar_soyadi": "",
         "isbn": 0,
+        "library_id": 0,
     })
 
     useEffect(() => {
         getBooks();
         getbooktypesfilter();
         fetchAuthors();
-        getlibrariesfilter();
+        getlibraries();
     }, []);
 
     const getbooktypesfilter = async () => {
@@ -80,7 +81,7 @@ const Book = () => {
             console.error("Kitap türleri yüklenirken bir hata oluştu:", error);
         }
     }
-    const getlibrariesfilter = async () => {
+    const getlibraries = async () => {
         try {
             const response = await libraryService.GetLibraries();
             if (response) {
@@ -161,7 +162,7 @@ const Book = () => {
             }
             const bookDetails = await bookService.getbooksbyid(bookData.id);
             await fetchAuthors();
-            await getlibrariesfilter();
+            await getlibraries();
             const selectedBookData = bookDetails[0];
             setSelectedBook(selectedBookData);
             setEditedBook(selectedBookData);
@@ -180,6 +181,7 @@ const Book = () => {
         if (response) {
             setBookTypes(response.data.data);
             await fetchAuthors();
+            await getlibraries();
             setCreateBookModal(true);
         }
     }
@@ -187,9 +189,10 @@ const Book = () => {
     const createbook = async () => {
         const payload = {
             kitap_adi: createofbook.kitap_adi || "",
-            author_id: createofbook.author_id ?? 0,   // id mutlaka int
+            author_id: createofbook.author_id ?? 0,
             isbn: createofbook.isbn || "",
-            kitap_tur_kodu: Number(createofbook.kitap_tur_kodu) || 0  // int olmalı
+            kitap_tur_kodu: Number(createofbook.kitap_tur_kodu) || 0,
+            library_id: createofbook.library_id || 0
         };
 
         const response = await bookService.createbook(payload);
@@ -555,6 +558,27 @@ const Book = () => {
                                     {bookTypes.map(type => (
                                         <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
                                             {type.aciklama}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel id="library-select-label">Kütüphaneler</InputLabel>
+                                <Select
+                                    labelId="library-select-label"
+                                    id="library-select"
+                                    value={createofbook.library_id || ""}
+                                    label="Kitap Türü"
+                                    onChange={(e) =>
+                                        setCreateofbook(prev => ({
+                                            ...prev,
+                                            library_id: e.target.value,
+                                        }))
+                                    }
+                                >
+                                    {libraries.map(item => (
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.library_name}
                                         </MenuItem>
                                     ))}
                                 </Select>

@@ -192,7 +192,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,false)";
+                    string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,library_id,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,@library_id,false)";
                     //var parameters = new { models };
                     connection.Execute(query, models);
                     return Ok(ResponseHelper.ResponseSuccesfully<object>("Book Created Succesfully"));

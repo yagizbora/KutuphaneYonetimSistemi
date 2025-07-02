@@ -46,6 +46,7 @@ namespace KutuphaneYonetimSistemi.Models
         public required int author_id { get; set; }
         public required string ISBN { get; set; }
         public required int kitap_tur_kodu { get; set; }
+        public required int library_id { get; set; }
     }
     public class UpdateBook
     {
