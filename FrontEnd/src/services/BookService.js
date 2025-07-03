@@ -17,6 +17,7 @@ export default class BookService {
 
         }
     }
+    // BUG VAR DÜZELTİLECEK!
     async getbookexcel(data) {
         try {
             const response = await axios.post('/Book/GetAllBooksExcel');
