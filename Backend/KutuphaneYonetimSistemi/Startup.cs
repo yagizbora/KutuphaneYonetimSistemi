@@ -45,7 +45,8 @@ namespace KutuphaneYonetimSistemi
                 {
                     builder.AllowAnyOrigin()
                            .AllowAnyMethod()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .WithExposedHeaders("Content-Disposition");
                 });
             });
 

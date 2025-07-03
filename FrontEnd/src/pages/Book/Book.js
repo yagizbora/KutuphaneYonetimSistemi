@@ -119,6 +119,24 @@ const Book = () => {
     };
 
 
+    const getbookexcel = async () => {
+        try {
+            await bookService.getbookexcel(filterbooks);
+            Swal.fire({
+                title: 'Başarılı',
+                text: 'Excel dosyası indirildi.',
+                icon: 'success'
+            });
+        } catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
+
+
 
     const fetchAuthors = async () => {
         try {
@@ -348,6 +366,13 @@ const Book = () => {
                         onClick={() => createbookmodalopen(true)}
                     >
                         Yeni Kitap Ekle
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => getbookexcel()}
+                    >
+                        Excel İndir
                     </Button>
                 </Box>
             </div>

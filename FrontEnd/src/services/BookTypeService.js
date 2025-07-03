@@ -24,4 +24,5 @@ export default class BookTypeService {
         const response = await axios.put(`/BookType/UpdateBookType`, data);
         return response;
     }
+
 }
