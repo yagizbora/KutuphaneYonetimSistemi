@@ -128,30 +128,22 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var worksheet = workbook.Worksheets.Add("Books");
 
                     // Başlıklar
-                    worksheet.Cell(1, 1).Value = "ID";
-                    worksheet.Cell(1, 2).Value = "Kitap Adı";
-                    worksheet.Cell(1, 3).Value = "ISBN";
-                    worksheet.Cell(1, 4).Value = "Durum";
-                    worksheet.Cell(1, 5).Value = "Yazar Adı";
-                    worksheet.Cell(1, 6).Value = "Yazar ID";
-                    worksheet.Cell(1, 7).Value = "Kitap Tür Kodu";
-                    worksheet.Cell(1, 8).Value = "Kitap Türü";
-                    worksheet.Cell(1, 9).Value = "Kütüphane Adı";
-                    worksheet.Cell(1, 10).Value = "Kütüphane ID";
+                    worksheet.Cell(1, 1).Value = "Kitap Adı";
+                    worksheet.Cell(1, 2).Value = "ISBN";
+                    worksheet.Cell(1, 3).Value = "Durum";
+                    worksheet.Cell(1, 4).Value = "Yazar Adı";
+                    worksheet.Cell(1, 5).Value = "Kitap Türü";
+                    worksheet.Cell(1, 6).Value = "Kütüphane Adı";
 
                     int row = 2;
                     foreach (var book in books)
                     {
-                        worksheet.Cell(row, 1).Value = book.id;
-                        worksheet.Cell(row, 2).Value = book.kitap_adi;
-                        worksheet.Cell(row, 3).Value = book.ISBN;
-                        worksheet.Cell(row, 4).Value = (bool)book.Durum ? "Alındı" : "Boşta";
-                        worksheet.Cell(row, 5).Value = book.author_name;
-                        worksheet.Cell(row, 6).Value = book.author_id;
-                        worksheet.Cell(row, 7).Value = book.kitap_tur_kodu;
-                        worksheet.Cell(row, 8).Value = book.kitap_tur;
-                        worksheet.Cell(row, 9).Value = book.library_name;
-                        worksheet.Cell(row, 10).Value = book.library_id;
+                        worksheet.Cell(row, 1).Value = book.kitap_adi;
+                        worksheet.Cell(row, 2).Value = book.ISBN;
+                        worksheet.Cell(row, 3).Value = (bool)book.Durum ? "Alındı" : "Boşta";
+                        worksheet.Cell(row, 4).Value = book.author_name;
+                        worksheet.Cell(row, 5).Value = book.kitap_tur;
+                        worksheet.Cell(row, 6).Value = book.library_name;
                         row++;
                     }
 
