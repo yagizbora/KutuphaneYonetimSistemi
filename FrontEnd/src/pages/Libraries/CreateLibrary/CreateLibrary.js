@@ -38,10 +38,20 @@ const CreateLibrary = ({ refrestdata }) => {
 
     const createdatafunction = async () => {
         try {
+            if (!editdata.library_name || !editdata.library_working_start_time || !editdata.library_working_end_time || !editdata.location) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Eksik Bilgi',
+                    text: 'Lütfen tüm alanları doldurun.',
+                });
+                return;
+            }
             const response = await libraryService.createlibrary({
                 "library_name": createdata.library_name,
                 "library_working_start_time": createdata.library_working_start_time ? dayjs(createdata.library_working_start_time).format('HH:mm') : null,
-                "library_working_end_time": createdata.library_working_end_time ? dayjs(createdata.library_working_end_time).format('HH:mm') : null
+                "library_working_end_time": createdata.library_working_end_time ? dayjs(createdata.library_working_end_time).format('HH:mm') : null,
+                "location": createdata.location,
+                "location_google_map_adress": createdata.location_google_map_adress
             });
             if (response) {
                 Swal.fire({
