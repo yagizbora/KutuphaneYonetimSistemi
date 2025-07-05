@@ -168,7 +168,7 @@ const Libraries = () => {
                         <CreateLibrary refrestdata={getdata} />
                     </Box>
                 </Grid>
-                <Paper sx={{ p: 2 }}>
+                <Paper sx={{ p: 2, width: '100%', overflow: 'hidden', marginTop: 2 }}>
                     <LibraryTable columns={columns} data={data} />
                 </Paper>
             </Container>
