@@ -19,9 +19,7 @@ export default class BookService {
     }
     async getbookexcel(data) {
         try {
-            const response = await axios.post('/Book/GetAllBooksExcel', data, {
-                responseType: 'blob'
-            });
+            const response = await axios.post('/Book/GetAllBooksExcel', data);
 
             console.log('Headers:', response.headers);
             const contentDisposition = response.headers['content-disposition'];

@@ -121,16 +121,18 @@ const Book = () => {
 
     const getbookexcel = async () => {
         try {
-            await bookService.getbookexcel(filterbooks);
-            Swal.fire({
-                title: 'Başarılı',
-                text: 'Excel dosyası indirildi.',
-                icon: 'success'
-            });
+            const response = await bookService.getbookexcel(filterbooks);
+            if (response) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: 'Excel dosyası indirildi.',
+                    icon: 'success'
+                });
+            }
         } catch (error) {
             Swal.fire({
                 title: 'Hata',
-                text: error?.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
+                text: error.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
                 icon: 'error'
             });
         }

@@ -96,30 +96,66 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
 
         [HttpPost("GetAllBooksExcel")]
-        public async Task<IActionResult> GetAllBooksExcel()
+        public async Task<IActionResult> GetAllBooksExcel(BookFilterModel models)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = @"SELECT 
-                tk.id, tk.kitap_adi, tk.isbn, tk.durum,
-                au.name_surname AS author_name, au.id AS author_id, 
+                    string filtersql = "";
+                    var parameters = new DynamicParameters();
+
+                    if (!string.IsNullOrEmpty(models.kitap_adi))
+                    {
+                        filtersql += " AND tk.kitap_adi ILIKE @kitap_adi";
+                        parameters.Add("kitap_adi", $"%{models.kitap_adi}%");
+                    }
+                    if (models.author_id.HasValue)
+                    {
+                        filtersql += " AND au.id = @author_id";
+                        parameters.Add("author_id", models.author_id.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(models.ISBN))
+                    {
+                        filtersql += " AND tk.isbn ILIKE @isbn";
+                        parameters.Add("isbn", $"%{models.ISBN}%");
+                    }
+                    if (models.Durum.HasValue)
+                    {
+                        filtersql += " AND tk.durum = @durum";
+                        parameters.Add("durum", models.Durum.Value);
+                    }
+                    if (models.kitap_tur_kodu.HasValue)
+                    {
+                        filtersql += " AND tkt.kitap_tur_kodu = @kitap_tur_kodu";
+                        parameters.Add("kitap_tur_kodu", models.kitap_tur_kodu.Value);
+                    }
+                    if (models.library_id.HasValue)
+                    {
+                        filtersql += " AND li.id = @library_id";
+                        parameters.Add("library_id", models.library_id);
+                    }
+
+                    string query = $@"SELECT 
+                tk.kitap_adi, tk.isbn, tk.durum,
+                au.name_surname AS author_name,
                 tkt.kitap_tur_kodu, tkt.aciklama AS kitap_tur,
-                li.library_name, li.id as library_id
+                li.library_name
                 FROM table_kitaplar tk
                 JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                 FULL OUTER JOIN table_authors au ON au.id = tk.author_id
                 FULL OUTER JOIN table_libraries li ON li.id = library_id
-                WHERE tk.is_deleted = false
+                WHERE tk.is_deleted = false {filtersql}
                 ORDER BY tk.id ASC;";
 
-                    var books = (await connection.QueryAsync<ListBookModels>(query)).ToList();
+                    var books = (await connection.QueryAsync<ListBookModels>(query,parameters)).ToList();
 
                     if (books == null || !books.Any())
                         return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
