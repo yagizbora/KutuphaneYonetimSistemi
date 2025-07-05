@@ -38,7 +38,7 @@ const CreateLibrary = ({ refrestdata }) => {
 
     const createdatafunction = async () => {
         try {
-            if (!editdata.library_name || !editdata.library_working_start_time || !editdata.library_working_end_time || !editdata.location) {
+            if (!createdata.library_name || !createdata.library_working_start_time || !createdata.library_working_end_time || !createdata.location) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Eksik Bilgi',
