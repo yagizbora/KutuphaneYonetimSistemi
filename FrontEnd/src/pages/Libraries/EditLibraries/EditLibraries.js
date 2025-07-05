@@ -40,7 +40,9 @@ const editLibraries = () => {
     const [editdata, setEditData] = useState({
         library_name: '',
         library_working_start_time: null,
-        library_working_end_time: null
+        library_working_end_time: null,
+        location: '',
+        location_google_map_adress: ''
     })
 
     const { id } = useParams();
@@ -59,7 +61,9 @@ const editLibraries = () => {
             setEditData({
                 ...response.data.data[0],
                 library_working_start_time: dayjs(response.data.data[0].library_working_start_time, 'HH:mm:ss'),
-                library_working_end_time: dayjs(response.data.data[0].library_working_end_time, 'HH:mm:ss')
+                library_working_end_time: dayjs(response.data.data[0].library_working_end_time, 'HH:mm:ss'),
+                location: response.data.data[0].location || '',
+                location_google_map_adress: response.data.data[0].location_google_map_adress || ''
             });
             console.log("Library data fetched successfully:", response.data.data);
             console.log("Edit data state updated:", editdata);
@@ -75,11 +79,21 @@ const editLibraries = () => {
 
     const createdatafunction = async () => {
         try {
+            if (!editdata.library_name || !editdata.library_working_start_time || !editdata.library_working_end_time || !editdata.location) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Eksik Bilgi',
+                    text: 'Lütfen tüm alanları doldurun.',
+                });
+                return;
+            }
             const response = await libraryService.editLibraries({
                 "id": id,
                 "library_name": editdata.library_name,
                 "library_working_start_time": editdata.library_working_start_time ? dayjs(editdata.library_working_start_time).format('HH:mm') : null,
-                "library_working_end_time": editdata.library_working_end_time ? dayjs(editdata.library_working_end_time).format('HH:mm') : null
+                "library_working_end_time": editdata.library_working_end_time ? dayjs(editdata.library_working_end_time).format('HH:mm') : null,
+                "location": editdata.location || '',
+                "location_google_map_adress": editdata.location_google_map_adress || ''
             });
             if (response) {
                 Swal.fire({
@@ -141,6 +155,25 @@ const editLibraries = () => {
                                     ampm={false}
                                 />
                             </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Lokasyon"
+                                variant="outlined"
+                                value={editdata.location || ''}
+                                onChange={(e) => setEditData({ ...editdata, location: e.target.value })}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Lokasyon Google Adresi"
+                                variant="outlined"
+                                value={editdata.location_google_map_adress || ''}
+                                onChange={(e) => setEditData({ ...editdata, location_google_map_adress: e.target.value })}
+                            />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Box sx={{ mt: 3 }}>

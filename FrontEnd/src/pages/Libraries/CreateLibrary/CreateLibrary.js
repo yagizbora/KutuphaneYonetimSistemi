@@ -15,6 +15,7 @@ import {
     DialogContent,
     DialogActions,
     TextField,
+    TextareaAutosize,
     Select,
     MenuItem,
     FormControl,
@@ -103,6 +104,26 @@ const CreateLibrary = ({ refrestdata }) => {
                                 />
                             </LocalizationProvider>
                         </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Lokasyon"
+                                variant="outlined"
+                                value={createdata.location || ''}
+                                onChange={(e) => setCreateData({ ...createdata, location: e.target.value })}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Lokasyon Google Adresi"
+                                variant="outlined"
+                                value={createdata.location_google_map_adress || ''}
+                                onChange={(e) => setCreateData({ ...createdata, location_google_map_adress: e.target.value })}
+                            />
+                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <Box sx={{ mt: 3 }}>
                                 <Button
@@ -110,13 +131,11 @@ const CreateLibrary = ({ refrestdata }) => {
                                     color="primary"
                                     onClick={() => createdatafunction()}
                                 >
-
                                     Oluştur
                                 </Button>
                             </Box>
                         </Grid>
                     </Grid>
-
                 </Box>
             </Container>
         </>

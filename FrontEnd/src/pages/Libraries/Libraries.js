@@ -164,7 +164,7 @@ const Libraries = () => {
                         backgroundColor: "#f5f5f5",
                     }}
                 >
-                    <Box sx={{ flexGrow: 1 }}>
+                    <Box sx={{ width: '100%' }}>
                         <CreateLibrary refrestdata={getdata} />
                     </Box>
                 </Grid>
