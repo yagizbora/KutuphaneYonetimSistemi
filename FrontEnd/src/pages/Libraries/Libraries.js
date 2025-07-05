@@ -43,6 +43,19 @@ const Libraries = () => {
         { field: 'library_name', headerName: 'Kütüphane Adı', width: 150, sortable: false, },
         { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date', sortable: false, },
         { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date', sortable: false, },
+        { field: 'location', headerName: 'Konum', width: 150, sortable: false, },
+        {
+            field: 'location_google_map_adress', headerName: 'Konum Adresi', width: 200, sortable: false,
+            renderCell: (params) => (
+                <>
+                    {params.value ? (
+                        <a href={params.location_google_map_adress} target="_blank" rel="noopener noreferrer">
+                            {params.value}
+                        </a>
+                    ) : null}
+                </>
+            )
+        },
         {
             field: 'actions',
             headerName: 'İşlemler',
