@@ -48,9 +48,9 @@ const Libraries = () => {
             field: 'location_google_map_adress', headerName: 'Konum Adresi', width: 200, sortable: false,
             renderCell: (params) => (
                 <>
-                    {params.value ? (
-                        <a href={params.location_google_map_adress} target="_blank" rel="noopener noreferrer">
-                            {params.value}
+                    {params.row.location_google_map_adress ? (
+                        <a href={params.row.location_google_map_adress} target="_blank" rel="noopener noreferrer">
+                            Adres
                         </a>
                     ) : null}
                 </>
