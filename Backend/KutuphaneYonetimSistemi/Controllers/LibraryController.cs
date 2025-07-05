@@ -28,7 +28,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using(var connection = _dbHelper.GetConnection())
                 {
 
-                 string query = "SELECT id,library_name,library_working_start_time,library_working_end_time FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
+                 string query = "SELECT id,library_name,library_working_start_time,library_working_end_time,location,location_google_map_adress FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
                     var result = await connection.QueryAsync<LibraryModels>(query,connection);
                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, result));
                 }
@@ -47,7 +47,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 using (var connection = _dbHelper.GetConnection())
                 {
 
-                    string query = "SELECT id,library_name,library_working_start_time,library_working_end_time FROM table_libraries WHERE is_deleted = false AND id = @id";
+                    string query = "SELECT id,library_name,library_working_start_time,library_working_end_time,location_google_map_adress,location FROM table_libraries WHERE is_deleted = false AND id = @id";
                     var result = (await connection.QueryAsync<LibraryModels>(query, new { id = id})).ToList();
                     if(result.Count == 1)
                     {
@@ -72,7 +72,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string updatesql = "UPDATE table_libraries SET library_name = @library_name,library_working_start_time = @library_working_start_time,library_working_end_time = @library_working_end_time WHERE id = @id ";
+                    string updatesql = "UPDATE table_libraries SET library_name = @library_name,library_working_start_time = @library_working_start_time,library_working_end_time = @library_working_end_time, location_google_map_adress  = @location_google_map_adress, location = @location WHERE id = @id ";
                     var result = await connection.ExecuteAsync(updatesql, models);
                     if(result > 1 || result == 1)
                     {
@@ -99,7 +99,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "INSERT INTO table_libraries(library_name,library_working_start_time,library_working_end_time,is_deleted) VALUES (@library_name,@library_working_start_time,@library_working_end_time,false)";
+                    string query = "INSERT INTO table_libraries(library_name,library_working_start_time,library_working_end_time,location_google_map_adress,location,is_deleted) VALUES (@library_name,@library_working_start_time,@library_working_end_time,@location_google_map_adress,@location,false)";
                     var result = await connection.ExecuteAsync(query, model);
                     return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordAdded));
 
