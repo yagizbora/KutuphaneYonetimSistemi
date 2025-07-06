@@ -161,27 +161,36 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
 
                     using var workbook = new XLWorkbook();
-                    var worksheet = workbook.Worksheets.Add("Books");
+                    var ws = workbook.Worksheets.Add("Books");
 
                     // Başlıklar
-                    worksheet.Cell(1, 1).Value = "Kitap Adı";
-                    worksheet.Cell(1, 2).Value = "ISBN";
-                    worksheet.Cell(1, 3).Value = "Durum";
-                    worksheet.Cell(1, 4).Value = "Yazar Adı";
-                    worksheet.Cell(1, 5).Value = "Kitap Türü";
-                    worksheet.Cell(1, 6).Value = "Kütüphane Adı";
+                    ws.Cell(1, 1).Value = "Kitap Adı";
+                    ws.Cell(1, 2).Value = "ISBN";
+                    ws.Cell(1, 3).Value = "Durum";
+                    ws.Cell(1, 4).Value = "Yazar Adı";
+                    ws.Cell(1, 5).Value = "Kitap Türü";
+                    ws.Cell(1, 6).Value = "Kütüphane Adı";
+                    ws.Cell("A1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    ws.Cell("B1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    ws.Cell("C1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    ws.Cell("D1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    ws.Cell("E1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    ws.Cell("F1").Style.Fill.SetBackgroundColor(XLColor.Red);
+                    
 
                     int row = 2;
                     foreach (var book in books)
                     {
-                        worksheet.Cell(row, 1).Value = book.kitap_adi;
-                        worksheet.Cell(row, 2).Value = book.ISBN;
-                        worksheet.Cell(row, 3).Value = (bool)book.Durum ? "Alındı" : "Boşta";
-                        worksheet.Cell(row, 4).Value = book.author_name;
-                        worksheet.Cell(row, 5).Value = book.kitap_tur;
-                        worksheet.Cell(row, 6).Value = book.library_name;
+                        ws.Cell(row, 1).Value = book.kitap_adi;
+                        ws.Cell(row, 2).Value = book.ISBN;
+                        ws.Cell(row, 3).Value = (bool)book.Durum ? "Alındı" : "Boşta";
+                        ws.Cell(row, 4).Value = book.author_name;
+                        ws.Cell(row, 5).Value = book.kitap_tur;
+                        ws.Cell(row, 6).Value = book.library_name;
                         row++;
                     }
+
+                    ws.Columns().AdjustToContents();
 
                     using var stream = new MemoryStream();
                     workbook.SaveAs(stream);
