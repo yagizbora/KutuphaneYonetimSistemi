@@ -177,7 +177,7 @@ const LendingBook = () => {
                                             padding: '12px'
                                         }}
                                     >
-                                        {book.kitap_adi}
+                                        {`${book.kitap_adi} - Günlük Ücret: ${formatCurrency(book.daily_lending_fee)}`}
                                     </MenuItem>
                                 ))}
                             </Select>
