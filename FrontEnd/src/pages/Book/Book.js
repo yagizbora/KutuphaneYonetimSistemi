@@ -471,6 +471,21 @@ const Book = () => {
                             ))}
                         </Select>
                     </FormControl>
+                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+
+                        <TextField
+                            label="Kütüphane Lokasyonu"
+                            value={filterbooks.library_location ?? ""}
+                            onChange={(e) =>
+                                setFilterBooks((prev) => ({
+                                    ...prev,
+                                    library_location: e.target.value,
+                                }))
+                            }
+                        >
+                        </TextField>
+
+                    </FormControl>
                     <IconButton aria-label="search" size="large" onClick={() => { searchbooks() }}>
                         <SearchIcon />
                     </IconButton>
