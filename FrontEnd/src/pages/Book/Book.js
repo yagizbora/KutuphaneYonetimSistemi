@@ -361,7 +361,7 @@ const Book = () => {
                 </Typography>
             </Box>
             <div>
-                <Box sx={{ display: 'flex', mb: 2, gap: 2, bgcolor: '#cfe8fc' }}>
+                <Box sx={{ display: 'flex', mb: 2, gap: 2, bgcolor: '#cfe8fc', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
                     <Button
                         variant="contained"
                         color="primary"
