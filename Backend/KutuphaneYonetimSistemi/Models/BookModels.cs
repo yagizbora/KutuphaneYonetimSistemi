@@ -38,6 +38,7 @@ namespace KutuphaneYonetimSistemi.Models
         public bool? Durum { get; set; }
         public int? kitap_tur_kodu { get; set; }
         public int? library_id { get; set; }
+        public string? library_location { get; set; }
     }
 
     public class CreateBook

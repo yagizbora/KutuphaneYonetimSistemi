@@ -52,6 +52,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                         filtersql += " AND tk.isbn ILIKE @isbn";
                         parameters.Add("isbn", $"%{models.ISBN}%");
                     }
+                    if (!string.IsNullOrEmpty(models.library_location))
+                    {
+                        filtersql += " AND li.location ILIKE @library_location";
+                        parameters.Add("library_location", $"%{models.library_location}%");
+                    }
                     if (models.Durum.HasValue)
                     {
                         filtersql += " AND tk.durum = @durum";
