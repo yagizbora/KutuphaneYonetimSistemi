@@ -34,6 +34,7 @@ const libraryService = new LibraryService();
 const authorService = new AuthorService();
 const bookService = new BookService();
 const bookTypeService = new BookTypeService();
+import { formatCurrency } from '../../utils/helper.js';
 
 const Book = () => {
     const [data, setBooks] = useState([]);
@@ -307,6 +308,9 @@ const Book = () => {
             field: 'daily_lending_fee',
             headerName: 'Günlük Ödünçü Ücreti',
             width: 150,
+            renderCell: (params) => {
+                return formatCurrency(params.value);
+            }
 
         },
         {
