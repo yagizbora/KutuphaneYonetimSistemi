@@ -80,7 +80,16 @@ const editLibraries = () => {
     }
 
     const createdatafunction = async () => {
+
         try {
+            if (editdata.library_email && !emailValid(editdata.library_email)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geçersiz E-posta',
+                    text: 'Lütfen geçerli bir e-posta adresi girin.',
+                });
+                return;
+            }
             if (!editdata.library_name || !editdata.library_working_start_time || !editdata.library_working_end_time || !editdata.location) {
                 Swal.fire({
                     icon: 'warning',
