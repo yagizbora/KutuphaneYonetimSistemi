@@ -29,12 +29,11 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-
 import Grid from '@mui/material/Grid';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import LibraryService from '../../../services/LibraryService.js';
-
+import { emailValid } from '../../../utils/helper.js';
 const editLibraries = () => {
     const libraryService = new LibraryService();
     const [editdata, setEditData] = useState({
@@ -128,7 +127,7 @@ const editLibraries = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Hata',
-                text: 'Kütüphane oluşturulamadı.',
+                text: error.response.data.message || 'Kütüphane oluşturulamadı.',
             });
         }
     }
