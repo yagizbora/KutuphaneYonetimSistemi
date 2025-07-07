@@ -57,6 +57,18 @@ const Libraries = () => {
             )
         },
         {
+            field: 'library_email', headerName: 'Elektronik Posta', width: 200, sortable: false,
+            renderCell: (params) => (
+                <>
+                    {params.row.library_email ? (
+                        <a href={params.row.library_email} target="_blank" rel="noopener noreferrer">
+                            E-mail adresi
+                        </a>
+                    ) : null}
+                </>
+            )
+        },
+        {
             field: 'actions',
             headerName: 'İşlemler',
             minWidth: 150,

@@ -8,6 +8,7 @@
         public TimeSpan? library_working_end_time { get; set; }
         public string? location { get; set; }
         public string? location_google_map_adress { get; set; }
+        public string? library_email { get; set; }
     }
     public class CreateLibrary
     {
@@ -15,6 +16,7 @@
         public required TimeSpan library_working_start_time { get; set; }
         public required TimeSpan library_working_end_time { get; set; }
         public required string location { get; set; }
+        public string? library_email { get; set; }
         public string? location_google_map_adress { get; set; }
     }
     public class EditLibraryModels
@@ -23,7 +25,8 @@
         public required string? library_name { get; set; }
         public required TimeSpan? library_working_start_time { get; set; }
         public required TimeSpan? library_working_end_time { get; set; }
-        public required string location { get; set; } 
+        public required string location { get; set; }
+        public string? library_email { get; set; }
         public string? location_google_map_adress { get; set; } 
     }
 }
