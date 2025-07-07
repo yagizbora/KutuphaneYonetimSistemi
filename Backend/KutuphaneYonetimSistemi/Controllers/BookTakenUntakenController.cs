@@ -30,7 +30,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = @"SELECT tk.id, tk.kitap_adi, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur
+                    string query = @"SELECT tk.id, tk.kitap_adi,tk.daily_lending_fee, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur
                                      FROM table_kitaplar tk 
                                      JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
                                       FULL OUTER JOIN table_authors au ON au.id = tk.author_id
@@ -57,7 +57,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = @"SELECT tk.id, tk.kitap_adi, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur
+                    string query = @"SELECT tk.id, tk.kitap_adi,tk.daily_lending_fee, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur
                                      FROM table_kitaplar tk 
                                      JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu 
                                      FULL OUTER JOIN table_authors au ON au.id = tk.author_id

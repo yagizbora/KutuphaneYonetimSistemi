@@ -73,6 +73,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string? kitap_adi { get; set; }
         public string? author_name { get; set; }
         public string? isbn { get; set; }
+        public int? daily_lending_fee { get; set; }
         public string? kitap_tur { get; set; }
         public bool? durum { get; set; }
     }

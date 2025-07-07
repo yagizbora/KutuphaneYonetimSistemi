@@ -30,6 +30,7 @@ import LendingBookService from '../../services/LendingBook';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
+import { formatCurrency } from '../../utils/helper.js';
 
 const bookService = new BookService();
 const lendingBookService = new LendingBookService();
@@ -92,7 +93,7 @@ const LendingBook = () => {
             if (response) {
                 Swal.fire({
                     title: 'Başarılı',
-                    text: 'Kitap başarıyla ödünç verildi.',
+                    text: response.data.message || 'Kitap başarıyla ödünç verildi.',
                     icon: 'success'
                 });
                 getBooks();
@@ -115,6 +116,15 @@ const LendingBook = () => {
         { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
+        {
+            field: 'daily_lending_fee',
+            headerName: 'Günlük Ödünçü Ücreti',
+            width: 150,
+            renderCell: (params) => {
+                return formatCurrency(params.value);
+            }
+
+        },
         {
             field: 'durum',
             headerName: 'Durum',
