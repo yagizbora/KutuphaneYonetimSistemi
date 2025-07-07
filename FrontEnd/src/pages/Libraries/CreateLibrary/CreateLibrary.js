@@ -30,6 +30,7 @@ import Grid from '@mui/material/Grid';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import LibraryService from '../../../services/LibraryService.js';
+import { emailValid } from '../../../utils/helper.js';
 
 const CreateLibrary = ({ refrestdata }) => {
     const libraryService = new LibraryService();
@@ -38,6 +39,15 @@ const CreateLibrary = ({ refrestdata }) => {
 
     const createdatafunction = async () => {
         try {
+            if (createdata.library_email && !emailValid(createdata.library_email)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geçersiz E-posta',
+                    text: 'Lütfen geçerli bir e-posta adresi girin.',
+                });
+                return;
+            }
+
             if (!createdata.library_name || !createdata.library_working_start_time || !createdata.library_working_end_time || !createdata.location) {
                 Swal.fire({
                     icon: 'warning',
