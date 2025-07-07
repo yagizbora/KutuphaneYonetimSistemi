@@ -591,6 +591,18 @@ const Book = () => {
                                 }
                                 variant="outlined"
                             />
+                            {/* Günlük kitap kiralama */}
+                            <TextField
+                                fullWidth
+                                label="Günlük kitap kiralama ücreti"
+                                name="Günlük kitap kiralama ücreti"
+                                type="number"
+                                value={createofbook.daily_lending_fee || ''}
+                                onChange={(e) =>
+                                    setCreateofbook(prev => ({ ...prev, daily_lending_fee: e.target.value }))
+                                }
+                                variant="outlined"
+                            />
 
                             {/* Kitap Türü Select */}
                             <FormControl fullWidth variant="outlined">
@@ -695,6 +707,20 @@ const Book = () => {
                                     name="isbn"
                                     value={editedBook.isbn || ''}
                                     onChange={handleInputChange}
+                                    variant="outlined"
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Günlük kitap kiralama ücreti"
+                                    name="Günlük kitap kiralama ücreti"
+                                    type="number"
+                                    value={editedBook.daily_lending_fee || ''}
+                                    onChange={(e) =>
+                                        setEditedBook((prev) => ({
+                                            ...prev,
+                                            daily_lending_fee: e.target.value,
+                                        }))
+                                    }
                                     variant="outlined"
                                 />
                                 <Select
