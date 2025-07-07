@@ -252,6 +252,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                         filtersql += " AND tk.durum = @durum";
                         parameters.Add("durum", models.Durum.Value);
                     }
+                    if (!string.IsNullOrEmpty(models.library_location))
+                    {
+                        filtersql += " AND li.location ILIKE @library_location";
+                        parameters.Add("library_location", $"%{models.library_location}%");
+                    }
                     if (models.kitap_tur_kodu.HasValue)
                     {
                         filtersql += " AND tkt.kitap_tur_kodu = @kitap_tur_kodu";
