@@ -16,6 +16,8 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
+        public int fee = 100;
+
 
         [HttpGet("LendingBooksGet")]
         public async Task<IActionResult> LendingBooksGet()
@@ -186,7 +188,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (calculateday > 10)
                     {
-                        int delayallowance = (int)(calculateday - 10) * 1;
+                        int delayallowance = (int)(calculateday - 10) * fee;
                         var list = (new
                         {
                             calculatedDelayAllowance = delayallowance
@@ -275,7 +277,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     int delayDays = calculateday - 10;
-                    decimal delayFee = delayDays * 1;
+                    decimal delayFee = delayDays * fee;
 
                     if (models.payment_amount < delayFee)
                     {
