@@ -51,7 +51,8 @@ const CreateLibrary = ({ refrestdata }) => {
                 "library_working_start_time": createdata.library_working_start_time ? dayjs(createdata.library_working_start_time).format('HH:mm') : null,
                 "library_working_end_time": createdata.library_working_end_time ? dayjs(createdata.library_working_end_time).format('HH:mm') : null,
                 "location": createdata.location,
-                "location_google_map_adress": createdata.location_google_map_adress
+                "location_google_map_adress": createdata.location_google_map_adress,
+                "library_email": createdata.library_email,
             });
             if (response) {
                 Swal.fire({
@@ -132,6 +133,15 @@ const CreateLibrary = ({ refrestdata }) => {
                                 variant="outlined"
                                 value={createdata.location_google_map_adress || ''}
                                 onChange={(e) => setCreateData({ ...createdata, location_google_map_adress: e.target.value })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Elektronik Posta"
+                                variant="outlined"
+                                value={createdata.library_email || ''}
+                                onChange={(e) => setCreateData({ ...createdata, library_email: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>

@@ -42,7 +42,8 @@ const editLibraries = () => {
         library_working_start_time: null,
         library_working_end_time: null,
         location: '',
-        location_google_map_adress: ''
+        location_google_map_adress: '',
+        library_email: '',
     })
 
     const { id } = useParams();
@@ -63,7 +64,8 @@ const editLibraries = () => {
                 library_working_start_time: dayjs(response.data.data[0].library_working_start_time, 'HH:mm:ss'),
                 library_working_end_time: dayjs(response.data.data[0].library_working_end_time, 'HH:mm:ss'),
                 location: response.data.data[0].location || '',
-                location_google_map_adress: response.data.data[0].location_google_map_adress || ''
+                location_google_map_adress: response.data.data[0].location_google_map_adress || '',
+                library_email: response.data.data[0].library_email || '',
             });
             console.log("Library data fetched successfully:", response.data.data);
             console.log("Edit data state updated:", editdata);
@@ -93,7 +95,8 @@ const editLibraries = () => {
                 "library_working_start_time": editdata.library_working_start_time ? dayjs(editdata.library_working_start_time).format('HH:mm') : null,
                 "library_working_end_time": editdata.library_working_end_time ? dayjs(editdata.library_working_end_time).format('HH:mm') : null,
                 "location": editdata.location || '',
-                "location_google_map_adress": editdata.location_google_map_adress || ''
+                "location_google_map_adress": editdata.location_google_map_adress || '',
+                "library_email": editdata.library_email || '',
             });
             if (response) {
                 Swal.fire({
@@ -173,6 +176,15 @@ const editLibraries = () => {
                                 variant="outlined"
                                 value={editdata.location_google_map_adress || ''}
                                 onChange={(e) => setEditData({ ...editdata, location_google_map_adress: e.target.value })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Elektronik Posta"
+                                variant="outlined"
+                                value={editdata.library_email || ''}
+                                onChange={(e) => setEditData({ ...editdata, library_email: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>

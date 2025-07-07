@@ -61,8 +61,8 @@ const Libraries = () => {
             renderCell: (params) => (
                 <>
                     {params.row.library_email ? (
-                        <a href={params.row.library_email} target="_blank" rel="noopener noreferrer">
-                            E-mail adresi
+                        <a href={`mailto:${params.row.library_email}`} rel="noopener noreferrer">
+                            {params.row.library_email}
                         </a>
                     ) : null}
                 </>
