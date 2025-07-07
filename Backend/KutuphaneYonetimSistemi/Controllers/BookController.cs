@@ -91,7 +91,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     FULL OUTER JOIN table_libraries li ON li.id = library_id
                     WHERE tk.is_deleted = false {filtersql}
                     ORDER BY tk.id ASC;";
-                    var books = await connection.QueryAsync<ListBookModels>(query, parameters);
+                    var books = (await connection.QueryAsync<ListBookModels>(query, parameters)).ToList();
+                    if (books == null || !books.Any())
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+                    }
                     return Ok(ResponseHelper.OkResponse("Books fetched.", books));
                 }
             }

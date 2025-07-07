@@ -111,7 +111,7 @@ const Book = () => {
                 setBooks([]);
             }
         } catch (error) {
-            setError("Kitaplar yüklenirken bir hata oluştu.");
+            setError(error?.response?.data?.message || "Kitaplar yüklenirken bir hata oluştu.");
             setBooks([]);
         } finally {
             setLoading(false);
@@ -162,7 +162,7 @@ const Book = () => {
         catch (error) {
             Swal.fire({
                 title: 'Hata',
-                text: error?.response?.message,
+                text: error?.response?.data?.message,
                 icon: 'error'
             })
         }
