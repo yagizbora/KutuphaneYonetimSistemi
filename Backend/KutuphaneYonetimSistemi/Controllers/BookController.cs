@@ -276,7 +276,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
 
                     using var workbook = new XLWorkbook();
-                    var ws = workbook.Worksheets.Add("Books");
+                    var ws = workbook.Worksheets.Add("Kitaplar");
 
                     var dataTable = new DataTable();
                     dataTable.Columns.Add("Kitap Adı");
@@ -288,7 +288,8 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     foreach (var book in books)
                     {
-                        dataTable.Rows.Add(
+                            dataTable.Rows.Add
+                            (
                             book.kitap_adi,
                             book.ISBN,
                             (bool)book.Durum ? "Alındı" : "Boşta",
@@ -299,9 +300,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     var table = ws.Cell(1, 1).InsertTable(dataTable, "KitaplarTablosu", true);
+                    
                     ws.SheetView.FreezeRows(1);
                     ws.Columns().AdjustToContents();
-                    table.Theme = XLTableTheme.TableStyleMedium9; 
+                    table.Theme = XLTableTheme.TableStyleLight16; 
 
 
                     using var stream = new MemoryStream();
