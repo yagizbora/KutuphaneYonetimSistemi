@@ -142,7 +142,7 @@ const ReturnBook = () => {
     const [paymentdata, setPaymentdata] = useState({
         id: null,
         "calculatedDelayAllowance": "",
-        "geri_verme_tarihi": null,
+        "geri_alma_tarihi": null,
         "payment_amount": "",
         "payment_type": "",
         "receipt_no": ""
@@ -217,7 +217,7 @@ const ReturnBook = () => {
         try {
             const response = await returnbookservice.CalculateBookLending({
                 id: data.id,
-                "odunc_alma_tarihi": data.odunc_alma_tarihi
+                "geri_alma_tarihi": data.odunc_alma_tarihi
             });
             if (response) {
 

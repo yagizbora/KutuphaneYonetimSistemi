@@ -11,7 +11,7 @@
     public class CalculateBook
     {
         public required int id { get; set; }
-        public DateTime? odunc_alma_tarihi { get; set; }
+        public DateTime? geri_alma_tarihi { get; set; }
     }
     public class BookRequestModels
     {

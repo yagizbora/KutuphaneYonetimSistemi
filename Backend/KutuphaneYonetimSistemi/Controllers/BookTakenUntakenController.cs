@@ -148,7 +148,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                     return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
                 }
             }
-
         [HttpPost("CalculateBookLending")]
         public async Task<IActionResult> CalculateBook(CalculateBook model)
         {
@@ -156,6 +155,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -167,42 +167,34 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
                     }
-                    DateTime date_of_taken_book;
-                    if (!model.odunc_alma_tarihi.HasValue)
-                    {
+
                     string findbook = "SELECT odunc_alma_tarihi FROM table_kitaplar WHERE id = @id";
-                    DateTime findbookresponse = await connection.QueryFirstOrDefaultAsync<DateTime>(findbook, new { id = model.id });
-                    if (findbookresponse == default(DateTime))
+                    DateTime oduncAlmaTarihi = await connection.QueryFirstOrDefaultAsync<DateTime>(findbook, new { id = model.id });
+
+                    if (oduncAlmaTarihi == default(DateTime))
                     {
-                            return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alma tarihi sistemde bulunamadı."));
-                    }
-                    date_of_taken_book = findbookresponse;
-                    }
-                    else
-                    {
-                        date_of_taken_book = (DateTime)model.odunc_alma_tarihi;
+                        return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alma tarihi sistemde bulunamadı."));
                     }
 
-                    DateTime todaydate = DateTime.Now;
-                    int calculateday = (int)(todaydate - date_of_taken_book).TotalDays;
+                    DateTime geriAlmaTarihi = model.geri_alma_tarihi ?? DateTime.Now;
 
-                    if (calculateday > 10)
+                    string findfee = "SELECT daily_lending_fee FROM table_kitaplar WHERE id = @id";
+                    int findfeeresult = await connection.QueryFirstOrDefaultAsync<int>(findfee, new { id = model.id });
+
+                    int gecenGun = (int)(geriAlmaTarihi.Date - oduncAlmaTarihi.Date).TotalDays;
+
+                    int ceza = 0;
+                    if (gecenGun > 10)
                     {
-                        int delayallowance = (int)(calculateday - 10) * fee;
-                        var list = (new
-                        {
-                            calculatedDelayAllowance = delayallowance
-                        });
-                        return Ok(ResponseHelper.OkResponse("Hesaplama başarılı!", list));
+                        ceza = (gecenGun - 10) * findfeeresult;
                     }
-                    else
+
+                    var result = new
                     {
-                        var list = (new
-                        {
-                            calculatedDelayAllowance = 0
-                        });
-                        return Ok(ResponseHelper.OkResponse("Hesaplama başarılı!", list));
-                    }
+                        calculatedDelayAllowance = ceza
+                    };
+
+                    return Ok(ResponseHelper.OkResponse("Hesaplama başarılı!", result));
                 }
             }
             catch (Exception ex)
@@ -210,13 +202,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
         [HttpPost("ReturnBook")]
         public async Task<IActionResult> ReturnBook([FromBody] ReturnBook models)
         {
-            TokenController g = new (_dbHelper);
+            TokenController g = new(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return BadRequest(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -225,39 +219,33 @@ namespace KutuphaneYonetimSistemi.Controllers
                     BookStatusModel? book = await connection.QueryFirstOrDefaultAsync<BookStatusModel>(checkBookQuery, new { id = models.id });
 
                     if (book == null)
-                    {
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap bulunamadı!"));
-                    }
 
                     if (book.Durum)
-                    {
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
-                    }
 
-                    if (string.IsNullOrEmpty(book.odunc_alan))
-                    {
+                    if (string.IsNullOrEmpty(book.odunc_alan) || !book.odunc_alma_tarihi.HasValue)
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
-                    }
 
-                    if (!book.odunc_alma_tarihi.HasValue)
-                    {
-                        return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
-                    }
+                    string findFeeQuery = "SELECT daily_lending_fee FROM table_kitaplar WHERE id = @id";
+                    int dailyFee = await connection.QueryFirstOrDefaultAsync<int>(findFeeQuery, new { id = models.id });
 
-                    int calculateday = (int)(models.geri_verme_tarihi - book.odunc_alma_tarihi.Value).TotalDays;
+                    DateTime geriVermeTarihi = models.geri_verme_tarihi != default(DateTime) ? models.geri_verme_tarihi : DateTime.Now;
 
-                    if (calculateday <= 10)
+                    int totalDays = (int)(geriVermeTarihi.Date - book.odunc_alma_tarihi.Value.Date).TotalDays;
+
+                    if (totalDays <= 10)
                     {
                         string updateQuery = "UPDATE table_kitaplar SET Durum = true, odunc_alan = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
                         int updateResult = await connection.ExecuteAsync(updateQuery, new { id = models.id });
 
                         if (updateResult > 0)
                         {
-                            string insertSuccessPaymentQuery = @"
-                           INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date,receipt_no) 
-                           VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date,@receipt_no)";
+                            string insertLogQuery = @"
+                        INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, receipt_no) 
+                        VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date, @receipt_no)";
 
-                            int paymentLogResult = await connection.ExecuteAsync(insertSuccessPaymentQuery, new
+                            int logResult = await connection.ExecuteAsync(insertLogQuery, new
                             {
                                 models.payment_amount,
                                 models.payment_type,
@@ -265,27 +253,24 @@ namespace KutuphaneYonetimSistemi.Controllers
                                 payment_date = DateTime.Now,
                                 receipt_no = models.receipt_no
                             });
-                            if (paymentLogResult > 0)
-                            {
+
+                            if (logResult > 0)
                                 return Ok(ResponseHelper.ActionResponse("Kitap zamanında iade edildi."));
-                            }
                         }
-                        else
-                        {
-                            return BadRequest(ResponseHelper.ErrorResponse("Kitap durumu güncellenemedi. Bir Hata oluştu"));
-                        }
+
+                        return BadRequest(ResponseHelper.ErrorResponse("Kitap durumu güncellenemedi."));
                     }
 
-                    int delayDays = calculateday - 10;
-                    decimal delayFee = delayDays * fee;
+                    int delayDays = totalDays - 10;
+                    decimal delayFee = delayDays * dailyFee;
 
                     if (models.payment_amount < delayFee)
                     {
-                        string insertPaymentQuery = @"
-                       INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, payment_failed_subject) 
-                       VALUES (@payment_amount, @payment_type, @book_id, false, false, @payment_date, 'Ödeme miktarı yetersiz!')";
+                        string insertFailLog = @"
+                    INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, payment_failed_subject) 
+                    VALUES (@payment_amount, @payment_type, @book_id, false, false, @payment_date, 'Ödeme miktarı yetersiz!')";
 
-                        await connection.ExecuteAsync(insertPaymentQuery, new
+                        await connection.ExecuteAsync(insertFailLog, new
                         {
                             models.payment_amount,
                             models.payment_type,
@@ -297,15 +282,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     string updateBookQuery = "UPDATE table_kitaplar SET Durum = true, odunc_alan = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
-                    int returnBookResult = await connection.ExecuteAsync(updateBookQuery, new { id = models.id });
+                    int returnResult = await connection.ExecuteAsync(updateBookQuery, new { id = models.id });
 
-                    if (returnBookResult > 0)
+                    if (returnResult > 0)
                     {
-                        string insertSuccessPaymentQuery = @"
-                       INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date,receipt_no) 
-                       VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date,@receipt_no)";
+                        string insertLog = @"
+                    INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, receipt_no) 
+                    VALUES (@payment_amount, @payment_type, @book_id, true, false, @payment_date, @receipt_no)";
 
-                        int paymentLogResult = await connection.ExecuteAsync(insertSuccessPaymentQuery, new
+                        int paymentLogResult = await connection.ExecuteAsync(insertLog, new
                         {
                             models.payment_amount,
                             models.payment_type,
@@ -315,10 +300,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                         });
 
                         if (paymentLogResult > 0)
-                        {
                             return Ok(ResponseHelper.ActionResponse("Kitap başarıyla iade edildi."));
-                        }
                     }
+
                     return BadRequest(ResponseHelper.ErrorResponse("İade işlemi başarısız."));
                 }
             }
@@ -327,5 +311,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
     }
 }
