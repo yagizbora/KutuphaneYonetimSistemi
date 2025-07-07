@@ -71,7 +71,7 @@ const Libraries = () => {
         {
             field: 'actions',
             headerName: 'İşlemler',
-            minWidth: 150,
+            minWidth: 250,
             flex: 1,
             sortable: false,
             renderCell: (params) => (
