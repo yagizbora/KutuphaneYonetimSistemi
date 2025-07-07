@@ -77,6 +77,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     SELECT 
                     tk.id, 
                     tk.kitap_adi,
+                    tk.daily_lending_fee,
                     tk.isbn,
                     tk.durum,
                     au.name_surname as author_name,
@@ -351,6 +352,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = @"SELECT 
                     tk.id, 
                     tk.kitap_adi,
+                    tk.daily_lending_fee,
                     tk.isbn,
                     tk.durum,
                     au.name_surname as author_name,
@@ -436,7 +438,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,library_id,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,@library_id,false)";
+                    string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,library_id,daily_lending_fee,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,@library_id,@daily_lending_fee,false)";
                     //var parameters = new { models };
                     connection.Execute(query, models);
                     return Ok(ResponseHelper.ResponseSuccesfully<object>("Book Created Succesfully"));
@@ -467,7 +469,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
                     }
 
-                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu,library_id = @library_id WHERE id = @id";
+                    string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu,library_id = @library_id,daily_lending_fee = @daily_lending_fee WHERE id = @id";
                     var result = connection.Execute(datasql, models);
                     if (result > 0 || result == 1)
                     {

@@ -27,6 +27,8 @@ namespace KutuphaneYonetimSistemi.Models
         public string? library_name { get; set; }
         [JsonPropertyOrder(10)]
         public int? library_id { get; set; }
+        [JsonPropertyOrder(11)]
+        public int? daily_lending_fee { get; set; }
 
     }
 
@@ -39,6 +41,8 @@ namespace KutuphaneYonetimSistemi.Models
         public int? kitap_tur_kodu { get; set; }
         public int? library_id { get; set; }
         public string? library_location { get; set; }
+        public int? daily_lending_fee { get; set; }
+
     }
 
     public class CreateBook
@@ -48,6 +52,8 @@ namespace KutuphaneYonetimSistemi.Models
         public required string ISBN { get; set; }
         public required int kitap_tur_kodu { get; set; }
         public required int library_id { get; set; }
+        public required int daily_lending_fee { get; set; }
+
     }
     public class UpdateBook
     {
@@ -57,6 +63,8 @@ namespace KutuphaneYonetimSistemi.Models
         public required string ISBN { get; set; }
         public required int kitap_tur_kodu { get; set; }
         public required int library_id { get; set; }
+        public required int daily_lending_fee { get; set; }
+
     }
 
     public class lendingBooksGet

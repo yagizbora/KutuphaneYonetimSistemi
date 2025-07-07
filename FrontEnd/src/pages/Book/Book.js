@@ -304,6 +304,12 @@ const Book = () => {
         { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 130 },
         {
+            field: 'daily_lending_fee',
+            headerName: 'Günlük Ödünçü Ücreti',
+            width: 150,
+
+        },
+        {
             field: 'durum',
             headerName: 'Durum',
             width: 120,
