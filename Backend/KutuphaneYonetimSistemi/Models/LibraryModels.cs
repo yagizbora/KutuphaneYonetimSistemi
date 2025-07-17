@@ -9,6 +9,7 @@
         public string? location { get; set; }
         public string? location_google_map_adress { get; set; }
         public string? library_email { get; set; }
+        public decimal? phone_number { get; set; }
     }
     public class CreateLibrary
     {
@@ -18,6 +19,7 @@
         public required string location { get; set; }
         public string? library_email { get; set; }
         public string? location_google_map_adress { get; set; }
+        public decimal? phone_number { get; set; }
     }
     public class EditLibraryModels
     {
@@ -27,6 +29,7 @@
         public required TimeSpan? library_working_end_time { get; set; }
         public required string location { get; set; }
         public string? library_email { get; set; }
-        public string? location_google_map_adress { get; set; } 
+        public string? location_google_map_adress { get; set; }
+        public decimal? phone_number { get; set; }
     }
 }
