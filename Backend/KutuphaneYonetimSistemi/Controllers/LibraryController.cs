@@ -77,11 +77,21 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));
                 }
-            }
+            }   
             try
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
+
+                    if (models.phone_number.HasValue)
+                    {
+                        var phoneNumberString = models.phone_number.Value.ToString(CultureInfo.InvariantCulture);
+                        if (!Helper.ValidatePhoneNumber(phoneNumberString))
+                        {
+                            return BadRequest(ResponseHelper.ErrorResponse("Telefon numarası geçerli değil!"));
+                        }
+                    }
+
                     string updatesql = "UPDATE table_libraries SET library_name = @library_name,library_working_start_time = @library_working_start_time,library_working_end_time = @library_working_end_time, location_google_map_adress  = @location_google_map_adress, location = @location,library_email = @library_email,phone_number = @phone_number WHERE id = @id ";
                     var result = await connection.ExecuteAsync(updatesql, models);
                     if(result > 1 || result == 1)
@@ -117,6 +127,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
                 using (var connection = _dbHelper.GetConnection())
                 {
+                    if (model.phone_number.HasValue)
+                    {
+                        var phoneNumberString = model.phone_number.Value.ToString(CultureInfo.InvariantCulture);
+                        if (!Helper.ValidatePhoneNumber(phoneNumberString))
+                        {
+                            return BadRequest(ResponseHelper.ErrorResponse("Telefon numarası geçerli değil!"));
+                        }
+                    }
+
                     string query = "INSERT INTO table_libraries(library_name,library_working_start_time,library_working_end_time,location_google_map_adress,location,library_email,phone_number,is_deleted) VALUES (@library_name,@library_working_start_time,@library_working_end_time,@location_google_map_adress,@location,@library_email,@phone_number,false)";
                     var result = await connection.ExecuteAsync(query, model);
                     return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordAdded));

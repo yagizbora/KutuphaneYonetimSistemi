@@ -49,6 +49,16 @@ namespace KutuphaneYonetimSistemi.Common
         {
             return Regex.IsMatch(input: email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
         }
+        public static bool ValidatePhoneNumber(string phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return false;
+
+            var normalized = Regex.Replace(phoneNumber, @"[^\d+]", "").Trim();
+
+            var pattern = @"^(?:\+90|0)?(?:5\d{9}|[2-9]\d{2}\d{7})$";
+            return Regex.IsMatch(normalized, pattern);
+        }
 
     }
 }
