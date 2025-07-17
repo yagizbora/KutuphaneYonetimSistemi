@@ -33,7 +33,7 @@ import Grid from '@mui/material/Grid';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import LibraryService from '../../../services/LibraryService.js';
-import { emailValid } from '../../../utils/helper.js';
+import { emailValid, validatePhoneNumber } from '../../../utils/helper.js';
 const editLibraries = () => {
     const libraryService = new LibraryService();
     const [editdata, setEditData] = useState({
@@ -90,6 +90,14 @@ const editLibraries = () => {
                 });
                 return;
             }
+            if (editdata.phone_number && !validatePhoneNumber(editdata.phone_number)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geçersiz Telefon Numarası',
+                    text: 'Lütfen geçerli bir telefon numarası girin.',
+                });
+                return;
+            }
             if (!editdata.library_name || !editdata.library_working_start_time || !editdata.library_working_end_time || !editdata.location) {
                 Swal.fire({
                     icon: 'warning',
@@ -129,7 +137,7 @@ const editLibraries = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Hata',
-                text: error.response.data.message || 'Kütüphane oluşturulamadı.',
+                text: error?.response?.data?.message || 'Kütüphane oluşturulamadı.',
             });
         }
     }

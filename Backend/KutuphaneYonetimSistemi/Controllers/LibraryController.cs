@@ -115,7 +115,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));
                     }
                 }
-
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string query = "INSERT INTO table_libraries(library_name,library_working_start_time,library_working_end_time,location_google_map_adress,location,library_email,phone_number,is_deleted) VALUES (@library_name,@library_working_start_time,@library_working_end_time,@location_google_map_adress,@location,@library_email,@phone_number,false)";
