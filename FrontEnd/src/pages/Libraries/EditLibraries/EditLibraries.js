@@ -65,6 +65,7 @@ const editLibraries = () => {
                 location: response.data.data[0].location || '',
                 location_google_map_adress: response.data.data[0].location_google_map_adress || '',
                 library_email: response.data.data[0].library_email || '',
+                phone_number: response.data.data[0].phone_number || '',
             });
             console.log("Library data fetched successfully:", response.data.data);
             console.log("Edit data state updated:", editdata);
@@ -105,6 +106,7 @@ const editLibraries = () => {
                 "location": editdata.location || '',
                 "location_google_map_adress": editdata.location_google_map_adress || '',
                 "library_email": editdata.library_email || '',
+                "phone_number": editdata.phone_number || ''
             });
             if (response) {
                 Swal.fire({
@@ -184,6 +186,15 @@ const editLibraries = () => {
                                 variant="outlined"
                                 value={editdata.location_google_map_adress || ''}
                                 onChange={(e) => setEditData({ ...editdata, location_google_map_adress: e.target.value })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Telefon Numarası (+90)"
+                                variant="outlined"
+                                value={editdata.phone_number || ''}
+                                onChange={(e) => setEditData({ ...editdata, phone_number: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>

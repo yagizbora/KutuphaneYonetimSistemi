@@ -63,6 +63,7 @@ const CreateLibrary = ({ refrestdata }) => {
                 "location": createdata.location,
                 "location_google_map_adress": createdata.location_google_map_adress,
                 "library_email": createdata.library_email,
+                "phone_number": createdata.phone_number
             });
             if (response) {
                 Swal.fire({
@@ -143,6 +144,15 @@ const CreateLibrary = ({ refrestdata }) => {
                                 variant="outlined"
                                 value={createdata.location_google_map_adress || ''}
                                 onChange={(e) => setCreateData({ ...createdata, location_google_map_adress: e.target.value })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Telefon Numarası (+90)"
+                                variant="outlined"
+                                value={createdata.phone_number || ''}
+                                onChange={(e) => setCreateData({ ...createdata, phone_number: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
