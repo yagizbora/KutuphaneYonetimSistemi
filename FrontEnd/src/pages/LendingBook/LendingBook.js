@@ -93,7 +93,7 @@ const LendingBook = () => {
             if (response) {
                 Swal.fire({
                     title: 'Başarılı',
-                    text: response.data.message || 'Kitap başarıyla ödünç verildi.',
+                    text: response?.data?.message || 'Kitap başarıyla ödünç verildi.',
                     icon: 'success'
                 });
                 getBooks();

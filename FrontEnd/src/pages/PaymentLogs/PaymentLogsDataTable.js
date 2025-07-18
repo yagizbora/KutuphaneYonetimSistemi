@@ -59,7 +59,7 @@ const PaymentLogsDataTable = ({ data, index }) => {
             width: 160,
             valueFormatter: (params) => {
                 if (!params) return 'Tarih yok';
-                const date = dayjs(params.value);
+                const date = dayjs(params);
                 return date.format('DD.MM.YYYY');
             }
         },
