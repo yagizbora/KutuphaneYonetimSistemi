@@ -213,9 +213,9 @@ const Book = () => {
             author_id: createofbook.author_id ?? 0,
             isbn: createofbook.isbn || "",
             kitap_tur_kodu: Number(createofbook.kitap_tur_kodu) || 0,
-            library_id: createofbook.library_id || 0
+            library_id: createofbook.library_id || 0,
+            daily_lending_fee: createofbook.daily_lending_fee
         };
-
         const response = await bookService.createbook(payload);
 
         if (response) {
