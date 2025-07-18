@@ -319,14 +319,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                         wsData.Columns().AdjustToContents();
                         dataTableRange.Theme = XLTableTheme.TableStyleLight16;
 
-                        // 2. Sayfa: Pivot Tablo
-                        var wsPivot = workbook.Worksheets.Add("Kitaplar Pivot");
-                        var dataRange = wsData.RangeUsed();
-
-                        var pivotTable = wsPivot.PivotTables.Add("KitaplarPivotTablosu", wsPivot.Cell(1, 1), dataRange);
-                        pivotTable.RowLabels.Add("Kütüphane Adı");
-                        pivotTable.ColumnLabels.Add("Durum");
-                        pivotTable.Values.Add("Kitap Adı").SetSummaryFormula(XLPivotSummary.Count);
 
                         using var stream = new MemoryStream();
                         workbook.SaveAs(stream);
