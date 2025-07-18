@@ -229,113 +229,120 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
 
-            try
-            {
-                using (var connection = _dbHelper.GetConnection())
+                try
                 {
-                    string filtersql = "";
-                    var parameters = new DynamicParameters();
-
-                    if (!string.IsNullOrEmpty(models.kitap_adi))
+                    using (var connection = _dbHelper.GetConnection())
                     {
-                        filtersql += " AND tk.kitap_adi ILIKE @kitap_adi";
-                        parameters.Add("kitap_adi", $"%{models.kitap_adi}%");
+                        string filtersql = "";
+                        var parameters = new DynamicParameters();
+
+                        if (!string.IsNullOrEmpty(models.kitap_adi))
+                        {
+                            filtersql += " AND tk.kitap_adi ILIKE @kitap_adi";
+                            parameters.Add("kitap_adi", $"%{models.kitap_adi}%");
+                        }
+                        if (models.author_id.HasValue)
+                        {
+                            filtersql += " AND au.id = @author_id";
+                            parameters.Add("author_id", models.author_id.Value);
+                        }
+
+                        if (!string.IsNullOrEmpty(models.ISBN))
+                        {
+                            filtersql += " AND tk.isbn ILIKE @isbn";
+                            parameters.Add("isbn", $"%{models.ISBN}%");
+                        }
+                        if (models.Durum.HasValue)
+                        {
+                            filtersql += " AND tk.durum = @durum";
+                            parameters.Add("durum", models.Durum.Value);
+                        }
+                        if (!string.IsNullOrEmpty(models.library_location))
+                        {
+                            filtersql += " AND li.location ILIKE @library_location";
+                            parameters.Add("library_location", $"%{models.library_location}%");
+                        }
+                        if (models.kitap_tur_kodu.HasValue)
+                        {
+                            filtersql += " AND tkt.kitap_tur_kodu = @kitap_tur_kodu";
+                            parameters.Add("kitap_tur_kodu", models.kitap_tur_kodu.Value);
+                        }
+                        if (models.library_id.HasValue)
+                        {
+                            filtersql += " AND li.id = @library_id";
+                            parameters.Add("library_id", models.library_id);
+                        }
+
+                        string query = $@"SELECT 
+                    tk.kitap_adi, tk.isbn, tk.durum,
+                    au.name_surname AS author_name,
+                    tkt.kitap_tur_kodu, tkt.aciklama AS kitap_tur,
+                    li.library_name
+                    FROM table_kitaplar tk
+                    JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
+                    FULL OUTER JOIN table_authors au ON au.id = tk.author_id
+                    FULL OUTER JOIN table_libraries li ON li.id = library_id
+                    WHERE tk.is_deleted = false {filtersql}
+                    ORDER BY tk.id ASC;";
+
+                        var books = (await connection.QueryAsync<ListBookModels>(query, parameters)).ToList();
+
+                        if (books == null || !books.Any())
+                            return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+
+                        using var workbook = new XLWorkbook();
+
+                        var dataTable = new DataTable();
+                        dataTable.Columns.Add("Kitap Adı");
+                        dataTable.Columns.Add("ISBN");
+                        dataTable.Columns.Add("Durum");
+                        dataTable.Columns.Add("Yazar Adı");
+                        dataTable.Columns.Add("Kitap Türü");
+                        dataTable.Columns.Add("Kütüphane Adı");
+
+                        foreach (var book in books)
+                        {
+                                dataTable.Rows.Add
+                                (
+                                book.kitap_adi,
+                                book.ISBN,
+                                (bool)book.Durum ? "Alındı" : "Boşta",
+                                book.author_name,
+                                book.kitap_tur,
+                                book.library_name
+                                );
+                        }
+
+                        var wsData = workbook.Worksheets.Add("Kitaplar");
+                        var dataTableRange = wsData.Cell(1, 1).InsertTable(dataTable, "KitaplarTablosu", true);
+                        wsData.SheetView.FreezeRows(1);
+                        wsData.Columns().AdjustToContents();
+                        dataTableRange.Theme = XLTableTheme.TableStyleLight16;
+
+                        // 2. Sayfa: Pivot Tablo
+                        var wsPivot = workbook.Worksheets.Add("Kitaplar Pivot");
+                        var dataRange = wsData.RangeUsed();
+
+                        var pivotTable = wsPivot.PivotTables.Add("KitaplarPivotTablosu", wsPivot.Cell(1, 1), dataRange);
+                        pivotTable.RowLabels.Add("Kütüphane Adı");
+                        pivotTable.ColumnLabels.Add("Durum");
+                        pivotTable.Values.Add("Kitap Adı").SetSummaryFormula(XLPivotSummary.Count);
+
+                        using var stream = new MemoryStream();
+                        workbook.SaveAs(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
+
+                        var fileName = $"Books_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                        return File(stream.ToArray(),
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            fileName);
+
                     }
-                    if (models.author_id.HasValue)
-                    {
-                        filtersql += " AND au.id = @author_id";
-                        parameters.Add("author_id", models.author_id.Value);
-                    }
-
-                    if (!string.IsNullOrEmpty(models.ISBN))
-                    {
-                        filtersql += " AND tk.isbn ILIKE @isbn";
-                        parameters.Add("isbn", $"%{models.ISBN}%");
-                    }
-                    if (models.Durum.HasValue)
-                    {
-                        filtersql += " AND tk.durum = @durum";
-                        parameters.Add("durum", models.Durum.Value);
-                    }
-                    if (!string.IsNullOrEmpty(models.library_location))
-                    {
-                        filtersql += " AND li.location ILIKE @library_location";
-                        parameters.Add("library_location", $"%{models.library_location}%");
-                    }
-                    if (models.kitap_tur_kodu.HasValue)
-                    {
-                        filtersql += " AND tkt.kitap_tur_kodu = @kitap_tur_kodu";
-                        parameters.Add("kitap_tur_kodu", models.kitap_tur_kodu.Value);
-                    }
-                    if (models.library_id.HasValue)
-                    {
-                        filtersql += " AND li.id = @library_id";
-                        parameters.Add("library_id", models.library_id);
-                    }
-
-                    string query = $@"SELECT 
-                tk.kitap_adi, tk.isbn, tk.durum,
-                au.name_surname AS author_name,
-                tkt.kitap_tur_kodu, tkt.aciklama AS kitap_tur,
-                li.library_name
-                FROM table_kitaplar tk
-                JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
-                FULL OUTER JOIN table_authors au ON au.id = tk.author_id
-                FULL OUTER JOIN table_libraries li ON li.id = library_id
-                WHERE tk.is_deleted = false {filtersql}
-                ORDER BY tk.id ASC;";
-
-                    var books = (await connection.QueryAsync<ListBookModels>(query, parameters)).ToList();
-
-                    if (books == null || !books.Any())
-                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
-
-                    using var workbook = new XLWorkbook();
-                    var ws = workbook.Worksheets.Add("Kitaplar");
-
-                    var dataTable = new DataTable();
-                    dataTable.Columns.Add("Kitap Adı");
-                    dataTable.Columns.Add("ISBN");
-                    dataTable.Columns.Add("Durum");
-                    dataTable.Columns.Add("Yazar Adı");
-                    dataTable.Columns.Add("Kitap Türü");
-                    dataTable.Columns.Add("Kütüphane Adı");
-
-                    foreach (var book in books)
-                    {
-                            dataTable.Rows.Add
-                            (
-                            book.kitap_adi,
-                            book.ISBN,
-                            (bool)book.Durum ? "Alındı" : "Boşta",
-                            book.author_name,
-                            book.kitap_tur,
-                            book.library_name
-                            );
-                    }
-
-                    var table = ws.Cell(1, 1).InsertTable(dataTable, "KitaplarTablosu", true);
-                    
-                    ws.SheetView.FreezeRows(1);
-                    ws.Columns().AdjustToContents();
-                    table.Theme = XLTableTheme.TableStyleLight16; 
-
-
-                    using var stream = new MemoryStream();
-                    workbook.SaveAs(stream);
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                    var fileName = $"Books_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
-                    return File(stream.ToArray(),
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        fileName);
-
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
-            }
+                catch (Exception ex)
+                {
+                    return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+                }
         }
 
         [HttpGet("GetBook/{id}")]
