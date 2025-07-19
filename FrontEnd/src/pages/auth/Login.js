@@ -123,7 +123,7 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                     className="py-2"
                   />
