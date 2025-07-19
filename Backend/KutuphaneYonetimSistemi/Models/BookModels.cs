@@ -29,6 +29,8 @@ namespace KutuphaneYonetimSistemi.Models
         public int? library_id { get; set; }
         [JsonPropertyOrder(11)]
         public int? daily_lending_fee { get; set; }
+        [JsonPropertyOrder(12)]
+        public string? location_google_map_adress { get; set; }
 
     }
 

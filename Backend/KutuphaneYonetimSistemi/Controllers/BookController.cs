@@ -84,6 +84,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     au.id AS author_id, 
                     li.library_name,
                     li.id as library_id,
+                    li.location_google_map_adress,
                     tkt.kitap_tur_kodu AS kitap_tur_kodu,
                     tkt.aciklama AS kitap_tur
                     FROM table_kitaplar tk
@@ -277,7 +278,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                     tk.kitap_adi, tk.isbn, tk.durum,
                     au.name_surname AS author_name,
                     tkt.kitap_tur_kodu, tkt.aciklama AS kitap_tur,
-                    li.library_name
+                    li.library_name,
+                    li.location_google_map_adress,
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id

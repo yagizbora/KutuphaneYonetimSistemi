@@ -327,7 +327,16 @@ const Book = () => {
         {
             field: 'library_name', headerName: 'Kütüphane Adı', width: 150, flex: 1,
             renderCell: (params) => {
-                return params.value ? params.value : "Kütüphane Atanmamış";
+                if (params?.row?.location_google_map_adress) {
+                    return (
+                        <a href={params.row.location_google_map_adress} target="_blank" rel="noopener noreferrer">
+                            {params.value}
+                        </a>
+                    );
+                }
+                else {
+                    return params.value ? params.value : "Kütüphane Atanmamış";
+                }
             }
         },
         { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
