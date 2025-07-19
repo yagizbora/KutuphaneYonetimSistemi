@@ -134,7 +134,14 @@ const BookType = () => {
         }
     };
 
-
+    const disabledbuttonandinput = () => {
+        if (createbooktype.aciklama === "" || createbooktype.aciklama === null) {
+            return true;
+        }
+        else {
+            return false
+        }
+    }
 
 
 
@@ -219,6 +226,7 @@ const BookType = () => {
     }
 
 
+
     return (
         <>
             <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -240,7 +248,10 @@ const BookType = () => {
                             sx={{ width: '100%' }}
                         />
                     </Stack>
-                    <Button variant="contained" onClick={createbooktyperequest}>Kitap Türü Ekle</Button>
+                    <Button variant="contained"
+                        onClick={createbooktyperequest}
+                        disabled={disabledbuttonandinput()}
+                    >Kitap Türü Ekle</Button>
                 </Paper>
 
                 <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
