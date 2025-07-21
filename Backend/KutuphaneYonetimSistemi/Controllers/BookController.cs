@@ -169,7 +169,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     FROM table_kitaplar tk
                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id
-                    FULL OUTER JOIN table_libraries li ON li.id = tk.library_id
+                    FULL OUTER JOIN table_libraries li ON li.id = tk.library_id 
                     WHERE tk.is_deleted = false {filtersql}
                     ORDER BY tk.id ASC;";
 
