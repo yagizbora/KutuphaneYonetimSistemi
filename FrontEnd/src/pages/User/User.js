@@ -162,6 +162,10 @@ const user = () => {
                 <Button variant="contained" color="primary" href="/user/create">
                     Kullanıcı Ekle
                 </Button>
+
+                <Button variant="contained" color="primary" href="/user/customer-user-create">
+                    Müşteri Kullanıcı Ekle
+                </Button>
             </Box>
             <Stack>
                 <Paper sx={{ width: '100%', mb: 4, p: 2 }}>
