@@ -1,0 +1,364 @@
+.main-navbar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #0066cc;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.main-navbar.collapsed {
+    width: 80px;
+}
+
+.navbar-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    margin-left: 0;
+}
+
+.navbar-brand-container {
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
+    color: white;
+    margin-right: 16px;
+}
+
+.brand-icon {
+    font-size: 1.5rem;
+    min-width: 32px;
+}
+
+.brand-text {
+    margin-left: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.main-navbar.collapsed .brand-text {
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
+}
+
+.toggle-button {
+    position: absolute;
+    right: -12px;
+    top: 32px;
+    width: 24px;
+    height: 24px;
+    background-color: #0066cc;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:hover {
+    transform: scale(1.1);
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item-container {
+    position: relative;
+    width: 100%;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+    width: 32px;
+    text-align: center;
+}
+
+.nav-text {
+    margin-left: 1rem;
+    opacity: 1;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.main-navbar.collapsed .nav-text {
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
+}
+
+.submenu {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.submenu.show {
+    display: block;
+    max-height: 500px;
+    /* ihtiyaca göre ayarla */
+    opacity: 1;
+}
+
+.submenu-item {
+    display: block;
+    padding: 0.75rem 3rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.submenu-item:hover,
+.submenu-item.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.nav-item:focus,
+.nav-item:hover,
+.submenu-item:focus,
+.submenu-item:hover {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.main-navbar.collapsed .nav-item-container:hover .submenu {
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #005bb5;
+    z-index: 1100;
+}
+
+/* Collapsed state hover */
+.main-navbar.collapsed .nav-item-container:hover .submenu {
+    display: block;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 200px;
+    background-color: #0066cc;
+}
+
+/* Mobile styles */
+.main-navbar.mobile {
+    width: 100%;
+    height: 60px;
+    bottom: 0;
+    top: auto;
+}
+
+.main-navbar.mobile .navbar-content {
+    padding: 0;
+}
+
+.main-navbar.mobile .nav-links {
+    flex-direction: row;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.main-navbar.mobile .nav-item {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.main-navbar.mobile .nav-item i {
+    font-size: 1.25rem;
+    width: auto;
+    margin: 0 0 0.25rem 0;
+}
+
+.main-navbar.mobile .nav-text {
+    margin-left: 0;
+    font-size: 0.75rem;
+    display: block;
+}
+
+.main-navbar.mobile .submenu {
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #0066cc;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.main-navbar.mobile .submenu-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Layout adjustments */
+body {
+    /* padding-left: 280px; */
+    transition: padding-left 0.3s ease;
+}
+
+body.nav-collapsed {
+    padding-left: 80px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-left: 0;
+        padding-bottom: 60px;
+    }
+
+    body.nav-collapsed {
+        padding-left: 0;
+    }
+}
+
+/* Dropdown Styles */
+.nav-item.dropdown {
+    padding: 0 !important;
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1.5rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dropdown-toggle:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-menu {
+    display: none;
+    width: 100%;
+    padding: 0.5rem 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.75rem 3rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    text-decoration: none;
+}
+
+/* Collapsed state */
+.main-navbar.collapsed .dropdown-menu {
+    display: none !important;
+}
+
+.main-navbar.collapsed .nav-item.dropdown:hover .dropdown-menu {
+    display: block !important;
+    position: absolute !important;
+    left: 100% !important;
+    top: 0 !important;
+    width: 200px !important;
+    background-color: #0066cc !important;
+}
+
+/* Mobile styles */
+.main-navbar.mobile .dropdown-menu {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 60px !important;
+    left: 0 !important;
+    width: 100% !important;
+    background-color: #0066cc !important;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+/* Mobilde hamburger toggle butonu */
+.mobile-toggle-button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1101;
+    background-color: #0066cc;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobilde navbar kapandığında tamamen gizle */
+.main-navbar.mobile.collapsed {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+.dropdown-icon {
+    position: absolute;
+    right: 1.5rem;
+    transform: translateY(0);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}

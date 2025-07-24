@@ -1,0 +1,78 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
+    "@mui/x-data-grid": "^8.6.0",
+    "@mui/x-date-pickers": "^8.6.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
+    "axios": "^1.10.0",
+    "bootstrap": "^5.3.7",
+    "dayjs": "^1.11.13",
+    "eslint": "^9.30.1",
+    "js-loading-overlay": "^1.2.0",
+    "react": "^19.1.0",
+    "react-bootstrap": "^2.10.10",
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-bootstrap-table2-filter": "^1.3.3",
+    "react-bootstrap-table2-paginator": "^2.1.2",
+    "react-currency-format": "^1.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3",
+    "react-scripts": "^5.0.1",
+    "sweetalert2": "^11.22.2",
+    "web-vitals": "^5.0.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [],
+    "rules": {
+      "no-unused-vars": "off",
+      "react/prop-types": "off",
+      "import/first": "off",
+      "react/no-unescaped-entities": "off",
+      "no-empty": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-filename-extension": "off",
+      "react/jsx-props-no-spreading": "off",
+      "react/jsx-one-expression-per-line": "off",
+      "react/jsx-curly-newline": "off",
+      "react/jsx-curly-spacing": "off",
+      "react/jsx-equals-spacing": "off",
+      "react/jsx-indent": "off",
+      "react/jsx-indent-props": "off",
+      "react/jsx-max-props-per-line": "off",
+      "react/jsx-tag-spacing": "off",
+      "react/jsx-wrap-multilines": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.37.5"
+  }
+}
