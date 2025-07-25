@@ -83,7 +83,7 @@ namespace KutuphaneYonetimSistemi.Models
     public class LendingBooks
     {
         public required int id { get; set; }
-        public required string odunc_alan { get; set; }
+        public required int customer_id { get; set; }
         public required DateTime odunc_alma_tarihi { get; set; }
     }
     public class TakenBooksGet
@@ -91,8 +91,9 @@ namespace KutuphaneYonetimSistemi.Models
         public int? id { get; set; }                 
         public string? kitap_adi { get; set; }        
         public bool? durum { get; set; }              
-        public string? odunc_alan { get; set; }      
         public DateTime? odunc_alma_tarihi { get; set; } 
+        public string? name_surname { get; set; }
+        public int? customer_id { get; set; }
     }
 
 

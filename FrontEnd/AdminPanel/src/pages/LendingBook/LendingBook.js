@@ -31,9 +31,10 @@ import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
 import { formatCurrency } from '../../utils/helper.js';
-
+import CustomerUserService from '../../services/CustomerUserService.js';
 const bookService = new BookService();
 const lendingBookService = new LendingBookService();
+const customerUserService = new CustomerUserService();
 const LendingBook = () => {
     const [data, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -41,12 +42,28 @@ const LendingBook = () => {
     const [bookList, setBookList] = useState([]);
     const [oduncalan, setOduncalan] = useState('');
     const [oduncAlmaTarihi, setOduncAlmaTarihi] = useState(dayjs());
-
+    const [CustomerUsers, setCustomerUsers] = useState({});
     useEffect(() => {
         getBooks();
         getBookList();
+        ListCustomerUsers();
     }, []);
 
+    const ListCustomerUsers = async () => {
+        try {
+            const response = await customerUserService.ListCustomerUsers();
+            if (response) {
+                setCustomerUsers(response.data);
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Müşteri kullanıcılar yüklenirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
     const getBooks = async () => {
         try {
             setLoading(true);
@@ -89,7 +106,7 @@ const LendingBook = () => {
             return;
         }
         try {
-            const response = await lendingBookService.lendBook({ id: selectedBook, odunc_alan: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
+            const response = await lendingBookService.lendBook({ id: selectedBook, customer_id: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
             if (response) {
                 Swal.fire({
                     title: 'Başarılı',
@@ -184,19 +201,36 @@ const LendingBook = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            label="Ödünç Alan"
-                            value={oduncalan}
-                            onChange={(e) => setOduncalan(e.target.value)}
-                            fullWidth
-                            sx={{
-                                '& .MuiInputBase-input': {
-                                    height: '24px',
-                                    fontSize: '1.1rem',
-                                    padding: '14px'
-                                }
-                            }}
-                        />
+                        <FormControl fullWidth size="medium" sx={{ minWidth: '300px' }}>
+                            <InputLabel id="customer-user-select-label">Ödünç Alan Kullanıcı</InputLabel>
+                            <Select
+                                labelId="customer-user-select-label"
+                                id="customer-user-select"
+                                value={oduncalan}
+                                label="Ödünç Alan Kullanıcı"
+                                onChange={(e) => setOduncalan(e.target.value)}
+                                sx={{
+                                    height: '56px',
+                                    '& .MuiSelect-select': {
+                                        fontSize: '1.1rem',
+                                        padding: '14px'
+                                    }
+                                }}
+                            >
+                                {CustomerUsers.map((user) => (
+                                    <MenuItem
+                                        key={user.id}
+                                        value={user.id}
+                                        sx={{
+                                            fontSize: '1.1rem',
+                                            padding: '12px'
+                                        }}
+                                    >
+                                        {`${user.name_surname} - Telefon: +90${user.phone_number}`}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="tr">

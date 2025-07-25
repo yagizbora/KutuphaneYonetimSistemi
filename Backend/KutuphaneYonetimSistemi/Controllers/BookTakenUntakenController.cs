@@ -16,8 +16,6 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
-        public int fee = 100;
-
 
         [HttpGet("LendingBooksGet")]
         public async Task<IActionResult> LendingBooksGet()
@@ -99,10 +97,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     DateTime oduncAlmaTarihi = models.odunc_alma_tarihi.Date;
 
 
-                    string sql = "UPDATE table_kitaplar SET odunc_alan = @odunc_alan, odunc_alma_tarihi = @odunc_alma_tarihi,durum = false WHERE id = @id";
+                    string sql = "UPDATE table_kitaplar SET customer_id = @customer_id, odunc_alma_tarihi = @odunc_alma_tarihi,durum = false WHERE id = @id";
                     int command = await connection.ExecuteAsync(sql, new
                     {
-                        odunc_alan = models.odunc_alan,
+                        customer_id = models.customer_id,
                         odunc_alma_tarihi = oduncAlmaTarihi,
                         id = models.id,
                     });
@@ -135,9 +133,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     using (var connection = _dbHelper.GetConnection())
                     {
-                        string query = @"SELECT id,kitap_adi,durum,odunc_alan,odunc_alma_tarihi 
-                                         FROM table_kitaplar 
-                                         WHERE is_deleted = false AND durum = false;";
+                        string query = $@"SELECT tk.id, tk.kitap_adi, tk.durum, tk.odunc_alma_tarihi,cs.name_surname,cs.id as customer_id
+                                        FROM table_kitaplar tk 
+                                        JOIN table_customer_users cs ON tk.customer_id = cs.id
+                                        WHERE tk.is_deleted = false AND tk.durum = false";
                         var list = await connection.QueryAsync<TakenBooksGet>(query);
                         return Ok(list);
                     }

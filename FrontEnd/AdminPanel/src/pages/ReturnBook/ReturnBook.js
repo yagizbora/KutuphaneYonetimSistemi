@@ -85,7 +85,7 @@ const ReturnBook = () => {
             },
         },
         {
-            field: 'odunc_alan',
+            field: 'name_surname',
             headerName: 'Ödünç Alan',
             width: 150,
             editable: false,
@@ -108,7 +108,8 @@ const ReturnBook = () => {
                     const minutes = date.getMinutes().toString().padStart(2, '0');
 
                     return `${day}.${month}.${year} ${hours}:${minutes}`;
-                } catch {
+                } catch (error) {
+                    console.error('Error formatting date:', error);
                     return '';
                 }
             }
