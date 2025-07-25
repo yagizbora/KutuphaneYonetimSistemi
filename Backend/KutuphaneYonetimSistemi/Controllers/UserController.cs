@@ -271,7 +271,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (userdata == null || !BCrypt.Net.BCrypt.Verify(model.password, userdata.hashedpassword))
                     {
-                        return BadRequest(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
+                        return Unauthorized(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
                     }
 
                     var token = Guid.NewGuid().ToString("N");
