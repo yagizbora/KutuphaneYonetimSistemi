@@ -19,6 +19,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
         public const int saltrounds = 12;
 
+
         [HttpPost("CreateCustomerUser")]
         public async Task<IActionResult> CreateCustomerUser(CreateCustomerUserModels model)
         {
@@ -56,7 +57,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("CustomerLogin")]
         public async Task<IActionResult> Login(CustomerUserModel model)
         {
-            UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
+            CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -86,6 +87,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         username = userdata.username,
                         token = token,
                     };
+                    customeruserloginlogs.LoginLogs(userdata.username, login_date, token);
 
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }
@@ -102,6 +104,8 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
 
             try
             {
@@ -126,7 +130,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(query, new { user_id = userid });
                     if (result > 0)
                     {
-
+                        customeruserloginlogs.LogoutLogs(userid);
 
                         return Ok(ResponseHelper.ActionResponse("User logout successfully"));
                     }

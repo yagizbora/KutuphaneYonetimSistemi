@@ -103,7 +103,7 @@ namespace KutuphaneYonetimSistemi.Common
 
         public ApiResponse<UserLoginModels> GetUserByToken(ControllerContext context)
         {
-            UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
+            CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
             string? token = null;
             string? user_id_str = null;
             int user_id;
@@ -143,7 +143,7 @@ namespace KutuphaneYonetimSistemi.Common
                             {
                                 if (!string.IsNullOrEmpty(user.username))
                                 {
-                                    userLoginLogs.LoginTimeOutLog(user.username, DateTime.Now);
+                                    customeruserloginlogs.LoginTimeOutLog(user.username, DateTime.Now);
                                 }
                                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Oturum süresi doldu!" };
                             }
