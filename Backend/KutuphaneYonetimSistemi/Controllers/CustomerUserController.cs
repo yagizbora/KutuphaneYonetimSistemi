@@ -141,6 +141,28 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
+        [HttpGet("ListAllCustomerUser")]
+        public IActionResult ListAllCustomerUser()
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
+                    var List = connection.Query<CustomerUserModels>(query, connection);
+                    return Ok(List);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
     } 
 }
 

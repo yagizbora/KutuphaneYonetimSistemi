@@ -162,6 +162,9 @@ const user = () => {
                 <Button variant="contained" color="primary" href="/user/create">
                     Kullanıcı Ekle
                 </Button>
+                <Button variant="contained" color="primary" href="/user/customer-user-list">
+                    Müşteri Kullanıcı Listesi
+                </Button>
 
                 <Button variant="contained" color="primary" href="/user/customer-user-create">
                     Müşteri Kullanıcı Ekle

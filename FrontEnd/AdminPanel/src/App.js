@@ -23,6 +23,7 @@ import AuthorEdit from './pages/Author/AuthorEdit.js';
 import Libraries from './pages/Libraries/Libraries.js';
 import EditLibraries from './pages/Libraries/EditLibraries/EditLibraries.js';
 import CustomerUserCreate from './pages/User/Customeruser/CustomerUserCreate.js';
+import CustomerUserList from './pages/User/Customeruser/CustomerUserList.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -78,6 +79,9 @@ function App() {
                 <Route path="/libraries" element={<Libraries />} />
                 <Route path="/libraries/edit/:id" element={<EditLibraries />} />
                 <Route path="/user/customer-user-create" element={<CustomerUserCreate />} />
+                <Route path="/user/customer-user-list" element={<CustomerUserList />} />
+
+                {/* Catch-all route for 404 */}
 
                 <Route path="*" element={<NotFound />} />
                 {/* Redirect to 404 for any unmatched routes */}
