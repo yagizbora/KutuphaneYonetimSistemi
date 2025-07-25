@@ -101,7 +101,7 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public bool Durum { get; set; }
         public DateTime? odunc_alma_tarihi { get; set; }
-        public string? odunc_alan { get; set; }
+        public int? customer_id { get; set; }
     }
 
 

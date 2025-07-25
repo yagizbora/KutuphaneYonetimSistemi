@@ -214,7 +214,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string checkBookQuery = "SELECT Durum, odunc_alma_tarihi, odunc_alan FROM table_kitaplar WHERE id = @id";
+                    string checkBookQuery = "SELECT Durum, odunc_alma_tarihi, customer_id FROM table_kitaplar WHERE id = @id";
                     BookStatusModel? book = await connection.QueryFirstOrDefaultAsync<BookStatusModel>(checkBookQuery, new { id = models.id });
 
                     if (book == null)
@@ -223,7 +223,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (book.Durum)
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
 
-                    if (string.IsNullOrEmpty(book.odunc_alan) || !book.odunc_alma_tarihi.HasValue)
+                    if (!book.customer_id.HasValue || !book.odunc_alma_tarihi.HasValue)
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
 
                     string findFeeQuery = "SELECT daily_lending_fee FROM table_kitaplar WHERE id = @id";
@@ -235,7 +235,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (totalDays <= 10)
                     {
-                        string updateQuery = "UPDATE table_kitaplar SET Durum = true, odunc_alan = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
+                        string updateQuery = "UPDATE table_kitaplar SET Durum = true, customer_id = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
                         int updateResult = await connection.ExecuteAsync(updateQuery, new { id = models.id });
 
                         if (updateResult > 0)
@@ -280,7 +280,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("Ödeme miktarı yetersiz!"));
                     }
 
-                    string updateBookQuery = "UPDATE table_kitaplar SET Durum = true, odunc_alan = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
+                    string updateBookQuery = "UPDATE table_kitaplar SET Durum = true, customer_id = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
                     int returnResult = await connection.ExecuteAsync(updateBookQuery, new { id = models.id });
 
                     if (returnResult > 0)
