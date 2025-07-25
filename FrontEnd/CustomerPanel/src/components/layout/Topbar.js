@@ -69,7 +69,7 @@ const Topbar = () => {
     <div className="topbar">
       <div className="topbar-container">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <h1 className="welcome-text">Welcome to Library System</h1>
+          <h1 className="welcome-text">Welcome to Library Customer System</h1>
           <Date />
         </div>
         <div className="topbar-right">

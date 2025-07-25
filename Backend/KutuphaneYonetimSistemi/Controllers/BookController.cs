@@ -3,7 +3,6 @@ using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
-using ClosedXML;
 using System.Data;
 
 namespace KutuphaneYonetimSistemi.Controllers

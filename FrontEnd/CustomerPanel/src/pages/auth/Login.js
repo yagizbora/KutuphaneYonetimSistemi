@@ -73,7 +73,7 @@ const Login = () => {
           <Card.Body className="p-5">
             <div className="text-center mb-4">
               <i className="fas fa-book-reader fa-3x text-primary mb-3"></i>
-              <h2 className="login-title">Library System</h2>
+              <h2 className="login-title">Library Customer System</h2>
               <p className="text-muted">Welcome back! Please login to your account.</p>
             </div>
 
