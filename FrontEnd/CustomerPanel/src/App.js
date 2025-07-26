@@ -5,7 +5,7 @@ import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
-
+import CustomerBook from './pages/CustomerBook/CustomerBook';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -43,7 +43,8 @@ function App() {
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-
+                <Route path="/customer-book" element={<CustomerBook />} />
+                {/* Add more protected routes here */}
                 <Route path="*" element={<NotFound />} />
                 {/* Redirect to 404 for any unmatched routes */}
               </Routes>

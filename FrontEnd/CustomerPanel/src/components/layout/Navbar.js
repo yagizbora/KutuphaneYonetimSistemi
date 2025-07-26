@@ -26,7 +26,14 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   }, []);
 
   const menuItems = [
-    { path: '/', icon: 'fas fa-home', text: 'Dashboard' }
+    { path: '/', icon: 'fas fa-home', text: 'Dashboard' },
+    {
+      text: 'Customer Book',
+      icon: 'fas fa-book',
+      items: [
+        { path: '/customer-book', text: 'Customer Book', icon: 'fas fa-address-book' },
+      ],
+    },
   ];
 
   const handleDropdownClick = (index) => {
