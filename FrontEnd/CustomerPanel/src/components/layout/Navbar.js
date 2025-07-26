@@ -28,10 +28,10 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   const menuItems = [
     { path: '/', icon: 'fas fa-home', text: 'Dashboard' },
     {
-      text: 'Customer Book',
+      text: 'Kitap operasyonları',
       icon: 'fas fa-book',
       items: [
-        { path: '/customer-book', text: 'Customer Book', icon: 'fas fa-address-book' },
+        { path: '/customer-book', text: 'Kitap', icon: 'fas fa-address-book' },
       ],
     },
   ];
