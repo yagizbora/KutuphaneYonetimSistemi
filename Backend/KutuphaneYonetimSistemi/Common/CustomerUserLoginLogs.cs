@@ -26,7 +26,7 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                string findUsernameQuery = "SELECT username FROM table_users WHERE id = @user_id";
+                string findUsernameQuery = "SELECT username FROM table_customer_users WHERE id = @user_id";
                 var username = connection.QueryFirstOrDefault<string>(findUsernameQuery, new { user_id });
 
 
