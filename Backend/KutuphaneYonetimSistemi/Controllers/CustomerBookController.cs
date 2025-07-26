@@ -32,7 +32,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                                  "FROM table_kitaplar tk " +
                                  "JOIN table_libraries lb ON lb.id = tk.library_id " +
                                  "JOIN table_authors au ON au.id = tk.author_id " +
-                                 "WHERE tk.is_deleted = false AND tk.durum = true;";
+                                 "WHERE tk.is_deleted = false AND tk.durum = true " +
+                                 "ORDER BY tk.id ASC;";
                     var result = await connection.QueryAsync<CustomerBookModels>(sql);
                     if (result == null || !result.Any())
                     {
