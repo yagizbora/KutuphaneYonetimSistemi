@@ -77,7 +77,8 @@ const CustomerBook = () => {
                             components={{
                                 Toolbar: GridToolbar,
                             }}
-                            checkboxSelection
+                            checkboxSelection={false}
+                            hideFooter
                         />
                     </Paper>
                 </Box>
