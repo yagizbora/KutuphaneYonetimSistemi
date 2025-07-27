@@ -3,6 +3,7 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Npgsql;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -72,7 +73,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
+                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
                     var List = await connection.QueryAsync<CustomerUserModels>(query, connection);
                     return Ok(List);
                 }
@@ -94,12 +95,57 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE AND tk.id = @id ORDER BY login_date ASC, id ASC";
+                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE AND id = @id ORDER BY login_date ASC, id ASC";
                     var List = await connection.QueryAsync<CustomerUserModels>(query, new {id = id});
                     return Ok(List);
                 }
             }
             catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+        [HttpPut("EditCustomerUser")]
+        public async Task <IActionResult> EditCustomerUser(CustomerUserModels model)
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+
+                    string usernameisexistquery = "SELECT COUNT(*) FROM table_customer_users where username = @username";
+                    int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, model);
+                    if (usernameisexist > 0)
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist user couldnt create"));
+                    }
+
+
+
+                    string sql = @$"
+                            UPDATE table_customer_users 
+                            SET 
+                            username = @username,
+                            name_surname = @name_surname,
+                            birthday_date = @birthday_date,
+                            tc_kimlik_no = @tc_kimlik_no,
+                            phone_number = @phone_number,
+                            eposta = @eposta,
+                            is_deleted = FALSE 
+                            WHERE id = @id";
+                            var result = await connection.ExecuteAsync(sql, model);
+                    if(result == 1)
+                    {
+                        return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse("Kullanıcı Güncellenemedi!"));
+                    }
+                }
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
