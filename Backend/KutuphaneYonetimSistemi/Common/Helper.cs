@@ -70,8 +70,8 @@ namespace KutuphaneYonetimSistemi.Common
 
             int[] digits = tc.Select(t => int.Parse(t.ToString())).ToArray();
 
-            int sumOdd = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];     // 1,3,5,7,9
-            int sumEven = digits[1] + digits[3] + digits[5] + digits[7];                // 2,4,6,8
+            int sumOdd = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];     
+            int sumEven = digits[1] + digits[3] + digits[5] + digits[7];                
 
             int digit10 = ((sumOdd * 7) - sumEven) % 10;
             if (digit10 != digits[9])
