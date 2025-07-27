@@ -107,7 +107,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
 
         [HttpPut("EditCustomerUser")]
-        public async Task <IActionResult> EditCustomerUser(CustomerUserModels model)
+        public async Task <IActionResult> EditCustomerUser(EditCustomerUserModels model)
         {
             try
             {

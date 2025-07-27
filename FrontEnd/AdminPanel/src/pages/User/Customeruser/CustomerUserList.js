@@ -116,6 +116,29 @@ const CustomerUserList = () => {
         }
     }
 
+    const editCustomerUser = async () => {
+        try {
+            const response = await customerUserService.editCustomerUser(editdata);
+            if (response) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: 'Müşteri kullanıcısı başarıyla düzenlendi.',
+                    icon: 'success'
+                });
+                setEditDataOpen(false);
+                ListCustomerUsers();
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Müşteri kullanıcısı düzenlenirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+
+    }
+
 
     return (
         <>
@@ -198,7 +221,7 @@ const CustomerUserList = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack direction="row" spacing={2}>
-                                        <Button variant="contained" color="primary">
+                                        <Button variant="contained" color="primary" onClick={editCustomerUser}>
                                             Kaydet
                                         </Button>
                                         <Button variant="outlined" color="secondary" onClick={() => setEditDataOpen(false)}>

@@ -17,6 +17,11 @@ export default class CustomerUserService {
         return response;
     }
 
+    async editCustomerUser(data) {
+        const response = await axios.put(`auth/CustomerUser/EditCustomerUser`, data);
+        return response;
+    }
+
 }
 
 
