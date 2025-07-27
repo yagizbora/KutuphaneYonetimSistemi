@@ -41,7 +41,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, model);
                         if (usernameisexist > 0)
                         {
-                            return BadRequest(ResponseHelper.ErrorResponse("Username is exist user couldnt create"));
+                            return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.UsernameIsExist));
                         }
 
 

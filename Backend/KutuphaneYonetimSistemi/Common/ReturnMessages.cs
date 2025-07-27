@@ -16,10 +16,11 @@ namespace KutuphaneYonetimSistemi.Common
         public const string UnAuthorized = "Erişim izniniz yok";
         public const string Exception = "Beklenmeyen bir hata oluştu.Lütfen tekrar deneyiniz";
         public const string NotFound = "Aradığınız istek bulunamadı";
+        public const string UsernameIsExist = "Bu kullanıcı ismi daha önce alınmış";
 
         public const string WrongFormat = "Yanlış format";
 
-        public const string BookIsNotFree = "Kitap zaten  ödünç alındı!";
+        public const string BookIsNotFree = "Kitap zaten ödünç alındı!";
         public const string BookIsFree = "Kitap ödünç alınmmaış!";
         public const string UserCredentialsInvalidMessage = "Kullanıcı Adı Veya Şifre Yanlış";
         public const string UserTokenInvalidMessage = "Failed to update user token";
