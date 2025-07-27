@@ -75,13 +75,20 @@ const CustomerUserCreate = () => {
         }
         try {
             const response = await customerUserService.CustomerUserCreate(formData);
-            if (response) {
+            if (response && response.data.statusCode === 200) {
                 Swal.fire({
                     title: 'Başarılı',
                     text: response?.data?.message || 'Müşteri kullanıcısı başarıyla oluşturuldu.',
                     icon: 'success'
                 }).then(() => {
                     window.location.href = '/user';
+                });
+            }
+            else if (response && response.data.statusCode === 400) {
+                Swal.fire({
+                    title: 'Hata',
+                    text: response.data.message || 'Müşteri kullanıcısı oluşturulurken bir hata oluştu.',
+                    icon: 'error'
                 });
             }
         }
