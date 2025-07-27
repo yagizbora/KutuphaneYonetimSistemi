@@ -87,7 +87,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (existingUserId != null && existingUserId != model.id)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Username already exists. Username can't be changed."));
+                        return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.UsernameIsExist));
                     }
 
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
@@ -236,7 +236,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, new { username = model.username });
                     if (usernameisexist > 0)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist username couldn't change"));
+                        return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.UsernameIsExist));
                     }
                     string mainquery = "UPDATE table_users SET username = @username WHERE id = @user_id";
                     int result = connection.Execute(mainquery, new { username = model.username, user_id = userid });
@@ -442,7 +442,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     int usernameisexist = connection.QueryFirstOrDefault<int>(usernameisexistquery, model);
                     if(usernameisexist > 0)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Username is exist user couldnt create"));
+                        return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.UsernameIsExist));
                     }
                     
 

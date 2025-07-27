@@ -119,7 +119,7 @@ const CustomerUserList = () => {
     const editCustomerUser = async () => {
         try {
             const response = await customerUserService.editCustomerUser(editdata);
-            if (response) {
+            if (response && response.data.statusCode === 200) {
                 Swal.fire({
                     title: 'Başarılı',
                     text: 'Müşteri kullanıcısı başarıyla düzenlendi.',
@@ -127,6 +127,13 @@ const CustomerUserList = () => {
                 });
                 setEditDataOpen(false);
                 ListCustomerUsers();
+            }
+            else if (response && response.data.statusCode === 400) {
+                Swal.fire({
+                    title: 'Hata',
+                    text: response.data.message || 'Müşteri kullanıcısı düzenlenirken bir hata oluştu.',
+                    icon: 'error'
+                });
             }
         }
         catch (error) {
