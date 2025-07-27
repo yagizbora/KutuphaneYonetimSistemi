@@ -60,5 +60,30 @@ namespace KutuphaneYonetimSistemi.Common
             return Regex.IsMatch(normalized, pattern);
         }
 
+        public static bool TcKimlikNoDogrula(string tc)
+        {
+            if (string.IsNullOrEmpty(tc) || tc.Length != 11 || !tc.All(char.IsDigit))
+                return false;
+
+            if (tc[0] == '0')
+                return false;
+
+            int[] digits = tc.Select(t => int.Parse(t.ToString())).ToArray();
+
+            int sumOdd = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];     // 1,3,5,7,9
+            int sumEven = digits[1] + digits[3] + digits[5] + digits[7];                // 2,4,6,8
+
+            int digit10 = ((sumOdd * 7) - sumEven) % 10;
+            if (digit10 != digits[9])
+                return false;
+
+            int sumFirst10 = digits.Take(10).Sum();
+            int digit11 = sumFirst10 % 10;
+
+            if (digit11 != digits[10])
+                return false;
+
+            return true;
+        }
     }
 }

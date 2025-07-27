@@ -34,6 +34,14 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                 try
                 {
+
+                        Helper helper = new();
+                        if (!Helper.TcKimlikNoDogrula(model.tc_kimlik_no))
+                        {
+                        return Ok(ResponseHelper.ErrorResponse("TC Kimlik No Geçersiz"));
+                        }
+
+
                     using (var connection = _dbHelper.GetConnection())
                     {
 
@@ -111,6 +119,8 @@ namespace KutuphaneYonetimSistemi.Controllers
         {
             try
             {
+                Helper helper = new();
+
                 using (var connection = _dbHelper.GetConnection())
                 {
 
@@ -121,21 +131,24 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return Ok(ResponseHelper.ErrorResponse(ReturnMessages.UsernameIsExist));
                     }
 
-
+                    if (!Helper.TcKimlikNoDogrula(model.tc_kimlik_no))
+                    {
+                        return Ok(ResponseHelper.ErrorResponse("TC Kimlik No Geçersiz"));
+                    }
 
                     string sql = @$"
-                            UPDATE table_customer_users 
-                            SET 
-                            username = @username,
-                            name_surname = @name_surname,
-                            birthday_date = @birthday_date,
-                            tc_kimlik_no = @tc_kimlik_no,
-                            phone_number = @phone_number,
-                            eposta = @eposta,
-                            is_deleted = FALSE 
-                            WHERE id = @id";
-                            var result = await connection.ExecuteAsync(sql, model);
-                    if(result == 1)
+                        UPDATE table_customer_users 
+                        SET 
+                        username = @username,
+                        name_surname = @name_surname,
+                        birthday_date = @birthday_date,
+                        tc_kimlik_no = @tc_kimlik_no,
+                        phone_number = @phone_number,
+                        eposta = @eposta,
+                        is_deleted = FALSE 
+                        WHERE id = @id";
+                    var result = await connection.ExecuteAsync(sql, model);
+                    if (result == 1)
                     {
                         return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                     }
@@ -145,7 +158,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
