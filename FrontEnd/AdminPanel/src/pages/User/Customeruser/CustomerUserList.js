@@ -38,7 +38,8 @@ const customerUserService = new CustomerUserService();
 
 const CustomerUserList = () => {
     const [data, setCustomerUsers] = useState({});
-
+    const [editdata, setEditData] = useState({});
+    const [editdataOpen, setEditDataOpen] = useState(false);
 
 
     const columns = [
@@ -63,6 +64,17 @@ const CustomerUserList = () => {
             )
         },
         { field: 'eposta', headerName: 'E-posta', width: 200 },
+        {
+            field: '', headerName: 'İşlemler', width: 150, renderCell: (params) => (
+                <>
+                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                        <Button onClick={() => ListCustomerUsersbyid(params.row.id)} variant="contained" color="primary">
+                            Düzenle
+                        </Button>
+                    </Stack>
+                </>
+            )
+        }
     ];
 
 
@@ -76,6 +88,23 @@ const CustomerUserList = () => {
             const response = await customerUserService.ListCustomerUsers();
             if (response) {
                 setCustomerUsers(response.data);
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Müşteri kullanıcılar yüklenirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
+
+    const ListCustomerUsersbyid = async (data) => {
+        try {
+            const response = await customerUserService.ListCustomerUsersbyid(data);
+            if (response) {
+                setEditData(response.data[0]);
+                setEditDataOpen(true);
             }
         }
         catch (error) {
@@ -105,6 +134,83 @@ const CustomerUserList = () => {
                         components={{ Toolbar: GridToolbar }}
                     />
                 </Paper>
+                {editdataOpen && (
+                    <Box mt={4}>
+                        <Typography variant="h6" gutterBottom>
+                            Kullanıcıyı Düzenle
+                        </Typography>
+                        <Paper sx={{ padding: 3 }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        label="Ad Soyad"
+                                        fullWidth
+                                        value={editdata.name_surname || ''}
+                                        onChange={(e) => setEditData({ ...editdata, name_surname: e.target.value })}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        label="T.C. Kimlik No"
+                                        fullWidth
+                                        value={editdata.tc_kimlik_no || ''}
+                                        onChange={(e) => setEditData({ ...editdata, tc_kimlik_no: e.target.value })}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        label="Kullanıcı Adı"
+                                        fullWidth
+                                        value={editdata.username || ''}
+                                        onChange={(e) => setEditData({ ...editdata, username: e.target.value })}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        label="Telefon"
+                                        fullWidth
+                                        value={editdata.phone_number || ''}
+                                        onChange={(e) => setEditData({ ...editdata, phone_number: e.target.value })}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        label="E-posta"
+                                        fullWidth
+                                        value={editdata.eposta || ''}
+                                        onChange={(e) => setEditData({ ...editdata, eposta: e.target.value })}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="tr">
+                                        <DatePicker
+                                            label="Doğum Tarihi"
+                                            format="DD/MM/YYYY"
+                                            value={editdata.birthday_date ? dayjs(editdata.birthday_date) : null}
+                                            onChange={(date) =>
+                                                setEditData({ ...editdata, birthday_date: date ? date.toISOString() : null })
+                                            }
+                                            slotProps={{
+                                                textField: { fullWidth: true },
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack direction="row" spacing={2}>
+                                        <Button variant="contained" color="primary">
+                                            Kaydet
+                                        </Button>
+                                        <Button variant="outlined" color="secondary" onClick={() => setEditDataOpen(false)}>
+                                            İptal
+                                        </Button>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    </Box>
+                )}
+
             </Container>
         </>
     )

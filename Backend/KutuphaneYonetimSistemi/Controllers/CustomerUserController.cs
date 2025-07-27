@@ -4,6 +4,7 @@ using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -19,6 +20,8 @@ namespace KutuphaneYonetimSistemi.Controllers
         }
         public const int saltrounds = 12;
 
+
+        // ADMIN PANEL API
 
         [HttpPost("CreateCustomerUser")]
         public async Task<IActionResult> CreateCustomerUser(CreateCustomerUserModels model)
@@ -54,6 +57,58 @@ namespace KutuphaneYonetimSistemi.Controllers
                     return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
                 }
         }
+
+
+
+
+        [HttpGet("ListAllCustomerUser")]
+        public async Task <IActionResult> ListAllCustomerUser()
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
+                    var List = await connection.QueryAsync<CustomerUserModels>(query, connection);
+                    return Ok(List);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+        [HttpGet("ListAllCustomerUser/{id}")]
+        public async Task<IActionResult> ListAllCustomerUserbyid(int id)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE AND tk.id = @id ORDER BY login_date ASC, id ASC";
+                    var List = await connection.QueryAsync<CustomerUserModels>(query, new {id = id});
+                    return Ok(List);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+
+
+        //AIN PANEL API END
+
         [HttpPost("CustomerLogin")]
         public async Task<IActionResult> Login(CustomerUserModel model)
         {
@@ -146,27 +201,6 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
 
-        [HttpGet("ListAllCustomerUser")]
-        public IActionResult ListAllCustomerUser()
-        {
-            TokenController g = new TokenController(_dbHelper);
-            var login = g.GetUserByToken(ControllerContext);
-            if (!login.Status)
-                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
-            try
-            {
-                using (var connection = _dbHelper.GetConnection())
-                {
-                    string query = "SELECT id,username,login_date,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
-                    var List = connection.Query<CustomerUserModels>(query, connection);
-                    return Ok(List);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
-            }
-        }
     } 
 }
 

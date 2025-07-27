@@ -7,6 +7,10 @@ export default class CustomerUserService {
         const response = await axios.get('auth/CustomerUser/ListAllCustomerUser');
         return response;
     }
+    async ListCustomerUsersbyid(data) {
+        const response = await axios.get(`auth/CustomerUser/ListAllCustomerUser/${data}`);
+        return response;
+    }
 
     async CustomerUserCreate(data) {
         const response = await axios.post('auth/CustomerUser/CreateCustomerUser', data);
