@@ -42,12 +42,8 @@ const LendingBook = () => {
     const [bookList, setBookList] = useState([]);
     const [oduncalan, setOduncalan] = useState('');
     const [oduncAlmaTarihi, setOduncAlmaTarihi] = useState(dayjs());
-    const [CustomerUsers, setCustomerUsers] = useState({});
-    useEffect(() => {
-        getBooks();
-        getBookList();
-        ListCustomerUsers();
-    }, []);
+    const [CustomerUsers, setCustomerUsers] = useState([]);
+
 
     const ListCustomerUsers = async () => {
         try {
@@ -154,7 +150,11 @@ const LendingBook = () => {
             )
         }
     ];
-
+    useEffect(() => {
+        getBooks();
+        getBookList();
+        ListCustomerUsers();
+    }, []);
     return (
         <div>
             <Container maxWidth="xl">

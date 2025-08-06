@@ -166,7 +166,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
 
 
-        //AIN PANEL API END
+        //ADMIN PANEL API END
 
         [HttpPost("CustomerLogin")]
         public async Task<IActionResult> Login(CustomerUserModel model)
