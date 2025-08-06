@@ -4,6 +4,7 @@ using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Npgsql;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -29,11 +30,13 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using(var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT tk.id, tk.kitap_adi, tk.durum,lb.library_name,lb.location,au.name_surname as author_name " +
+                    string sql = "SELECT tk.id, tk.kitap_adi, tk.durum,lb.library_name,lb.id as library_id,lb.location,au.name_surname as author_name " +
                                  "FROM table_kitaplar tk " +
                                  "JOIN table_libraries lb ON lb.id = tk.library_id " +
                                  "JOIN table_authors au ON au.id = tk.author_id " +
+                                 "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "WHERE tk.is_deleted = false AND tk.durum = true " +
+                                 "AND (kr.request_status IS NULL OR kr.request_status = false) " +
                                  "ORDER BY tk.id ASC;";
                     var result = await connection.QueryAsync<CustomerBookModels>(sql);
                     if (result == null || !result.Any())
@@ -76,8 +79,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse("Bu kitap zaten talep edilmiş!"));
                     }
-                    string sql = "UPDATE table_kitap_request SET book_id = @book_id, customer_user_id = @customer_user_id,library_id = @library_id request_status = true";
-                    int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = useridvalue,library_id = model.library_id });
+                    string sql = "INSERT INTO table_kitap_request (book_id,customer_user_id,request_status,library_id) VALUES (@book_id,@customer_user_id,true,@library_id)";
+                    int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = userid, library_id = model.library_id });
                     if(result == 1)
                     {
                         return Ok(ResponseHelper.ActionResponse($@"Kitap ödünç isteği başarı ile iletildi lütfen kütüphanenizle görüşünüz!"));
@@ -89,7 +92,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
                     
             }
-            catch(Exception ex)
+            catch(NpgsqlException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
+
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
             }

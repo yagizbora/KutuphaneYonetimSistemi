@@ -43,6 +43,34 @@ const CustomerBook = () => {
         }
     };
 
+    const requestbook = async (data) => {
+        try {
+            const response = await customerBookService.customerbookrequest(data);
+            if (response.data.status) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: 'Kitap talep edildi.',
+                    icon: 'success'
+                });
+                getdata(); // Refresh the book list
+            } else {
+                Swal.fire({
+                    title: 'Hata',
+                    text: response.data.message,
+                    icon: 'error'
+                });
+            }
+        }
+        catch (error) {
+            console.error("Error requesting book:", error);
+            Swal.fire({
+                title: 'Hata',
+                text: 'Kitap talep edilirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
+
     useEffect(() => {
         getdata();
     }, []);
@@ -60,6 +88,23 @@ const CustomerBook = () => {
             renderCell: (params) => (
                 params.value ? 'Uygun' : 'Değil'
             )
+        },
+        {
+            field: 'actions',
+            headerName: 'İşlemler',
+            width: 150,
+            renderCell: (params) => {
+                return (
+                    <Stack direction="row" spacing={1}>
+                        <Button
+                            color="primary"
+                            onClick={() => requestbook({ book_id: params.row.id, library_id: params.row.library_id })}
+                        >
+                            Talep Et
+                        </Button>
+                    </Stack>
+                );
+            }
         }
     ];
 

@@ -10,4 +10,8 @@ export default class CustomerBookService {
             throw error;
         }
     }
+    async customerbookrequest(data) {
+        const response = await axios.post('CustomerBook/Customerbookrequest', data);
+        return response;
+    }
 }

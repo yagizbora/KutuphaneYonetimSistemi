@@ -16,6 +16,8 @@ namespace KutuphaneYonetimSistemi.Models
         public string? library_name { get; set; }
         [JsonPropertyOrder(6)]
         public string? location { get; set; }
+        [JsonPropertyOrder(7)]
+        public int library_id { get; set; }
     }
     public class CustomerBookRequest
     {
