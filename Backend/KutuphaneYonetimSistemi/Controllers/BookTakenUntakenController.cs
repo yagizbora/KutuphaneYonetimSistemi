@@ -94,6 +94,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsNotFree));
                     }
 
+                    string bookisavaible = "SELECT request_status = true FROM table_kitap_request WHERE book_id = @book_id";
+                    var bookfreecontrol = await connection.QueryFirstOrDefaultAsync<bool>(bookisavaible, new { book_id = models.id });
+                    if (bookfreecontrol)
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiş!"));
+                    }
+
                     DateTime oduncAlmaTarihi = models.odunc_alma_tarihi.Date;
 
 

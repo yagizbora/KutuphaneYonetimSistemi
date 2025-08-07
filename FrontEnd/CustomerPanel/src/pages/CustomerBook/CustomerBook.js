@@ -52,7 +52,7 @@ const CustomerBook = () => {
                     text: 'Kitap talep edildi.',
                     icon: 'success'
                 });
-                getdata(); // Refresh the book list
+                getdata();
             } else {
                 Swal.fire({
                     title: 'Hata',
@@ -65,7 +65,7 @@ const CustomerBook = () => {
             console.error("Error requesting book:", error);
             Swal.fire({
                 title: 'Hata',
-                text: 'Kitap talep edilirken bir hata oluştu.',
+                text: error?.response?.data?.message || 'Kitap talep edilirken bir hata oluştu.',
                 icon: 'error'
             });
         }

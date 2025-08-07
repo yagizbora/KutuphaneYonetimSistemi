@@ -51,6 +51,32 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+
+        [HttpGet("RequestBookAdminList")]
+        public async Task<IActionResult> RequestBookAdminList()
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string sql = "SELECT tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
+                                 "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
+                                 "JOIN table_libraries lb ON lb.id = kr.library_id " +
+                                 "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +
+                                 "WHERE tk.is_deleted = false AND kr.request_status = true";
+                    var result = await connection.QueryAsync<RequestBookAdminList>(sql);
+                    return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+
+
         [HttpPost("Customerbookrequest")]
         public async Task <IActionResult> Customerbookrequest(CustomerBookRequest model)
         {
@@ -72,12 +98,19 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
                     }
 
+                    string bookcountsql = "SELECT Count(*) FROM table_kitap_request WHERE request_status = true AND customer_user_id = @user_id";
+                    var bookcontrol = await connection.QueryFirstOrDefaultAsync<int>(bookcountsql, new { user_id = userid });
+                    if(bookcontrol >= 2)
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("2 kitaptan fazla ödünç alma isteği oluşturamazsınız! Lütfen çalışan ekip ile irtibata geçiniz!"));
+                    }
+
 
                     string bookisavaible = "SELECT request_status = true FROM table_kitap_request WHERE book_id = @book_id";
                     var bookfreecontrol = await connection.QueryFirstOrDefaultAsync<bool>(bookisavaible, new { book_id = model.book_id });
                     if (bookfreecontrol)
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse("Bu kitap zaten talep edilmiş!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiş!"));
                     }
                     string sql = "INSERT INTO table_kitap_request (book_id,customer_user_id,request_status,library_id) VALUES (@book_id,@customer_user_id,true,@library_id)";
                     int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = userid, library_id = model.library_id });
