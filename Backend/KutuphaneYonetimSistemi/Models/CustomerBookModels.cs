@@ -26,7 +26,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string? kitap_adi { get; set; }
         public string? library_name { get; set; }
         public string? name_surname { get; set; }
-
+        public DateTime request_date { get; set; } // DateTime olarak değiştirin
     }
     public class CustomerBookRequest
     {

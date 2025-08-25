@@ -55,15 +55,15 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("RequestBookAdminList")]
         public async Task<IActionResult> RequestBookAdminList()
         {
-            TokenController g = new TokenController(_dbHelper);
-            var login = g.GetUserByToken(ControllerContext);
-            if (!login.Status)
-                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            //TokenController g = new TokenController(_dbHelper);
+            //var login = g.GetUserByToken(ControllerContext);
+            //if (!login.Status)
+            //    return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT kr.id, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
+                    string sql = "SELECT kr.id,kr.request_date::date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
                                  "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "JOIN table_libraries lb ON lb.id = kr.library_id " +
                                  "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +
@@ -73,9 +73,11 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
+                // İç istisnayı da loglayın
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ResponseHelper.ExceptionResponse($"{ex.Message} - Inner: {ex.InnerException?.Message}"));
             }
         }
 

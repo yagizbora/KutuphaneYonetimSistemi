@@ -25,6 +25,7 @@ import {
 import Swal from 'sweetalert2';
 import CustomerBookRequestService from '../../services/CustomerBookRequestService';
 import { DataGrid } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 
 const customerbookrequestservice = new CustomerBookRequestService();
 
@@ -55,7 +56,13 @@ const CustomerBooKRequest = () => {
     const columns = [
         { field: 'name_surname', headerName: 'Müşteri Adı', width: 200 },
         { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
-        { field: 'library_name', headerName: 'Kütüphane', width: 200 }
+        { field: 'library_name', headerName: 'Kütüphane', width: 200 },
+        {
+            field: 'request_date',
+            headerName: 'İstek Tarihi',
+            width: 200,
+            valueGetter: (params) => dayjs(params.request_date).format('YYYY-MM-DD')
+        },
     ];
 
     return (
