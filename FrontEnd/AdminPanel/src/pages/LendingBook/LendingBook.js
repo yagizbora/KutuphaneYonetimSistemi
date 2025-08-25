@@ -131,7 +131,7 @@ const LendingBook = () => {
         { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
         {
             field: 'daily_lending_fee',
-            headerName: 'Günlük Ödünçü Ücreti',
+            headerName: 'Günlük Ödünç Ücreti',
             width: 150,
             renderCell: (params) => {
                 return formatCurrency(params.value);
