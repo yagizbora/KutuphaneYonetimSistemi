@@ -21,6 +21,7 @@ namespace KutuphaneYonetimSistemi.Models
     }
     public class RequestBookAdminList
     {
+        public int id { get; set; }
         public int? book_id { get; set; }
         public string? kitap_adi { get; set; }
         public string? library_name { get; set; }
