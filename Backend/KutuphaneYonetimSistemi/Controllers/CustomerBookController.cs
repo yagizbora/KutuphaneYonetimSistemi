@@ -77,7 +77,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 // İç istisnayı da loglayın
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ResponseHelper.ExceptionResponse($"{ex.Message} - Inner: {ex.InnerException?.Message}"));
+                    ResponseHelper.ExceptionResponse($"{ex.Message}"));
             }
         }
 
