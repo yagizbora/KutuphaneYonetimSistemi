@@ -61,7 +61,8 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       text: 'Request',
       icon: 'fas fa-plus',
       items: [
-        { path: '/request/request-book', text: 'Kitap istekleri' }
+        { path: '/request/request-book', text: 'Kitap istekleri' },
+        { path: '/book/customer-book-request', text: 'Müşteri Kitap İstekleri' }
       ]
     },
     {

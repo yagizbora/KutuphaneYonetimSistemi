@@ -67,7 +67,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                                  "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "JOIN table_libraries lb ON lb.id = kr.library_id " +
                                  "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +
-                                 "WHERE tk.is_deleted = false AND kr.request_status = true";
+                                 "WHERE kr.request_status = true";
                     var result = await connection.QueryAsync<RequestBookAdminList>(sql);
                     return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
 
