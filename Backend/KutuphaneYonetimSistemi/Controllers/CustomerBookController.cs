@@ -147,6 +147,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("2 kitaptan fazla ödünç alma isteği oluşturamazsınız! Lütfen çalışan ekip ile irtibata geçiniz!"));
                     }
+                    string secondstatuscountsql = "SELECT Count(*) FROM table_kitaplar WHERE customer_id = @user_id AND durum = FALSE";
+                    var secondstatuscountsqlresult = await connection.QueryFirstOrDefaultAsync<int>(secondstatuscountsql, new { user_id = userid });
+                    if(secondstatuscountsqlresult >= 2)
+                    {
+                     return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("2 kitaptan fazla kitap sahibi olamazsınız ve isteyemezsiniz! Lütfen çalışan ekip ile irtibata geçiniz!"));
+                    }
 
 
                     string bookisavaible = "SELECT request_status = true FROM table_kitap_request WHERE book_id = @book_id";
