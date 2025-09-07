@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DocumentFormat.OpenXml.Math;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Http;
@@ -55,15 +56,15 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("RequestBookAdminList")]
         public async Task<IActionResult> RequestBookAdminList()
         {
-            //TokenController g = new TokenController(_dbHelper);
-            //var login = g.GetUserByToken(ControllerContext);
-            //if (!login.Status)
-            //    return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT kr.id,kr.request_date::date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
+                    string sql = "SELECT kr.id,kr.customer_user_id,kr.request_date::date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
                                  "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "JOIN table_libraries lb ON lb.id = kr.library_id " +
                                  "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +
@@ -80,7 +81,44 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ResponseHelper.ExceptionResponse($"{ex.Message}"));
             }
         }
+        [HttpPost("RequestBookAdminResult")]
+        public async Task<IActionResult> RequestBookAdminResult(RequestBookAdminResult model)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    if (!model.result)
+                    {
+                        string sql = "UPDATE table_kitap_request SET request_status = false WHERE id = @id";
+                        var result = await connection.ExecuteAsync(sql, new { id = model.request_id });
+                        return Ok(ResponseHelper.ActionResponse("Müşterinin kitap ödünç alma isteği başarı ile red edildi!"));
+                    }
+                    else
+                    {
+                        string firstsql = "UPDATE table_kitap_request SET request_status = false WHERE id = @id";
+                        int result = await connection.ExecuteAsync(firstsql, new { id = model.request_id });
+                        if (result > 0)
+                        {
+                            string secondsql = "UPDATE table_kitaplar SET durum = false, odunc_alma_tarihi = @odunc_alma_tarihi, customer_id = @customer_id WHERE id = @book_id";
+                            var execute = await connection.ExecuteAsync(secondsql, new { odunc_alma_tarihi = DateTime.Now, customer_id = model.customer_id, book_id = model.book_id });
+                            return Ok(ResponseHelper.ActionResponse("Müşterinin kitap ödünç alma isteği başarı ile kabul edildi!"));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ResponseHelper.ExceptionResponse($"{ex.Message}"));
+            }
 
+            return BadRequest(ResponseHelper.ErrorResponse("Beklenmeyen bir hata oluştu."));
+        }
 
         [HttpPost("Customerbookrequest")]
         public async Task <IActionResult> Customerbookrequest(CustomerBookRequest model)

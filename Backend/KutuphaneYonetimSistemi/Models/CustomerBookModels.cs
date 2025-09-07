@@ -22,6 +22,7 @@ namespace KutuphaneYonetimSistemi.Models
     public class RequestBookAdminList
     {
         public int id { get; set; }
+        public int customer_user_id { get; set; }
         public int? book_id { get; set; }
         public string? kitap_adi { get; set; }
         public string? library_name { get; set; }
@@ -32,5 +33,12 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public required int book_id { get; set; }
         public required int library_id { get; set; }
+    }
+    public class RequestBookAdminResult
+    {
+        public required int book_id { get; set; }
+        public required bool result { get; set; }
+        public required int request_id { get; set; }
+        public required int customer_id { get; set; }
     }
 }
