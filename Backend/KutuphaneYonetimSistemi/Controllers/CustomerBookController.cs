@@ -20,6 +20,47 @@ namespace KutuphaneYonetimSistemi.Controllers
             _dbHelper = dbHelper;
         }
 
+        [HttpGet("MyBooks")]
+        public async Task<IActionResult> MyBooks()
+        {
+            CustomerTokenController g = new(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+                    if (StringValues.IsNullOrEmpty(useridvalue))
+                    {
+                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    }
+                    if (!int.TryParse(useridvalue, out int userid))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    }
+                    string sql = "SELECT tk.id, tk.kitap_adi, tk.durum,tk.odunc_alma_tarihi,lb.library_name,lb.location,au.name_surname as author_name " +
+                                 "FROM table_kitaplar tk " +
+                                 "JOIN table_libraries lb ON lb.id = tk.library_id " +
+                                 "JOIN table_authors au ON au.id = tk.author_id " +
+                                 "WHERE tk.is_deleted = false AND tk.durum = false AND tk.customer_id = @user_id " +
+                                 "ORDER BY tk.id ASC;";
+                    var result = await connection.QueryAsync<CustomerBookModels>(sql, new { user_id = userid });
+                    if (result == null || !result.Any())
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse("No books found."));
+                    }
+                    return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+
+
         [HttpGet("CustomerBookList")]
         public async Task<IActionResult> CustomerBookList()
         {
