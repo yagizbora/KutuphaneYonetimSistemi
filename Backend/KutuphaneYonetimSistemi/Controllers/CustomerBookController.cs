@@ -40,19 +40,19 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
                     }
-                    string sql = "SELECT tk.id, tk.kitap_adi, tk.durum,tk.odunc_alma_tarihi,lb.library_name,lb.location,au.name_surname as author_name " +
+                    string sql = "SELECT tk.id, tk.kitap_adi,tk.odunc_alma_tarihi,lb.library_name,lb.location,au.name_surname as author_name " +
                                  "FROM table_kitaplar tk " +
                                  "JOIN table_libraries lb ON lb.id = tk.library_id " +
                                  "JOIN table_authors au ON au.id = tk.author_id " +
                                  "WHERE tk.is_deleted = false AND tk.durum = false AND tk.customer_id = @user_id " +
                                  "ORDER BY tk.id ASC;";
-                    var result = await connection.QueryAsync<CustomerBookModels>(sql, new { user_id = userid });
+                    var result = await connection.QueryAsync<MyBooks>(sql, new { user_id = userid });
                     if (result == null || !result.Any())
                     {
-                        return NotFound(ResponseHelper.NotFoundResponse("No books found."));
+                        return Ok(ResponseHelper.OkResponse("Kullanıcının şu anda ödünçte kitabı yok.", result));
                     }
                     return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
-                }
+                }   
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using(var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT tk.id, tk.kitap_adi, tk.durum,lb.library_name,lb.id as library_id,lb.location,au.name_surname as author_name " +
+                    string sql = "SELECT DISTINCT tk.id, tk.kitap_adi, tk.durum,lb.library_name,lb.id as library_id,lb.location,au.name_surname as author_name " +
                                  "FROM table_kitaplar tk " +
                                  "JOIN table_libraries lb ON lb.id = tk.library_id " +
                                  "JOIN table_authors au ON au.id = tk.author_id " +

@@ -47,7 +47,7 @@
             };
         }
 
-        public static ApiResponse<object> NotFoundResponse(string notFound)
+        public static ApiResponse<object> NotFoundResponse(string? notFound)
         {
             return new ApiResponse<object> { StatusCode = 404, Status = false, Message = ReturnMessages.NotFound, Data = null };
         }

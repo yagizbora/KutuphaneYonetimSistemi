@@ -123,7 +123,10 @@ const CustomerBook = () => {
                                 Toolbar: GridToolbar,
                             }}
                             checkboxSelection={false}
+                            disableColumnFiltering
+                            autoHeight
                             hideFooter
+
                         />
                     </Paper>
                 </Box>

@@ -14,4 +14,8 @@ export default class CustomerBookService {
         const response = await axios.post('CustomerBook/Customerbookrequest', data);
         return response;
     }
+    async Mybooks() {
+        const response = await axios.get('CustomerBook/Mybooks');
+        return response;
+    }
 }
