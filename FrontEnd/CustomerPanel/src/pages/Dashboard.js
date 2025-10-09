@@ -69,6 +69,7 @@ const Dashboard = () => {
               pageSize={5}
               rowsPerPageOptions={[5]}
               components={{ Toolbar: GridToolbar }}
+              disableColumnFiltering
               disableSelectionOnClick
               disableColumnSorting
             />
