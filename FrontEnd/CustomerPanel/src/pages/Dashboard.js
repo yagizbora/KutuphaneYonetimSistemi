@@ -9,7 +9,7 @@ import {
   Divider
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-
+import dayjs from 'dayjs';
 const customerBookService = new CustomerBookService();
 
 const Dashboard = () => {
@@ -35,12 +35,22 @@ const Dashboard = () => {
     getdata();
   }, []);
 
+
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'kitap_adi', headerName: 'Kitabın Adı', width: 200 },
     { field: 'author_name', headerName: 'Yazar', width: 150 },
     { field: 'library_name', headerName: 'Kütüphane', width: 150 },
     { field: 'location', headerName: 'Lokasyon', width: 150 },
+    {
+      field: 'odunc_alma_tarihi',
+      headerName: 'Ödünç Alma Tarihi',
+      width: 150,
+      valueFormatter: (params) => {
+        if (!params) return '';
+        return dayjs(params).format('DD/MM/YYYY');
+      },
+    },
   ];
 
   return (

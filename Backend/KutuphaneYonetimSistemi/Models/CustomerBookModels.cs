@@ -31,6 +31,8 @@ namespace KutuphaneYonetimSistemi.Models
         public string? library_name { get; set; }
         [JsonPropertyOrder(6)]
         public string? location { get; set; }
+        [JsonPropertyOrder(7)]
+        public DateTime odunc_alma_tarihi { get; set; }
     }
     public class RequestBookAdminList
     {
