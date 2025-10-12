@@ -76,9 +76,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                                  "FROM table_kitaplar tk " +
                                  "JOIN table_libraries lb ON lb.id = tk.library_id " +
                                  "JOIN table_authors au ON au.id = tk.author_id " +
-                                 "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
+                                 "JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "WHERE tk.is_deleted = false AND tk.durum = true " +
-                                 "AND (kr.request_status IS NULL OR kr.request_status = false) " +
+                                 "AND kr.request_status = false " +
+                                 "AND kr.book_id IS NOT NULL " +
+                                 "AND NOT EXISTS (SELECT 1 FROM table_kitap_request kr WHERE kr.book_id = tk.id AND kr.request_status = true) " +
                                  "ORDER BY tk.id ASC;";
                     var result = await connection.QueryAsync<CustomerBookModels>(sql);
                     if (result == null || !result.Any())
