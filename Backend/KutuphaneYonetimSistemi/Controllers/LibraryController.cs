@@ -22,6 +22,35 @@ namespace KutuphaneYonetimSistemi.Controllers
 
         Helper helper = new Helper();
 
+
+        //FOR CUSTOMER PANEL
+
+        [HttpGet("GettAllLibrariesForCustomer")]
+        public async Task<IActionResult> GetAllLibrariesforCustomers()
+        {
+            CustomerTokenController g = new(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+
+                    string query = "SELECT id,library_name,library_working_start_time,library_working_end_time,location,location_google_map_adress,phone_number,library_email FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
+                    var result = await connection.QueryAsync<LibraryModels>(query, connection);
+                    return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, result));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
+        // end
+
+
         [HttpGet("GetAllLibraries")]
         public async Task<IActionResult> GetLibraries()
         {
