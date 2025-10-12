@@ -38,7 +38,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       text: 'Kütüphaneler',
       icon: 'fas fa-university',
       items: [
-        { path: null, text: 'Kütüphaneler', icon: 'fas fa-plus' },
+        { path: '/library', text: 'Kütüphaneler', icon: 'fas fa-plus' },
       ]
     }
   ];

@@ -6,6 +6,7 @@ import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
 import CustomerBook from './pages/CustomerBook/CustomerBook';
+import Library from './pages/Library/Library';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -44,6 +45,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/customer-book" element={<CustomerBook />} />
+                <Route path="/library" element={<Library />} />
                 {/* Add more protected routes here */}
                 <Route path="*" element={<NotFound />} />
                 {/* Redirect to 404 for any unmatched routes */}
