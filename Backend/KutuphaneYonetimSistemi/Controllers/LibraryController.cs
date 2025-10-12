@@ -25,6 +25,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("GetAllLibraries")]
         public async Task<IActionResult> GetLibraries()
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using(var connection = _dbHelper.GetConnection())
@@ -44,6 +48,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("GetAllLibraries/{id}")]
         public async Task<IActionResult> GetLibrariesbyid(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -70,6 +78,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPut("EditLibrary")]
         public async Task<IActionResult> EditLibrary(EditLibraryModels models)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             if (!string.IsNullOrEmpty(models.library_email))
             {
                 var checkemail = helper.validatemail(models.library_email);
@@ -115,6 +127,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpPost("CreateLibraries")]
         public async Task<IActionResult> CreateLibraries(CreateLibrary model)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 if (!string.IsNullOrEmpty(model.library_email))
@@ -150,6 +166,10 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpDelete("DeleteLibrary/{id}")]
         public async Task<IActionResult> DeleteLibrary(int id)
         {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
                 using(var connection = _dbHelper.GetConnection())

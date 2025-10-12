@@ -217,11 +217,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
                     
             }
-            catch(NpgsqlException ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));
-
-            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse(ex.Message));

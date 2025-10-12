@@ -34,6 +34,13 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
         { path: '/customer-book', text: 'Kitap', icon: 'fas fa-address-book' },
       ],
     },
+    {
+      text: 'Kütüphaneler',
+      icon: 'fas fa-university',
+      items: [
+        { path: null, text: 'Kütüphaneler', icon: 'fas fa-plus' },
+      ]
+    }
   ];
 
   const handleDropdownClick = (index) => {
