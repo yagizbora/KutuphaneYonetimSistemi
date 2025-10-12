@@ -25,14 +25,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
-import BookService from '../../services/BookService';
 import LendingBookService from '../../services/LendingBook';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
 import { formatCurrency } from '../../utils/helper.js';
 import CustomerUserService from '../../services/CustomerUserService.js';
-const bookService = new BookService();
 const lendingBookService = new LendingBookService();
 const customerUserService = new CustomerUserService();
 const LendingBook = () => {
