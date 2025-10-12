@@ -65,6 +65,7 @@ const LendingBook = () => {
             setLoading(true);
             const response = await lendingBookService.getLendingBooks();
             setBooks(response || []);
+            setBookList(response || []);
         } catch (error) {
             console.error('Error fetching books:', error);
             Swal.fire({
@@ -77,21 +78,21 @@ const LendingBook = () => {
             setLoading(false);
         }
     }
-    const getBookList = async () => {
-        try {
-            const response = await bookService.getBooks({});
-            if (response) {
-                setBookList(response.data);
-            }
-        } catch (error) {
-            console.error('Error fetching books:', error);
-            Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu.',
-                icon: 'error'
-            });
-        }
-    }
+    // const getBookList = async () => {
+    //     try {
+    //         const response = await bookService.getBooks({});
+    //         if (response) {
+    //             setBookList(response.data);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching books:', error);
+    //         Swal.fire({
+    //             title: 'Hata',
+    //             text: error?.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu.',
+    //             icon: 'error'
+    //         });
+    //     }
+    // }
     const handleLendBook = async () => {
         if (selectedBook === '' || oduncalan === '' || oduncAlmaTarihi.value === '') {
             Swal.fire({
@@ -152,7 +153,6 @@ const LendingBook = () => {
     ];
     useEffect(() => {
         getBooks();
-        getBookList();
         ListCustomerUsers();
     }, []);
     return (
