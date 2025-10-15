@@ -25,7 +25,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
         //FOR CUSTOMER PANEL
 
-        [HttpGet("GettAllLibrariesForCustomer")]
+        [HttpGet("GetAllLibrariesForCustomer")]
         public async Task<IActionResult> GetAllLibrariesforCustomers()
         {
             CustomerTokenController g = new(_dbHelper);

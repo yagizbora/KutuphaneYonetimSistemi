@@ -102,7 +102,34 @@ const Library = () => {
 
     return (
         <>
-
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                <Paper>
+                    <Box>
+                        <Typography component="h2" variant="h6" color="primary" gutterBottom sx={{ p: 2 }}>
+                            Kütüphaneler
+                        </Typography>
+                    </Box>
+                </Paper>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', width: '100%', mt: 2 }}>
+                    <Box sx={{ height: 900, width: '100%' }}>
+                        <DataGrid
+                            rows={libraries}
+                            columns={columns}
+                            pageSize={10}
+                            rowsPerPageOptions={[10, 25, 50]}
+                            sx={{
+                                boxShadow: 2,
+                                width: '100%',
+                                border: 2,
+                                borderColor: 'primary.light',
+                                '& .MuiDataGrid-cell:hover': {
+                                    color: 'primary.main',
+                                },
+                            }}
+                        />
+                    </Box>
+                </Paper>
+            </Container>
         </>
     )
 }
