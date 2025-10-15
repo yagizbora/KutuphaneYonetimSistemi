@@ -18,6 +18,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string? location { get; set; }
         [JsonPropertyOrder(7)]
         public int library_id { get; set; }
+        public bool is_deleted { get; set; }
     }
     public class MyBooks
     {

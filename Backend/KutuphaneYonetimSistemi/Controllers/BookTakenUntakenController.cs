@@ -28,12 +28,14 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = @"SELECT DISTINCT tk.id, tk.kitap_adi,tk.daily_lending_fee, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur
-                                     FROM table_kitaplar tk 
-                                     JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu
-                                     JOIN table_kitap_request kr ON kr.book_id = tk.id
-                                     FULL OUTER JOIN table_authors au ON au.id = tk.author_id
-                                     WHERE tk.is_deleted = false AND tk.durum = true AND NOT EXISTS (SELECT 1 FROM table_kitap_request kr WHERE kr.book_id = tk.id AND request_status)";
+                    string query = "SELECT DISTINCT tk.id, tk.kitap_adi,tk.daily_lending_fee, au.name_surname as author_name, tk.isbn, tk.durum, tkt.aciklama as kitap_tur " +
+                                     "FROM table_kitaplar tk " +
+                                     "JOIN table_kitap_turleri tkt ON tkt.kitap_tur_kodu = tk.kitap_tur_kodu " +
+                                     "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " + 
+                                     "FULL OUTER JOIN table_authors au ON au.id = tk.author_id " +
+                                     "WHERE tk.is_deleted = false AND tk.durum = true " +
+                                     "AND ((kr.request_status = false AND kr.book_id IS NOT NULL)OR kr.book_id IS NULL) " +
+                                     "AND NOT EXISTS (SELECT 1 FROM table_kitap_request kr WHERE kr.book_id = tk.id AND request_status)";
                     var list = await connection.QueryAsync<lendingBooksGet>(query, connection);
                     return Ok(list);
                 }
