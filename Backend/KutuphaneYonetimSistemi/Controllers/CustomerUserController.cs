@@ -169,7 +169,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         //ADMIN PANEL API END
 
         [HttpPost("CustomerLogin")]
-        public async Task<IActionResult> Login([FromBody]CustomerUserModel model)
+        public async Task<IActionResult> Login([FromBody] CustomerUserModel model)
         {
             CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
             Helper helper = new();
@@ -185,16 +185,18 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
                     }
 
-                    //var token = Guid.NewGuid().ToString("N");
-                    string token = helper.GenerateJWTToken(userdata.id, userdata.username);
+                    string? token = helper.GenerateJWTToken(userdata.id, userdata.username);
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        return BadRequest(ResponseHelper.ErrorResponse("Token generation failed"));
+                    }
+
                     string format = "yyyy-MM-dd HH:mm:ss";
                     DateTime login_date = DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture);
 
-                    if (!string.IsNullOrEmpty(token))
-                    {
-                        string inserttokenquery = "UPDATE table_customer_users SET token = @token, login_date = @login_date,is_login = true WHERE id = @id";
-                        var inserttoken = await connection.ExecuteAsync(inserttokenquery, new { token = token, id = userdata.id, login_date = login_date });
-                    }
+                    string inserttokenquery = "UPDATE table_customer_users SET token = @token, login_date = @login_date,is_login = true WHERE id = @id";
+                    var inserttoken = await connection.ExecuteAsync(inserttokenquery, new { token = token, id = userdata.id, login_date = login_date });
+
                     var response = new
                     {
                         login_date = login_date,

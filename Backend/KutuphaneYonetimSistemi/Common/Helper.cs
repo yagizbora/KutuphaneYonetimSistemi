@@ -1,11 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using JWT;
+﻿using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
-using System.Diagnostics;
 using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,21 +13,17 @@ namespace KutuphaneYonetimSistemi.Common
     {
         internal class JwtData
         {
-            public int user_id { get; set; }
-            public string username { get; set; }
-            public DateTime login_date { get; set; }
+            public int? user_id { get; set; }
+            public string? username { get; set; }
+            public DateTime? login_date { get; set; }
         }
-
         string secretKey = "jwt";
-
         public string? GenerateJWTToken(int user_id, string username)
         {
             try
             {
                 string randomtext = RandomString(32);
-
                 string format = "yyyy-MM-dd HH:mm:ss";
-
                 string token = new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
                     .WithSecret(secretKey)
@@ -39,7 +32,6 @@ namespace KutuphaneYonetimSistemi.Common
                     .AddClaim("username", username)
                     .AddClaim("randomtext",randomtext)
                     .Encode();
-
                 return token;
             }
             catch
@@ -147,7 +139,7 @@ namespace KutuphaneYonetimSistemi.Common
                 }
                 else
                 {
-                    return (true, "");
+                    return (true, null);
                 }
             }
             catch (Exception ex)
