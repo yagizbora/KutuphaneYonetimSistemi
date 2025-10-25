@@ -17,7 +17,21 @@ namespace KutuphaneYonetimSistemi.Common
             public string? username { get; set; }
             public DateTime? login_date { get; set; }
         }
-        string secretKey = "jwt";
+        private static readonly IConfiguration _config;
+
+        private static readonly string secretKey;
+
+        static Helper()
+        {
+            _config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory) 
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .Build();
+
+            secretKey = _config["secret_key"];
+        }
+
+
         public string? GenerateJWTToken(int user_id, string username)
         {
             try
@@ -30,7 +44,7 @@ namespace KutuphaneYonetimSistemi.Common
                     .AddClaim("login_date", DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture))
                     .AddClaim("user_id", user_id)
                     .AddClaim("username", username)
-                    .AddClaim("randomtext",randomtext)
+                    .AddClaim("randomtext", randomtext)
                     .Encode();
                 return token;
             }
@@ -39,7 +53,8 @@ namespace KutuphaneYonetimSistemi.Common
                 return null;
             }
         }
-        public (bool status,string? message) CheckJWTokenHaveTrueKey(string token)
+
+        public (bool status, string? message) CheckJWTokenHaveTrueKey(string token)
         {
             try
             {
@@ -48,21 +63,17 @@ namespace KutuphaneYonetimSistemi.Common
                     .WithSecret(secretKey)
                     .MustVerifySignature()
                     .Decode(token);
-
-                return (true,null);
-                
+                return (true, null);
             }
-
             catch (SignatureVerificationException)
             {
-                return (false,"imza doğru değil"); 
+                return (false, "imza doğru değil");
             }
             catch (Exception ex)
             {
                 return (false, ex.Message.ToString().Trim());
             }
         }
-
         //public (bool? status, string? message) CheckLoginDateValidate(string token)
         //{
         //    try
