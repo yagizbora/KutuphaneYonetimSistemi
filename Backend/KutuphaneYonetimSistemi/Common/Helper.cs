@@ -1,11 +1,8 @@
 ﻿using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
-using Microsoft.IdentityModel.JsonWebTokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+using JWT.Exceptions;
 using System.Text.RegularExpressions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace KutuphaneYonetimSistemi.Common
 {
@@ -35,34 +32,20 @@ namespace KutuphaneYonetimSistemi.Common
         }
         public bool CheckJWTokenHaveTrueKey(string token)
         {
-            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(secretKey))
-                return false;
-
-            var handler = new JwtSecurityTokenHandler();
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-
             try
             {
-                handler.ValidateToken(
-                    token,
-                    new TokenValidationParameters
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
-                        RequireSignedTokens = true
-                    },
-                    out SecurityToken validatedToken);
+                var json = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA256Algorithm())
+                    .WithSecret(secretKey)
+                    .MustVerifySignature()
+                    .Decode(token);
 
-                if(validatedToken is JwtSecurityToken)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true; 
+            }
+
+            catch (SignatureVerificationException)
+            {
+                return false; 
             }
             catch
             {
