@@ -20,6 +20,7 @@ namespace KutuphaneYonetimSistemi.Common
             _dbHelper = dbHelper;
         }
 
+
         public ApiResponse<UserLoginModels> GetUserByToken(ControllerContext context)
         {
             UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
@@ -126,11 +127,17 @@ namespace KutuphaneYonetimSistemi.Common
             }
 
             var handler = new JwtSecurityTokenHandler();
-
+            Helper helper = new Helper();
             if (!handler.CanReadToken(token))
             {
                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
             }
+
+            if (!helper.CheckJWTokenHaveTrueKey(token))
+            {
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token İmzası geçerli değil veya oynanmış" };
+            }
+
 
             using (var connection = _dbHelper.GetConnection())
             {

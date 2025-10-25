@@ -1,18 +1,23 @@
-﻿using System.Text.RegularExpressions;
-using JWT;
+﻿using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
+using Microsoft.IdentityModel.JsonWebTokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.IdentityModel.Tokens;
+
 namespace KutuphaneYonetimSistemi.Common
 {
     public class Helper
     {
 
+        string secretKey = "jwt";
 
         public string? GenerateJWTToken(int user_id, string username)
         {
             try
             {
-                string secretKey = "jwt"; 
 
                 string token = new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
@@ -28,6 +33,43 @@ namespace KutuphaneYonetimSistemi.Common
                 return null;
             }
         }
+        public bool CheckJWTokenHaveTrueKey(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(secretKey))
+                return false;
+
+            var handler = new JwtSecurityTokenHandler();
+            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+
+            try
+            {
+                handler.ValidateToken(
+                    token,
+                    new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                        RequireSignedTokens = true
+                    },
+                    out SecurityToken validatedToken);
+
+                if(validatedToken is JwtSecurityToken)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
         public (bool status, string? message) IsDateCheck(DateTime date)
         {
