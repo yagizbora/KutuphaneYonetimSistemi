@@ -1,9 +1,34 @@
 ﻿using System.Text.RegularExpressions;
-
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
 namespace KutuphaneYonetimSistemi.Common
 {
     public class Helper
     {
+
+
+        public string? GenerateJWTToken(int user_id, string username)
+        {
+            try
+            {
+                string secretKey = "jwt"; 
+
+                string token = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA256Algorithm())
+                    .WithSecret(secretKey)
+                    .AddClaim("user_id", user_id)
+                    .AddClaim("username", username)
+                    .Encode();
+
+                return token;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public (bool status, string? message) IsDateCheck(DateTime date)
         {
             try

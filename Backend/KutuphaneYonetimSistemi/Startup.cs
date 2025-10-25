@@ -3,6 +3,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using System.Data;
+using JWT;
 
 namespace KutuphaneYonetimSistemi
 {
@@ -23,6 +24,10 @@ namespace KutuphaneYonetimSistemi
                 builder.AddConsole(); // Konsola log yazma
                 builder.AddDebug();   // Debug logları
                 builder.SetMinimumLevel(LogLevel.Debug); // Log seviyesini Debug'a ayarla
+                builder.Services.AddAuthentication(options =>
+                {
+
+                }); // Authentication servisini ekle
 
             });
 
@@ -150,10 +155,11 @@ namespace KutuphaneYonetimSistemi
 
             app.UseRouting();
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                
             });
 
         }

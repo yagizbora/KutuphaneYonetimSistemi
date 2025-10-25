@@ -6,7 +6,7 @@ using Microsoft.Extensions.Primitives;
 using Npgsql;
 using System.Globalization;
 using System.Threading.Tasks;
-
+using JWT;
 namespace KutuphaneYonetimSistemi.Controllers
 {
     [Route("api/auth/[controller]")]
@@ -172,6 +172,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         public async Task<IActionResult> Login(CustomerUserModel model)
         {
             CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
+            Helper helper = new();
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -184,8 +185,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
                     }
 
-                    var token = Guid.NewGuid().ToString("N");
-
+                    //var token = Guid.NewGuid().ToString("N");
+                    string token = helper.GenerateJWTToken(userdata.id, userdata.username);
                     string format = "yyyy-MM-dd HH:mm:ss";
                     DateTime login_date = DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture);
 

@@ -3,7 +3,11 @@ using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 using static KutuphaneYonetimSistemi.Common.ResponseHelper;
 using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
-
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace KutuphaneYonetimSistemi.Common
 {
@@ -119,6 +123,13 @@ namespace KutuphaneYonetimSistemi.Common
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(user_id_str) || !int.TryParse(user_id_str, out user_id))
             {
                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+
+            if (!handler.CanReadToken(token))
+            {
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
             }
 
             using (var connection = _dbHelper.GetConnection())
