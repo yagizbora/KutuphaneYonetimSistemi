@@ -169,7 +169,7 @@ namespace KutuphaneYonetimSistemi.Controllers
         //ADMIN PANEL API END
 
         [HttpPost("CustomerLogin")]
-        public async Task<IActionResult> Login(CustomerUserModel model)
+        public async Task<IActionResult> Login([FromBody]CustomerUserModel model)
         {
             CustomerUserLoginLogs customeruserloginlogs = new(_dbHelper);
             Helper helper = new();
