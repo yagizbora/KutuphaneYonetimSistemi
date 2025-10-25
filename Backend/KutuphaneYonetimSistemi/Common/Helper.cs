@@ -1,13 +1,25 @@
-﻿using JWT;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
+using System.Diagnostics;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace KutuphaneYonetimSistemi.Common
 {
     public class Helper
     {
+        internal class JwtData
+        {
+            public int user_id { get; set; }
+            public string username { get; set; }
+            public DateTime login_date { get; set; }
+        }
 
         string secretKey = "jwt";
 
@@ -15,12 +27,17 @@ namespace KutuphaneYonetimSistemi.Common
         {
             try
             {
+                string randomtext = RandomString(32);
+
+                string format = "yyyy-MM-dd HH:mm:ss";
 
                 string token = new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
                     .WithSecret(secretKey)
+                    .AddClaim("login_date", DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture))
                     .AddClaim("user_id", user_id)
                     .AddClaim("username", username)
+                    .AddClaim("randomtext",randomtext)
                     .Encode();
 
                 return token;
@@ -40,7 +57,8 @@ namespace KutuphaneYonetimSistemi.Common
                     .MustVerifySignature()
                     .Decode(token);
 
-                return (true,null); 
+                return (true,null);
+                
             }
 
             catch (SignatureVerificationException)
@@ -51,6 +69,69 @@ namespace KutuphaneYonetimSistemi.Common
             {
                 return (false, ex.Message.ToString().Trim());
             }
+        }
+
+        //public (bool? status, string? message) CheckLoginDateValidate(string token)
+        //{
+        //    try
+        //    {
+        //        var handler = new JwtSecurityTokenHandler();
+        //        var jwtToken = handler.ReadJwtToken(token);
+
+        //        var logindateclaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "login_date");
+
+        //        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "user_id");
+        //        var usernameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "username");
+        //        var loginDateClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "login_date");
+
+        //        if (userIdClaim == null || usernameClaim == null || loginDateClaim == null)
+        //        {
+        //            return (false, "Token içeriği eksik veya hatalı.");
+        //        }
+        //        var data = new JwtData
+        //        {
+        //            user_id = int.Parse(userIdClaim.Value),
+        //            username = usernameClaim.Value,
+        //            login_date = DateTime.Parse(loginDateClaim.Value)
+        //        };
+
+        //        TimeSpan loginTimeDiff = DateTime.Now - data.login_date;
+
+        //        if (loginTimeDiff.TotalMinutes >= 270)
+        //        {
+        //            return (false, "Oturum süresi doldu!");
+        //        }
+        //        if (data.login_date > DateTime.Now)
+        //        {
+        //            return (false, "Sistemde hata oluştu sistemdeki giriş saatiniz" +
+        //                            $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!");
+        //        }
+        //        else
+        //        {
+        //            return (true, null);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return (false, ex.Message);
+        //    }
+        //}
+
+
+        public static string RandomString(int length)
+        {
+            const string chars = "abcdefghijklmnoprstuvyz"; 
+            var result = new StringBuilder(length);
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    // GetInt32 is available in .NET Core / .NET 5+
+                    int idx = RandomNumberGenerator.GetInt32(chars.Length);
+                    result.Append(chars[idx]);
+                }
+            }
+            return result.ToString();
         }
 
 
