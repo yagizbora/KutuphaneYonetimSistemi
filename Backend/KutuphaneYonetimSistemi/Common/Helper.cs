@@ -30,7 +30,7 @@ namespace KutuphaneYonetimSistemi.Common
                 return null;
             }
         }
-        public bool CheckJWTokenHaveTrueKey(string token)
+        public (bool status,string? message) CheckJWTokenHaveTrueKey(string token)
         {
             try
             {
@@ -40,16 +40,16 @@ namespace KutuphaneYonetimSistemi.Common
                     .MustVerifySignature()
                     .Decode(token);
 
-                return true; 
+                return (true,null); 
             }
 
             catch (SignatureVerificationException)
             {
-                return false; 
+                return (false,"imza doğru değil"); 
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return (false, ex.Message.ToString().Trim());
             }
         }
 

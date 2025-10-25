@@ -133,9 +133,11 @@ namespace KutuphaneYonetimSistemi.Common
                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
             }
 
-            if (!helper.CheckJWTokenHaveTrueKey(token))
+            var checkTokenSignature = helper.CheckJWTokenHaveTrueKey(token);
+
+            if (!checkTokenSignature.status)
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token İmzası geçerli değil veya oynanmış" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = checkTokenSignature.message };
             }
 
 
