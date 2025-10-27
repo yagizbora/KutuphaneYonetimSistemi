@@ -48,6 +48,7 @@ instance.interceptors.response.use(
     JsLoadingOverlay.hide();
     const status = error?.response?.status;
     const message = error?.response?.data?.message || error?.message;
+    const statusCode = error?.response?.data?.statusCode;
 
     if (status === 401) {
       localStorage.clear();
@@ -59,7 +60,7 @@ instance.interceptors.response.use(
       }).then(() => {
         window.location.replace('/login');
       });
-    } else if (status === 429) {
+    } else if (status === 429 || statusCode === 429) {
       Swal.fire({
         title: "Warning!",
         text: message,
@@ -151,6 +152,7 @@ axiosFile.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const message = error?.response?.data?.message || error?.message;
+    const statusCode = error?.response?.data?.statusCode;
 
     if (status === 401) {
       localStorage.clear();
@@ -162,7 +164,7 @@ axiosFile.interceptors.response.use(
       }).then(() => {
         window.location.replace('/login');
       });
-    } else if (status === 429) {
+    } else if (status === 429 || statusCode === 429) {
       Swal.fire({
         title: "Warning!",
         text: message,
