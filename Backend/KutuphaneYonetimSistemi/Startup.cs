@@ -1,9 +1,10 @@
-﻿using KutuphaneYonetimSistemi.Common;
+﻿using AspNetCoreRateLimit;
+using JWT;
+using KutuphaneYonetimSistemi.Common;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using System.Data;
-using JWT;
 
 namespace KutuphaneYonetimSistemi
 {
@@ -110,10 +111,17 @@ namespace KutuphaneYonetimSistemi
                     }
                 });
             });
-            //services.AddMemoryCache();
-            //services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-            //services.AddInMemoryRateLimiting();
-            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            services.AddOptions();
+            services.AddMemoryCache();
+            services.AddInMemoryRateLimiting();
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -152,7 +160,7 @@ namespace KutuphaneYonetimSistemi
                 
 
             app.UseCors("MyPolicy");
-
+            app.UseIpRateLimiting();
             app.UseRouting();
             app.UseAuthorization();
             app.UseAuthentication();

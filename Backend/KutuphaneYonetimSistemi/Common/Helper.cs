@@ -136,6 +136,20 @@ namespace KutuphaneYonetimSistemi.Common
             }
             return result.ToString();
         }
+        public static string RandomNumber(int length)
+        {
+            const string number = "1234567890";
+            var result = new StringBuilder(length);
+            using(var rng = RandomNumberGenerator.Create())
+            {
+                for(int i = 0; i < length; i++)
+                {
+                    int idx = RandomNumberGenerator.GetInt32(number.Length);
+                    result.Append(number[idx]);
+                }
+            }
+            return result.ToString();
+        }
 
 
         public (bool status, string? message) IsDateCheck(DateTime date)
