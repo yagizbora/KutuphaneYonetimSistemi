@@ -19,7 +19,7 @@ namespace KutuphaneYonetimSistemi.Common
         }
         private static readonly IConfiguration _config;
 
-        private static readonly string secretKey;
+        private static readonly string? secretKey;
 
         static Helper()
         {
