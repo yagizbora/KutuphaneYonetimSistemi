@@ -122,6 +122,8 @@ namespace KutuphaneYonetimSistemi
             services.AddHttpContextAccessor();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
+
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -137,6 +139,7 @@ namespace KutuphaneYonetimSistemi
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kutuphane Yonetim Sistemi API v1");
                     c.RoutePrefix = "swagger";
                 });
+
             }
             else
             {

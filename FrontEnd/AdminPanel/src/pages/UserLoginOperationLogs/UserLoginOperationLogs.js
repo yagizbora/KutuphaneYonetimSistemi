@@ -147,7 +147,7 @@ const UserLoginOperationLogs = () => {
                         columns={[
                             { field: 'id', headerName: 'ID', width: 70 },
                             { field: 'event', headerName: 'Olay', width: 200 },
-                            { field: 'event_description', headerName: 'Olay Açıklaması', width: 1000 },
+                            { field: 'event_description', headerName: 'Olay Açıklaması', flex: 1 },
                         ]}
                         pageSize={5}
                         rowsPerPageOptions={[5]}

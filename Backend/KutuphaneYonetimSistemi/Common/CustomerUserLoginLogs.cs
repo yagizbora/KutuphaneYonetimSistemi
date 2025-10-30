@@ -11,11 +11,11 @@ namespace KutuphaneYonetimSistemi.Common
             _dbHelper = dbHelper;
         }
 
-        public void LoginLogs(string username, DateTime login_date, string token)
+        public void LoginLogs(string username, DateTime login_date)
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var event_description = $@"Bu ( {username} ) adlı müşteri kullanıcısı bu zamanda {login_date} bu token ( {token} ) ile giriş yaptı!";
+                var event_description = $@"Bu ( {username} ) adlı müşteri kullanıcısı bu zamanda {login_date} giriş yaptı!";
 
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Login", event_description = event_description });

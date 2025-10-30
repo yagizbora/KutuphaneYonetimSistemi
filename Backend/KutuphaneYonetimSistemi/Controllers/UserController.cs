@@ -265,6 +265,8 @@ namespace KutuphaneYonetimSistemi.Controllers
         public async Task<IActionResult> Login(UserModel model)
         {
             UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
+            Helper helper = new();
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -277,7 +279,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return Unauthorized(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
                     }
 
-                    var token = Guid.NewGuid().ToString("N");
+                    string? token = helper.GenerateJWTToken(userdata.id, userdata.username);
+
 
                     string format = "yyyy-MM-dd HH:mm:ss";
                     DateTime login_date = DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture);
@@ -295,7 +298,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         token = token,
                     };
                     //LOGIN LOGS
-                    userLoginLogs.LoginLogs(userdata.username, login_date, token);
+                    userLoginLogs.LoginLogs(userdata.username, login_date);
                     //LOGIN LOGS END
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }

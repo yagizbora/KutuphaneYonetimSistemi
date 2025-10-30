@@ -41,6 +41,20 @@ namespace KutuphaneYonetimSistemi.Common
                 return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
             }
 
+            var handler = new JwtSecurityTokenHandler();
+            Helper helper = new Helper();
+            if (!handler.CanReadToken(token))
+            {
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
+            }
+
+            var checkTokenSignature = helper.CheckJWTokenHaveTrueKey(token);
+
+            if (!checkTokenSignature.status)
+            {
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = checkTokenSignature.message };
+            }
+
             using (var connection = _dbHelper.GetConnection())
             {
                 try

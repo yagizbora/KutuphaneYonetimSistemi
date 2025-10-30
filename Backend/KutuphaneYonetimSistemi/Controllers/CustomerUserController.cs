@@ -204,7 +204,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         username = userdata.username,
                         token = token,
                     };
-                    customeruserloginlogs.LoginLogs(userdata.username, login_date, token);
+                    customeruserloginlogs.LoginLogs(userdata.username, login_date);
 
                     return Ok(ResponseHelper.OkResponse("Login is successfully", response));
                 }
