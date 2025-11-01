@@ -18,20 +18,15 @@ namespace KutuphaneYonetimSistemi.Common
             public DateTime? login_date { get; set; }
         }
         private static readonly IConfiguration _config;
-
         private static readonly string? secretKey;
-
         static Helper()
         {
             _config = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory) 
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
-
             secretKey = _config["secret_key"];
         }
-
-
         public string? GenerateJWTToken(int user_id, string username)
         {
             try

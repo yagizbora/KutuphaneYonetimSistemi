@@ -21,6 +21,7 @@ const logservice = new LogService();
 
 const UserLoginOperationLogs = () => {
     const [data, setData] = useState([]);
+    const [selectboxdata, setSelectBoxData] = useState([]);
     const [eventdata, setEventData] = useState([]);
     const [event, setEvent] = useState('');
     const [pagination, setPagination] = useState({
@@ -42,6 +43,10 @@ const UserLoginOperationLogs = () => {
                     currentPage: 1,
                     count: response.data.count
                 });
+
+                if (selectboxdata.length === 0) {
+                    setSelectBoxData(response.data.data);
+                }
             }
         } catch (error) {
             Swal.fire({
@@ -83,6 +88,9 @@ const UserLoginOperationLogs = () => {
                     currentPage: 1,
                     count: response.data.count
                 });
+                if (selectboxdata.length === 0) {
+                    setSelectBoxData(response.data.data);
+                }
             }
         } catch (error) {
             Swal.fire({
@@ -122,7 +130,7 @@ const UserLoginOperationLogs = () => {
                             onChange={(e) => setEvent(e.target.value)}
                             sx={{ flexGrow: 1 }}
                         >
-                            {[...new Set(eventdata.map((item) => item.event))].map((uniqueEvent) => (
+                            {[...new Set(selectboxdata.map((item) => item.event))].map((uniqueEvent) => (
                                 <MenuItem key={uniqueEvent} value={uniqueEvent}>
                                     {uniqueEvent}
                                 </MenuItem>
@@ -138,7 +146,7 @@ const UserLoginOperationLogs = () => {
                         </IconButton>
                     </Box>
                 </FormControl>
-                <Box>
+                <Box sx={{ width: '100%', mt: 2 }}>
                     <Typography variant="subtitle1" gutterBottom>
                         Toplam Kayıt: {pagination.count}
                     </Typography>
@@ -151,8 +159,12 @@ const UserLoginOperationLogs = () => {
                         ]}
                         pageSize={5}
                         rowsPerPageOptions={[5]}
-                        autoHeight
                         hideFooter
+                        autoHeight
+                        initialState={{
+                            ...data.initialState,
+                            scroll: { top: 1000, left: 1000 }
+                        }}
                         getRowId={(row) => row.id}
                     />
                     <Box row="auto" display="flex" justifyContent="center" mt={2}>
