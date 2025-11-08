@@ -24,5 +24,6 @@ namespace KutuphaneYonetimSistemi.Common
         public const string BookIsFree = "Kitap ödünç alınmmaış!";
         public const string UserCredentialsInvalidMessage = "Kullanıcı Adı Veya Şifre Yanlış";
         public const string UserTokenInvalidMessage = "Failed to update user token";
+        public const string UserTokenSignatureIsNotTrue = "JWT token imzası doğru değil";
     }
 }

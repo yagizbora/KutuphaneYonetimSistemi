@@ -39,7 +39,7 @@ namespace KutuphaneYonetimSistemi.Common
                     .AddClaim("login_date", DateTime.ParseExact(DateTime.Now.ToString(format), format, CultureInfo.InvariantCulture))
                     .AddClaim("user_id", user_id)
                     .AddClaim("username", username)
-                    .AddClaim("randomtext", randomtext)
+                    .AddClaim("jti", Guid.NewGuid().ToString("N").Substring(0,8))
                     .Encode();
                 return token;
             }
@@ -62,7 +62,7 @@ namespace KutuphaneYonetimSistemi.Common
             }
             catch (SignatureVerificationException)
             {
-                return (false, "imza doğru değil");
+                return (false, ReturnMessages.UserTokenSignatureIsNotTrue);
             }
             catch (Exception ex)
             {
@@ -131,6 +131,7 @@ namespace KutuphaneYonetimSistemi.Common
             }
             return result.ToString();
         }
+
         public static string RandomNumber(int length)
         {
             const string number = "1234567890";
@@ -188,7 +189,7 @@ namespace KutuphaneYonetimSistemi.Common
             }
         }
 
-        public bool validatemail(string email)
+        public bool ValidateEmail(string email)
         {
             return Regex.IsMatch(input: email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
         }

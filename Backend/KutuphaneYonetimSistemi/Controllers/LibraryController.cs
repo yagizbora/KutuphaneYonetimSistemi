@@ -113,7 +113,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             if (!string.IsNullOrEmpty(models.library_email))
             {
-                var checkemail = helper.validatemail(models.library_email);
+                var checkemail = helper.ValidateEmail(models.library_email);
                 if (!checkemail)
                 {
                     return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));
@@ -164,7 +164,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 if (!string.IsNullOrEmpty(model.library_email))
                 {
-                    var checkemail = helper.validatemail(model.library_email);
+                    var checkemail = helper.ValidateEmail(model.library_email);
                     if (!checkemail)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));

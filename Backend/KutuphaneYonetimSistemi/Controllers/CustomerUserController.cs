@@ -262,6 +262,33 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+        [HttpPost("GetCustomerInformation")]
+        public async Task<IActionResult> GetCustomerInformation()
+        {
+            try
+            {
+                ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+                if (StringValues.IsNullOrEmpty(useridvalue))
+                {
+                    return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                }
+                if (!int.TryParse(useridvalue, out int userid))
+                {
+                    return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                }
+
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string sql = "SELECT username,name_surname,phone_number,tc_kimlik_no,birthday_date,eposta FROM table_customer_users WHERE id = @id";
+                    var response = await connection.QueryAsync<dynamic>(sql,new {id = userid});
+                    return Ok(response);
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+        }
 
     } 
 }

@@ -25,6 +25,7 @@ namespace KutuphaneYonetimSistemi
                 builder.AddConsole(); // Konsola log yazma
                 builder.AddDebug();   // Debug logları
                 builder.SetMinimumLevel(LogLevel.Debug); // Log seviyesini Debug'a ayarla
+               
                 builder.Services.AddAuthentication(options =>
                 {
 
@@ -131,15 +132,14 @@ namespace KutuphaneYonetimSistemi
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
 
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kutuphane Yonetim Sistemi API v1");
                     c.RoutePrefix = "swagger";
                 });
-
             }
             else
             {
@@ -160,17 +160,19 @@ namespace KutuphaneYonetimSistemi
                 RequestPath = new PathString ("/" + "Upload")
             });
 
-                
 
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();  
             app.UseCors("MyPolicy");
-            app.UseIpRateLimiting();
+
             app.UseRouting();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseIpRateLimiting(); 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                
             });
 
         }
