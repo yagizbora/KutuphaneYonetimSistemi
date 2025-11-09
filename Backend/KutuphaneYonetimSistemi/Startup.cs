@@ -117,7 +117,7 @@ namespace KutuphaneYonetimSistemi
             services.AddMemoryCache();
             services.AddInMemoryRateLimiting();
             services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimiting"));
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
             services.AddHttpContextAccessor();
@@ -162,9 +162,9 @@ namespace KutuphaneYonetimSistemi
 
 
 
+            app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseStaticFiles();  
-            app.UseCors("MyPolicy");
 
             app.UseRouting();
             app.UseAuthentication();

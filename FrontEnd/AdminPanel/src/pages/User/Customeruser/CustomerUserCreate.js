@@ -148,6 +148,7 @@ const CustomerUserCreate = () => {
                                 label="Doğum Tarihi"
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
+                                defaultValue={dayjs().format('YYYY-MM-DD')}
                                 value={dayjs(formData.birthday_date).format('YYYY-MM-DD')}
                                 onChange={handleChange}
                                 fullWidth

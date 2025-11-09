@@ -13,8 +13,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [userbuttoncontrol, setUserbuttoncontrol] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👈 Added state
   const navigate = useNavigate();
-
 
   useEffect(() => {
     checkuserinsystem();
@@ -35,7 +35,6 @@ const Login = () => {
     }));
   };
 
-
   const checkuserinsystem = async () => {
     try {
       const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
@@ -51,7 +50,7 @@ const Login = () => {
     } catch (error) {
       console.error('API Error:', error);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,8 +67,7 @@ const Login = () => {
       } else {
         setError('Invalid credentials. Please try again.');
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Login error:', error);
       setError(
         error.response?.data?.message ||
@@ -94,6 +92,7 @@ const Login = () => {
             </div>
 
             <Form onSubmit={handleSubmit}>
+              {/* Username Input */}
               <Form.Group className="mb-4">
                 <div className="input-group">
                   <span className="input-group-text">
@@ -112,13 +111,14 @@ const Login = () => {
                 </div>
               </Form.Group>
 
+              {/* Password Input with Show/Hide */}
               <Form.Group className="mb-4">
                 <div className="input-group">
                   <span className="input-group-text">
                     <i className="fas fa-lock text-primary"></i>
                   </span>
                   <Form.Control
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -127,6 +127,13 @@ const Login = () => {
                     required
                     className="py-2"
                   />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(prev => !prev)}
+                  >
+                    <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+                  </button>
                 </div>
               </Form.Group>
 
@@ -164,9 +171,7 @@ const Login = () => {
                     </>
                   )}
                 </Button>
-              )
-              }
-
+              )}
             </Form>
           </Card.Body>
         </Card>
@@ -175,4 +180,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;
