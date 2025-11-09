@@ -35,7 +35,7 @@ namespace KutuphaneYonetimSistemi.Models
         [JsonPropertyOrder(7)]
         public DateTime odunc_alma_tarihi { get; set; }
     }
-    public class RequestBookAdminList
+    public class RequestBookAdminList<T>
     {
         public int id { get; set; }
         public int customer_user_id { get; set; }
@@ -43,7 +43,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string? kitap_adi { get; set; }
         public string? library_name { get; set; }
         public string? name_surname { get; set; }
-        public DateTime request_date { get; set; } // DateTime olarak değiştirin
+        public DateTime request_date { get; set; } 
     }
     public class CustomerBookRequest
     {

@@ -123,12 +123,12 @@ ORDER BY tk.id ASC;";
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT kr.id,kr.customer_user_id,kr.request_date::date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
+                    string sql = "SELECT kr.id,kr.customer_user_id,kr.request_date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
                                  "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "JOIN table_libraries lb ON lb.id = kr.library_id " +
                                  "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +
                                  "WHERE kr.request_status = true";
-                    var result = await connection.QueryAsync<RequestBookAdminList>(sql);
+                    var result = await connection.QueryAsync<RequestBookAdminList <object>>(sql);
                     return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
 
                 }
@@ -216,21 +216,18 @@ ORDER BY tk.id ASC;";
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiş!"));
                     }
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                    
                         string sql = "INSERT INTO table_kitap_request (book_id,customer_user_id,request_status,library_id,request_date) VALUES (@book_id,@customer_user_id,true,@library_id,@request_date)";
-                        int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = userid, library_id = model.library_id, request_date = DateTime.Now.Date },transaction: transaction);
+                        int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = userid, library_id = model.library_id, request_date = DateTime.Now.Date });
                         if (result == 1)
                         {
-                            await transaction.CommitAsync();
                             return Ok(ResponseHelper.ActionResponse($@"Kitap ödünç isteği başarı ile iletildi lütfen kütüphanenizle görüşünüz!"));
                         }
                         else
                         {
-                            await transaction.RollbackAsync();
                             return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç isteği başarısız oldu"));
                         }
-                    }
+                    
                 }
             }
             catch (Exception ex)
