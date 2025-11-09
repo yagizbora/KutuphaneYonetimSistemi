@@ -1,7 +1,9 @@
-﻿using Dapper;
+﻿using ClosedXML.Excel;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -176,6 +178,68 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
             }
             catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ErrorResponse(ex.Message));
+            }
+        }
+        /* 
+         TO DO:
+        Bu apinin excel döndüren versiyonu da yazılacak!
+         */
+
+        [HttpGet("RequestBookLogsExcel")]
+        public async Task<IActionResult> RequestBookLogsExcel()
+        {
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string sql = $@"SELECT tr.id,
+                    tr.request_date,
+                    tr.is_approved,
+                    users.username as auth_person,
+                    customer_users.name_surname,
+                    book.kitap_adi,
+                    tr.request_status
+                    FROM table_kitap_request tr
+                    left JOIN table_users users
+                    ON tr.auth_person_id = users.id
+                    left JOIN table_customer_users customer_users
+                    ON tr.customer_user_id = customer_users.id
+                    left JOIN table_kitaplar book 
+                    ON book.id = tr.book_id
+                    WHERE book.is_deleted = false";
+                    var result = (await connection.QueryAsync<RequestBookLogsModels<object>>(sql, connection)).ToList();
+                    if (result.Count > 1)
+                    {
+                        using var workbook = new XLWorkbook();
+                        var worksheet = workbook.Worksheets.Add("Kitap İstek Logları");
+                        var datatable = new DataTable();
+                        datatable.Columns.Add("ID", typeof(int));
+                        datatable.Columns.Add("İstek Tarihi", typeof(DateTime));
+                        datatable.Columns.Add("Onay Durumu", typeof(bool));
+                        datatable.Columns.Add("Yetkili Kişi", typeof(string));
+                        datatable.Columns.Add("Kullanıcı Adı", typeof(string));
+                        datatable.Columns.Add("Kitap Adı", typeof(string));
+                        datatable.Columns.Add("İstek Durumu", typeof(string));
+                        datatable.Columns.Add("İstek Zamanı", typeof(DateTime));
+                        foreach (var item in result)
+                        {
+                            datatable.Rows.Add(item.id, item.request_date, item.is_approved, item.auth_person, item.name_surname, item.kitap_adi, item.request_status, item.request_date);
+                        }
+                        worksheet.Cell(1, 1).InsertTable(datatable);
+                        using var stream = new MemoryStream();
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglari{DateTime.UtcNow}.xlsx");
+                    }
+                    else
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+                    }
+                }
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ResponseHelper.ErrorResponse(ex.Message));
             }

@@ -105,7 +105,7 @@ const RequestBookLogs = () => {
 
             <Container>
                 <Typography variant="h4" gutterBottom>
-                    Request Book Logs
+                    Kitap İstek Logları
                 </Typography>
                 <Paper style={{ height: 600, width: '100%', padding: '20px' }}>
                     <DataGrid
