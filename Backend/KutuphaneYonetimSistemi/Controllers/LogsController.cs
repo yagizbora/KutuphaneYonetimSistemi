@@ -182,10 +182,6 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ErrorResponse(ex.Message));
             }
         }
-        /* 
-         TO DO:
-        Bu apinin excel döndüren versiyonu da yazılacak!
-         */
 
         [HttpGet("RequestBookLogsExcel")]
         public async Task<IActionResult> RequestBookLogsExcel()
@@ -231,7 +227,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         using var stream = new MemoryStream();
                         workbook.SaveAs(stream);
                         var content = stream.ToArray();
-                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglari{DateTime.UtcNow}.xlsx");
+                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglari {DateTime.UtcNow}.xlsx");
                     }
                     else
                     {

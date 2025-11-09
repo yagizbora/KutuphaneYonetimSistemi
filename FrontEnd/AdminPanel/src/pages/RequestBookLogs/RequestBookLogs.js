@@ -10,11 +10,12 @@ import {
     MenuItem,
     Switch,
     Checkbox,
+    Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Swal from 'sweetalert2';
 import LogService from "../../services/LogService.js";
 import { DataGrid } from '@mui/x-data-grid';
@@ -97,8 +98,27 @@ const RequestBookLogs = () => {
                 );
             }
         }
-
     ]
+
+    const getExcel = async () => {
+        try {
+            const response = await logservice.RequestBookLogsExcel();
+            if (response && response.data) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: 'Excel dosyası başarıyla indirildi.',
+                    icon: 'success'
+                });
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
 
     return (
         <>
@@ -108,6 +128,9 @@ const RequestBookLogs = () => {
                     Kitap İstek Logları
                 </Typography>
                 <Paper style={{ height: 600, width: '100%', padding: '20px' }}>
+                    <Button startIcon={<OpenInNewIcon />} variant="outlined" color="primary" style={{ marginBottom: '10px' }} onClick={getExcel}>
+                        Excel
+                    </Button>
                     <DataGrid
                         rows={data}
                         columns={columns}
