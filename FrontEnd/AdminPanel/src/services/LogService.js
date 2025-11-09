@@ -30,4 +30,13 @@ export default class LogService {
             throw error;
         }
     }
+    async RequestBookLogs() {
+        try {
+            const response = await axios.get("/Logs/RequestBookLogs")
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 }

@@ -25,6 +25,7 @@ import EditLibraries from './pages/Libraries/EditLibraries/EditLibraries.js';
 import CustomerUserCreate from './pages/User/Customeruser/CustomerUserCreate.js';
 import CustomerUserList from './pages/User/Customeruser/CustomerUserList.js';
 import CustomerBooKRequest from './pages/CustomerBookRequest/CustomerBooKRequest.js';
+import RequestBookLogs from './pages/RequestBookLogs/RequestBookLogs.js';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -75,6 +76,7 @@ function App() {
                 <Route path="/request/complate-request/:id" element={<ComplateRequest />} />
                 <Route path="/logs/user-login-operation-logs" element={<UserLoginOperationLogs />} />
                 <Route path="/logs/user-operation-logs" element={<UserOperationLogs />} />
+                <Route path="/logs/request-book-logs" element={<RequestBookLogs />} />
                 <Route path="/author" element={<Author />} />
                 <Route path="/author/create" element={<AuthorCreate />} />
                 <Route path="/author/edit/:id" element={<AuthorEdit />} />

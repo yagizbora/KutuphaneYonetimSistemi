@@ -48,5 +48,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string name_surname { get; set; }
         public string kitap_adi { get; set; }
         public bool request_status { get; set; }
+        public DateTime request_date { get; set; }
+        public bool? is_approved { get; set; }
     }
 }

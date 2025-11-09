@@ -151,6 +151,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     string sql = $@"SELECT tr.id,
                     tr.request_date,
+                    tr.is_approved,
                     users.username as auth_person,
                     customer_users.name_surname,
                     book.kitap_adi,

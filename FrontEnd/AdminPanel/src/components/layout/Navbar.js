@@ -79,7 +79,8 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       items: [
         { path: '/logs/payment-logs', text: 'Ödeme Logları' },
         { path: '/logs/user-login-operation-logs', text: 'Kullanıcı Giriş Logları' },
-        { path: '/logs/user-operation-logs', text: 'Kullanıcı Operasyon Logları' }
+        { path: '/logs/user-operation-logs', text: 'Kullanıcı Operasyon Logları' },
+        { path: '/logs/request-book-logs', text: 'Kitap İstek Logları' },
       ]
     }
   ];

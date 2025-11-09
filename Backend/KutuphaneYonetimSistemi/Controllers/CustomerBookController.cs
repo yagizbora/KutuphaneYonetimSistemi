@@ -165,14 +165,14 @@ ORDER BY tk.id ASC;";
                 {
                     if (!model.result)
                     {
-                        string sql = "UPDATE table_kitap_request SET request_status = false WHERE id = @id";
-                        var result = await connection.ExecuteAsync(sql, new { id = model.request_id });
+                        string sql = "UPDATE table_kitap_request SET request_status = false,auth_person_id = @userid,is_approved = @is_approved WHERE id = @id";
+                        var result = await connection.ExecuteAsync(sql, new { id = model.request_id, userid = userid, is_approved = model.result });
                         return Ok(ResponseHelper.ActionResponse("Müşterinin kitap ödünç alma isteği başarı ile red edildi!"));
                     }
                     else
                     {
-                        string firstsql = "UPDATE table_kitap_request SET request_status = false,auth_person_id = @userid WHERE id = @id";
-                        int result = await connection.ExecuteAsync(firstsql, new { id = model.request_id, userid = userid });
+                        string firstsql = "UPDATE table_kitap_request SET request_status = false,auth_person_id = @userid,is_approved = @is_approved WHERE id = @id";
+                        int result = await connection.ExecuteAsync(firstsql, new { id = model.request_id, userid = userid, is_approved = model.result });
                         if (result > 0)
                         {
                             string secondsql = "UPDATE table_kitaplar SET durum = false, odunc_alma_tarihi = @odunc_alma_tarihi, customer_id = @customer_id WHERE id = @book_id";
