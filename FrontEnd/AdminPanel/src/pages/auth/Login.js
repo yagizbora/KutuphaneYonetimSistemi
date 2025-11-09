@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [userbuttoncontrol, setUserbuttoncontrol] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👈 Added state
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,7 +111,6 @@ const Login = () => {
                 </div>
               </Form.Group>
 
-              {/* Password Input with Show/Hide */}
               <Form.Group className="mb-4">
                 <div className="input-group">
                   <span className="input-group-text">
