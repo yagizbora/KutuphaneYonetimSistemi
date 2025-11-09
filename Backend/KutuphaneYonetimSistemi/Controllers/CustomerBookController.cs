@@ -147,6 +147,18 @@ ORDER BY tk.id ASC;";
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
+            if (StringValues.IsNullOrEmpty(useridvalue))
+            {
+                return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+            }
+            if (!int.TryParse(useridvalue, out int userid))
+            {
+                return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+            }
+
+
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -159,8 +171,8 @@ ORDER BY tk.id ASC;";
                     }
                     else
                     {
-                        string firstsql = "UPDATE table_kitap_request SET request_status = false WHERE id = @id";
-                        int result = await connection.ExecuteAsync(firstsql, new { id = model.request_id });
+                        string firstsql = "UPDATE table_kitap_request SET request_status = false,auth_person_id = @userid WHERE id = @id";
+                        int result = await connection.ExecuteAsync(firstsql, new { id = model.request_id, userid = userid });
                         if (result > 0)
                         {
                             string secondsql = "UPDATE table_kitaplar SET durum = false, odunc_alma_tarihi = @odunc_alma_tarihi, customer_id = @customer_id WHERE id = @book_id";

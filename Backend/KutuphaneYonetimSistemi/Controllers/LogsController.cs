@@ -142,5 +142,42 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
         }
+        [HttpGet("RequestBookLogs")]
+        public async Task<IActionResult> RequestBookLogs()
+        {
+            try
+            {
+                using(var connection = _dbHelper.GetConnection())
+                {
+                    string sql = $@"SELECT tr.id,
+                    tr.request_date,
+                    users.username as auth_person,
+                    customer_users.name_surname,
+                    book.kitap_adi,
+                    tr.request_status
+                    FROM table_kitap_request tr
+                    left JOIN table_users users
+                    ON tr.auth_person_id = users.id
+                    left JOIN table_customer_users customer_users
+                    ON tr.customer_user_id = customer_users.id
+                    left JOIN table_kitaplar book 
+                    ON book.id = tr.book_id
+                    WHERE book.is_deleted = false";
+                    var result = (await connection.QueryAsync<RequestBookLogsModels<object>>(sql, connection)).ToList();
+                    if(result.Count > 1)
+                    {
+                        return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched,result));
+                    }
+                    else
+                    {
+                        return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ResponseHelper.ErrorResponse(ex.Message));
+            }
+        }
     }
 }

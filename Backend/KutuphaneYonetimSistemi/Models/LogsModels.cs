@@ -41,4 +41,12 @@ namespace KutuphaneYonetimSistemi.Models
         [JsonPropertyOrder(2)]
         public List <UserLoginOperationLogs>? data { get; set; }
     }
+    public class RequestBookLogsModels<T>
+    {
+        public int id { get; set; }
+        public T? auth_person { get; set; }
+        public string name_surname { get; set; }
+        public string kitap_adi { get; set; }
+        public bool request_status { get; set; }
+    }
 }
