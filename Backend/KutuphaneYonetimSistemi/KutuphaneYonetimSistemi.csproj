@@ -12,6 +12,7 @@
     <DockerfileContext>.</DockerfileContext>
     <OutputType>Exe</OutputType>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <HotReloadAutoRestart>True</HotReloadAutoRestart>
   </PropertyGroup>
 
   <ItemGroup>

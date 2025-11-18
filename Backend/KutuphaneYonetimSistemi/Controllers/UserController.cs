@@ -262,11 +262,9 @@ namespace KutuphaneYonetimSistemi.Controllers
             }
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserModel model)
+        public async Task<IActionResult> Login([FromBody]UserModel model, [FromServices] Helper helper)
         {
             UserLoginLogs userLoginLogs = new UserLoginLogs(_dbHelper);
-            Helper helper = new();
-
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -404,6 +402,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return Ok(new
                         {
                             status = true,
+                            message = "Sistemde kullanıcı mevcuttur!"
                         });
                     }
                     else
