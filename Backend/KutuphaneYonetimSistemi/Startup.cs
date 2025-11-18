@@ -45,6 +45,7 @@ namespace KutuphaneYonetimSistemi
 
             services.AddSingleton<IDbConnection>(sp => new NpgsqlConnection(connectionString));
             services.AddTransient<Helper>();
+            services.AddTransient<ResponseHelper>();
 
             services.AddCors(options =>
             {
