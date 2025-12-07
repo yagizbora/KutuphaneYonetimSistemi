@@ -21,8 +21,8 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = GetConnection())
             {
-                connection.Open();
-                return func(connection);
+            connection.Open();
+            return func(connection);
             }
         }
         

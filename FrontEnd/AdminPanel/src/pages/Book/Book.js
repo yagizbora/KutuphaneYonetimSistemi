@@ -156,7 +156,6 @@ const Book = () => {
         try {
             const response = await bookService.getBooks(filterbooks);
             if (response) {
-                console.log(response);
                 setBooks(response.data);
             }
         }

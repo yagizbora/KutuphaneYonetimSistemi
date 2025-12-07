@@ -141,7 +141,7 @@ ORDER BY tk.id ASC;";
             }
         }
         [HttpPost("RequestBookAdminResult")]
-        public async Task<IActionResult> RequestBookAdminResult(RequestBookAdminResult model)
+        public async Task<IActionResult> RequestBookAdminResult([FromBody]RequestBookAdminResult model)
         {
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
@@ -191,7 +191,7 @@ ORDER BY tk.id ASC;";
             return BadRequest(ResponseHelper.ErrorResponse("Beklenmeyen bir hata oluştu."));
         }
         [HttpPost("Customerbookrequest")]
-        public async Task <IActionResult> Customerbookrequest(CustomerBookRequest model)
+        public async Task <IActionResult> Customerbookrequest([FromBody]CustomerBookRequest model)
         {
             CustomerTokenController g = new(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);

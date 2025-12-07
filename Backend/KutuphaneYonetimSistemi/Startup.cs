@@ -22,10 +22,13 @@ namespace KutuphaneYonetimSistemi
         {
             services.AddLogging(builder =>
             {
-                builder.AddConsole(); // Konsola log yazma
-                builder.AddDebug();   // Debug logları
-                builder.SetMinimumLevel(LogLevel.Debug); // Log seviyesini Debug'a ayarla
-               
+                builder.AddConsole(); 
+                builder.AddDebug();   
+                builder.SetMinimumLevel(LogLevel.Debug);
+                builder.Services.AddMemoryCache();
+                builder.Services.AddHostedService<CacheCleanupService>();
+
+
                 builder.Services.AddAuthentication(options =>
                 {
 

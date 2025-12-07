@@ -3,6 +3,7 @@ using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 
 namespace KutuphaneYonetimSistemi.Controllers
@@ -12,12 +13,15 @@ namespace KutuphaneYonetimSistemi.Controllers
     public class BookController : ControllerBase
     {
 
+        private readonly IMemoryCache _cache;
         private readonly DbHelper _dbHelper;
 
-        public BookController(DbHelper dbHelper)
+        public BookController(IMemoryCache cache, DbHelper dbHelper)
         {
+            _cache = cache;
             _dbHelper = dbHelper;
         }
+
 
 
         [HttpPost("GetBook")]
@@ -27,7 +31,13 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
-
+            string cacheKey = $"books_{models.kitap_adi ?? ""}_{models.author_id?.ToString() ?? ""}_{models.ISBN ?? ""}_{models.library_location ?? ""}_{models.Durum?.ToString() ?? ""}_{models.kitap_tur_kodu?.ToString() ?? ""}_{models.library_id?.ToString() ?? ""}";
+            CacheKeys.BookKeys.Add(cacheKey);
+            if (_cache.TryGetValue(cacheKey, out List<ListBookModels> cachedBooks))
+            {
+                Response.Headers["X-Cache"] = "Cache Active";
+                return Ok(ResponseHelper.OkResponse("Books fetched (cache).", cachedBooks));
+            }
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -97,6 +107,8 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return NotFound(ResponseHelper.NotFoundResponse(ReturnMessages.NotFound));
                     }
+                    _cache.Set(cacheKey, books, TimeSpan.FromMinutes(10));
+                    Response.Headers["X-Cache"] = "Cache Not Active";
                     return Ok(ResponseHelper.OkResponse("Books fetched.", books));
                 }
             }
@@ -288,6 +300,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = "UPDATE table_kitaplar SET is_deleted = true WHERE id = @id";
                     var parameters = new { id = id };
                     var result = connection.Execute(query, parameters);
+                    foreach (var key in CacheKeys.BookKeys.ToList())
+                    {
+                        if (key.StartsWith("books_"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     if (result > 0 || result == 1)
                     {
                         return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
@@ -325,8 +345,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
 
                     string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,library_id,daily_lending_fee,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,@library_id,@daily_lending_fee,false)";
-                    //var parameters = new { models };
                     connection.Execute(query, models);
+                    foreach (var key in CacheKeys.BookKeys.ToList())
+                    {
+                        if (key.StartsWith("books_"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ResponseSuccesfully<object>("Book Created Succesfully"));
                 }
             }
@@ -357,6 +384,14 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu,library_id = @library_id,daily_lending_fee = @daily_lending_fee WHERE id = @id";
                     var result = connection.Execute(datasql, models);
+                    foreach (var key in CacheKeys.BookKeys.ToList())
+                    {
+                        if (key.StartsWith("books_"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     if (result > 0 || result == 1)
                     {
                         return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordUpdated));

@@ -6,7 +6,7 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public int id { get; set; }
         public string name_surname { get; set; }
-        public DateTime birthday_date { get; set; }
+        public DateOnly birthday_date { get; set; }
         public string biography { get; set; }
     }
     public class CreateAuthor
