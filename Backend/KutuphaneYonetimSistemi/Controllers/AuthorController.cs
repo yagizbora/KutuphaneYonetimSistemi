@@ -3,6 +3,8 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -11,10 +13,13 @@ namespace KutuphaneYonetimSistemi.Controllers
     public class AuthorController : ControllerBase
     {
         private readonly DbHelper _dbHelper;
+        private readonly IMemoryCache _cache;
 
-        public AuthorController(DbHelper dbHelper)
+
+        public AuthorController(DbHelper dbHelper, IMemoryCache cache)
         {
             _dbHelper = dbHelper;
+            _cache = cache;
         }
         Helper helper = new Helper();
 
@@ -27,12 +32,22 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
             try
             {
+                string cachekey = $"author_key";
+                CacheKeys.AuthorKeys.Add(cachekey);
+                if (_cache.TryGetValue(cachekey, out List<GetAuthor> cachedmodels))
+                {
+                    Response.Headers["X-Cache"] = "Cache Active";
+                    return Ok(cachedmodels);
+                }
+
+
                 using (var connection = _dbHelper.GetConnection())
                 {
                     string query = "SELECT id,name_surname,biography,birthday_date FROM table_authors WHERE is_deleted = false";
                     var result = (await connection.QueryAsync<GetAuthor>(query)).ToList();
                     if (result.Count != 0)
                     {
+                        _cache.Set(cachekey, result, TimeSpan.FromMinutes(10));
                         return Ok(result);
                     }
                     else
@@ -105,6 +120,14 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     string query = "INSERT INTO table_authors(name_surname, biography, birthday_date, is_deleted) VALUES (@name_surname, @biography, @birthday_date, false)";
                     var result = await connection.ExecuteAsync(query, model);
+                    foreach (var key in CacheKeys.AuthorKeys.ToList())
+                    {
+                        if (key.StartsWith("author_key"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordAdded));
                 }
             }
@@ -128,6 +151,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     string query = "UPDATE table_authors SET name_surname = @name_surname,biography = @biography,birthday_date = @birthday_date WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, model);
+                    foreach (var key in CacheKeys.AuthorKeys.ToList())
+                    {
+                        if (key.StartsWith("author_key"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated)); 
                 }
             }
@@ -157,6 +188,14 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     string deleteQuery = "UPDATE table_authors SET is_deleted = true WHERE id = @id";
                     await connection.ExecuteAsync(deleteQuery, new { id = id });
+                    foreach (var key in CacheKeys.AuthorKeys.ToList())
+                    {
+                        if (key.StartsWith("author_key"))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordDeleted));
                 }
             }
