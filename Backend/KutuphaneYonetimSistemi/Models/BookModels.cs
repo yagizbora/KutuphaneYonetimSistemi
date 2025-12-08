@@ -91,7 +91,7 @@ namespace KutuphaneYonetimSistemi.Models
         public int? id { get; set; }                 
         public string? kitap_adi { get; set; }        
         public bool? durum { get; set; }              
-        public DateTime? odunc_alma_tarihi { get; set; } 
+        public DateOnly? odunc_alma_tarihi { get; set; } 
         public string? name_surname { get; set; }
         public int? customer_id { get; set; }
     }

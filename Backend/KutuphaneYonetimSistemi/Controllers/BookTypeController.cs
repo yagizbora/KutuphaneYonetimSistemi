@@ -3,6 +3,7 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Npgsql;
 using Dapper;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace KutuphaneYonetimSistemi.Controllers
 {
@@ -11,12 +12,15 @@ namespace KutuphaneYonetimSistemi.Controllers
     public class BookTypeController : ControllerBase
     {
         private readonly DbHelper _dbHelper;
+        private readonly IMemoryCache _cache;
 
-        public BookTypeController(DbHelper dbHelper)
+        public BookTypeController(DbHelper dbHelper, IMemoryCache cache)
         {
             _dbHelper = dbHelper;
+            _cache = cache;
         }
 
+        public static string cachekey = "book_type_key";
 
         [HttpGet("ListBookType")]
         public IActionResult GetAllBookTypes()
@@ -25,6 +29,13 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            CacheKeys.BookTypeKeys.Add(cachekey);
+            if (_cache.TryGetValue(cachekey, out List<GetBookTypes> cachedBookTypes))
+            {
+                Response.Headers["X-Cache"] = "Cache Active";
+                return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, cachedBookTypes));
+            }
             try
             {
                 using (var connection = _dbHelper.GetConnection())
@@ -32,6 +43,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = "SELECT * FROM table_kitap_turleri WHERE is_deleted = FALSE ORDER BY kitap_tur_kodu ASC";
                     var bookTypes = connection.Query<GetBookTypes>(query).ToList();
 
+                    _cache.Set(cachekey, bookTypes, TimeSpan.FromMinutes(10));
                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, bookTypes));
 
                 }
@@ -82,6 +94,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = "UPDATE table_kitap_turleri SET aciklama = @aciklama WHERE kitap_tur_kodu = @kitap_tur_kodu";
                     var list = new { aciklama = models.aciklama, kitap_tur_kodu = models.kitap_tur_kodu };
                     connection.Execute(query, list);
+                    foreach (var key in CacheKeys.BookTypeKeys.ToList())
+                    {
+                        if (key.StartsWith(cachekey))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ActionResponse("Book type updated successfully."));
                 }
             }
@@ -109,6 +129,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string query = "INSERT INTO table_kitap_turleri (aciklama) VALUES (@aciklama)";
                     var list = new { aciklama = models.aciklama };
                     connection.Execute(query, list);
+
+                    foreach (var key in CacheKeys.BookTypeKeys.ToList())
+                    {
+                        if (key.StartsWith(cachekey))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ActionResponse("Book type created successfully."));
                 }
             }
@@ -140,10 +169,26 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(deletebook, parameters);
                     if(result == 1 || result > 0)
                     {
+                        foreach (var key in CacheKeys.BookTypeKeys.ToList())
+                        {
+                            if (key.StartsWith(cachekey))
+                            {
+                                _cache.Remove(key);
+                                CacheKeys.BookKeys.Remove(key);
+                            }
+                        }
                         return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                     }
                     else
                     {
+                        foreach (var key in CacheKeys.BookTypeKeys.ToList())
+                        {
+                            if (key.StartsWith(cachekey))
+                            {
+                                _cache.Remove(key);
+                                CacheKeys.BookKeys.Remove(key);
+                            }
+                        }
                         return BadRequest(ResponseHelper.ErrorResponse("Book Type is not found"));
                     }
                 }

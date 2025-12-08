@@ -101,10 +101,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var bookfreecontrol = await connection.QueryFirstOrDefaultAsync<bool>(bookisavaible, new { book_id = models.id });
                     if (bookfreecontrol)
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiş!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiştir!"));
                     }
 
-                    DateTime oduncAlmaTarihi = models.odunc_alma_tarihi.Date;
+                    DateTime oduncAlmaTarihi = models.odunc_alma_tarihi;
 
 
                     string sql = "UPDATE table_kitaplar SET customer_id = @customer_id, odunc_alma_tarihi = @odunc_alma_tarihi,durum = false WHERE id = @id";
@@ -120,7 +120,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     else
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Lending failed."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Ödünç verme işlemi başarısız."));
                     }
                 }
             }
@@ -177,20 +177,23 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
                     }
 
-                    string findbook = "SELECT odunc_alma_tarihi FROM table_kitaplar WHERE id = @id";
-                    DateTime oduncAlmaTarihi = await connection.QueryFirstOrDefaultAsync<DateTime>(findbook, new { id = model.id });
+                    string findbook = "SELECT odunc_alma_tarihi::timestamp FROM table_kitaplar WHERE id = @id";
+                    DateTime? oduncAlmaTarihiRaw = await connection.QueryFirstOrDefaultAsync<DateTime?>(findbook, new { id = model.id });
 
-                    if (oduncAlmaTarihi == default(DateTime))
+                    if (!oduncAlmaTarihiRaw.HasValue)
                     {
                         return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alma tarihi sistemde bulunamadı."));
                     }
+
+                    DateOnly oduncAlmaTarihi = DateOnly.FromDateTime(oduncAlmaTarihiRaw.Value);
 
                     DateTime geriAlmaTarihi = model.geri_alma_tarihi ?? DateTime.Now;
 
                     string findfee = "SELECT daily_lending_fee FROM table_kitaplar WHERE id = @id";
                     int findfeeresult = await connection.QueryFirstOrDefaultAsync<int>(findfee, new { id = model.id });
 
-                    int gecenGun = (int)(geriAlmaTarihi.Date - oduncAlmaTarihi.Date).TotalDays;
+                    var oduncDateTime = oduncAlmaTarihi.ToDateTime(TimeOnly.MinValue);
+                    int gecenGun = (int)(geriAlmaTarihi.Date - oduncDateTime.Date).TotalDays;
 
                     int ceza = 0;
                     if (gecenGun > 10)
@@ -224,7 +227,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string checkBookQuery = "SELECT Durum, odunc_alma_tarihi, customer_id FROM table_kitaplar WHERE id = @id";
+                    string checkBookQuery = "SELECT Durum, odunc_alma_tarihi::timestamp, customer_id FROM table_kitaplar WHERE id = @id";
                     BookStatusModel? book = await connection.QueryFirstOrDefaultAsync<BookStatusModel>(checkBookQuery, new { id = models.id });
 
                     if (book == null)

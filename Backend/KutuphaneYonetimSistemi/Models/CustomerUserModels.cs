@@ -6,7 +6,7 @@
         public string? tc_kimlik_no { get; set; }
         public string? username { get; set; }
         public string? name_surname { get; set; }
-        public DateTime? birthday_date { get; set; }
+        public DateOnly? birthday_date { get; set; }
         public decimal? phone_number { get; set; }
         public string? eposta { get; set; }
     }

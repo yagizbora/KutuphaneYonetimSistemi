@@ -14,7 +14,7 @@ namespace KutuphaneYonetimSistemi.Models
         public int book_id { get; set; }
         public bool payment_is_success { get; set; }
         public string? kitap_adi { get; set; }
-        public DateTime payment_date { get; set; }
+        public DateOnly? payment_date { get; set; }
         public string? payment_failed_subject { get; set; }
     }
 
@@ -48,7 +48,7 @@ namespace KutuphaneYonetimSistemi.Models
         public string name_surname { get; set; }
         public string kitap_adi { get; set; }
         public bool request_status { get; set; }
-        public DateTime request_date { get; set; }
+        public DateOnly? request_date { get; set; }
         public bool? is_approved { get; set; }
     }
 }
