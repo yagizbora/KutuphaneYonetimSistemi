@@ -17,6 +17,7 @@ namespace KutuphaneYonetimSistemi.Models
     {
         public int id { get; set; }
         public required string username { get; set; }
+        public bool? user_account_status { get; set; }
         public required string hashedpassword { get; set; }
     }
     public class ChangeUsername

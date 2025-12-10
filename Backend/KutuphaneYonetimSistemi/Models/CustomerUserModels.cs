@@ -9,6 +9,8 @@
         public DateOnly? birthday_date { get; set; }
         public decimal? phone_number { get; set; }
         public string? eposta { get; set; }
+        
+        public bool? user_account_status { get; set; }
     }
 
 

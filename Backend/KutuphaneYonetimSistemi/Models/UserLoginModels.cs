@@ -6,6 +6,7 @@
         public string? username { get; set; }
         public string? token { get; set; }
         public DateTime? login_date { get; set; }
+        public bool? user_account_status { get; set; }
     }
     public class TokenControlModels
     {

@@ -65,6 +65,28 @@ const CustomerUserList = () => {
         },
         { field: 'eposta', headerName: 'E-posta', width: 200 },
         {
+            field: 'is_disabled_account', headerName: 'Hesap Durumu', width: 150,
+            renderCell: (params) => (
+                <>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Grid container direction="column" spacing={1}>
+                            <Grid item>
+                                <Checkbox
+                                    checked={params.row.user_account_status}
+
+                                    onChange={() => {
+                                        const newStatus = !params.row.user_account_status;
+                                        deactiveCustomerUser({ id: params.row.id, status: newStatus });
+                                    }
+                                    }
+                                />
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </>
+            )
+        },
+        {
             field: '', headerName: 'İşlemler', width: 150, renderCell: (params) => (
                 <>
                     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
@@ -116,6 +138,26 @@ const CustomerUserList = () => {
         }
     }
 
+    const deactiveCustomerUser = async (data) => {
+        try {
+            const response = await customerUserService.deactiveCustomerUser(data);
+            if (response && response.data.statusCode === 200) {
+                Swal.fire({
+                    title: 'Başarılı',
+                    text: response.data.message || 'Müşterinin kullanıcısı başarıyla devre dışı bırakıldı.',
+                    icon: 'success'
+                });
+                ListCustomerUsers();
+            }
+        }
+        catch (error) {
+            Swal.fire({
+                title: 'Hata',
+                text: error?.response?.data?.message || 'Müşteri kullanıcısı devre dışı bırakılırken bir hata oluştu.',
+                icon: 'error'
+            });
+        }
+    }
     const editCustomerUser = async () => {
         try {
             const response = await customerUserService.editCustomerUser(editdata);

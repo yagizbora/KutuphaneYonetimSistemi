@@ -81,7 +81,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
+                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number,user_account_status FROM table_customer_users WHERE is_deleted = FALSE ORDER BY login_date ASC, id ASC";
                     var List = await connection.QueryAsync<CustomerUserModels>(query, connection);
                     return Ok(List);
                 }
@@ -90,6 +90,39 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
+        }
+
+        [HttpGet("DisableCustomerUserAccount/{id}/{status}")]
+        public async Task<IActionResult> DisableCustomerUserAccount(int id,bool status)
+        {
+            TokenController g = new TokenController(_dbHelper);
+            var login = g.GetUserByToken(ControllerContext);
+            if (!login.Status)
+                return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            try
+            {
+                using (var connection = _dbHelper.GetConnection())
+                {
+                    string sql = "UPDATE table_customer_users SET user_account_status = @status WHERE id = @id ";
+                    var response = await connection.ExecuteAsync(sql, new { status = status, id = id });
+                    if(response > 0)
+                    {
+                        return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
+                    }
+                    else
+                    {
+                        return StatusCode(500,new
+                        {
+                            message = "Bir şeyler ters gitti :("
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
+            }
+
         }
 
         [HttpGet("ListAllCustomerUser/{id}")]
@@ -103,7 +136,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number FROM table_customer_users WHERE is_deleted = FALSE AND id = @id ORDER BY login_date ASC, id ASC";
+                    string query = "SELECT id,username,is_login,name_surname,birthday_date,eposta,tc_kimlik_no,phone_number,user_account_status FROM table_customer_users WHERE is_deleted = FALSE AND id = @id ORDER BY login_date ASC, id ASC";
                     var List = await connection.QueryAsync<CustomerUserModels>(query, new {id = id});
                     return Ok(List);
                 }
@@ -183,6 +216,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (userdata == null || !BCrypt.Net.BCrypt.Verify(model.password, userdata.hashedpassword))
                     {
                         return BadRequest(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
+                    }
+
+                    if(userdata.user_account_status.HasValue && userdata.user_account_status.Value)
+                    {
+                        return BadRequest(ResponseHelper.UnAuthorizedResponse("Bu hesaba giriş mümkün değildir! Lütfen kütüphanenizle görüşünüz!"));
                     }
 
                     string? token = helper.GenerateJWTToken(userdata.id, userdata.username);

@@ -1,13 +1,14 @@
 ﻿using Dapper;
-using KutuphaneYonetimSistemi.Models;
-using Microsoft.AspNetCore.Mvc;
-using static KutuphaneYonetimSistemi.Common.ResponseHelper;
-using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
 using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
-using System.IdentityModel.Tokens.Jwt;
+using KutuphaneYonetimSistemi.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading;
+using static KutuphaneYonetimSistemi.Common.ResponseHelper;
+using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
 
 namespace KutuphaneYonetimSistemi.Common
 {
@@ -164,6 +165,16 @@ namespace KutuphaneYonetimSistemi.Common
                     if (user == null)
                     {
                         return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token doğrulanamadı!" };
+                    }
+                    if (user.user_account_status.HasValue && !user.user_account_status.Value)
+                    {
+                        var disablesql = "UPDATE table_customer_users SET token = NULL,login_date = NULL,is_login = FALSE WHERE id = @id";
+                        int disable = connection.Execute(disablesql, new { id = user.id });
+                        if (disable > 0)
+                        {
+                            return new ApiResponse<UserLoginModels>() { Status = false, Message = "Bu hesap devre dışı bırakılmıştır!" };
+                        }
+
                     }
                     if (user.login_date != null)
                     {
