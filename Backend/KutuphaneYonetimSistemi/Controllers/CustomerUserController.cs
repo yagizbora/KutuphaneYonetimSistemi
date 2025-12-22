@@ -218,7 +218,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return BadRequest(ResponseHelper.UnAuthorizedResponse(ReturnMessages.UserCredentialsInvalidMessage));
                     }
 
-                    if(userdata.user_account_status.HasValue && userdata.user_account_status.Value)
+                    if(userdata.user_account_status.HasValue && !userdata.user_account_status.Value)
                     {
                         return BadRequest(ResponseHelper.UnAuthorizedResponse("Bu hesaba giriş mümkün değildir! Lütfen kütüphanenizle görüşünüz!"));
                     }
