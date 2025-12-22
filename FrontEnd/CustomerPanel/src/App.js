@@ -17,9 +17,35 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
+
+
 function App() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(true);
-
+  const [version, setVersion] = useState(null);
+  const checkversion = async () => {
+    try {
+      const response = await fetch(`${API_URL}/Version/CheckVersion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data) {
+          const filterdata = data.map(item => item.app_name === "Customer Panel" ? item : null).filter(item => item !== null)[0];
+          setVersion(filterdata.version);
+        }
+      }
+    }
+    catch (error) {
+      console.error('Error checking version:', error);
+    }
+  }
+  React.useEffect(() => {
+    checkversion();
+  }, []);
   const toggleNavbar = () => {
     setIsNavbarOpen(!isNavbarOpen);
   };
@@ -41,7 +67,7 @@ function App() {
         <Route path="/*" element={
 
           <ProtectedRoute>
-            <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar}>
+            <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/customer-book" element={<CustomerBook />} />

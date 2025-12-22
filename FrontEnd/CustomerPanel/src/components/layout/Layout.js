@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import Topbar from './Topbar';
 import Footer from './Footer';
 
-const Layout = ({ children, isNavbarOpen, toggleNavbar }) => {
+const Layout = ({ children, isNavbarOpen, toggleNavbar, version }) => {
   return (
     <div className="layout">
       <Navbar isOpen={isNavbarOpen} toggleNavbar={toggleNavbar} />
@@ -12,7 +12,7 @@ const Layout = ({ children, isNavbarOpen, toggleNavbar }) => {
         <main className="main-content">
           {children}
         </main>
-        <Footer />
+        <Footer version={version} />
       </div>
     </div>
   );

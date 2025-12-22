@@ -227,7 +227,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         using var stream = new MemoryStream();
                         workbook.SaveAs(stream);
                         var content = stream.ToArray();
-                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglari {DateTime.UtcNow}.xlsx");
+                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglariExcel {DateTime.UtcNow}.xlsx");
                     }
                     else
                     {
