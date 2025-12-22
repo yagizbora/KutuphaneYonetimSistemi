@@ -46,6 +46,7 @@ function App() {
   React.useEffect(() => {
     checkversion();
   }, []);
+  setInterval(checkversion, 5000);
   const toggleNavbar = () => {
     setIsNavbarOpen(!isNavbarOpen);
   };
