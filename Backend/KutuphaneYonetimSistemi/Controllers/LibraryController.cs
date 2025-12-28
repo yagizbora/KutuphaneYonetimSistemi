@@ -2,6 +2,7 @@
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -14,14 +15,18 @@ namespace KutuphaneYonetimSistemi.Controllers
     public class LibraryController : ControllerBase
     {
         private readonly DbHelper _dbHelper;
+        private readonly IMemoryCache _cache;
 
-        public LibraryController(DbHelper dbHelper)
+        public LibraryController(DbHelper dbHelper, IMemoryCache cache)
         {
             _dbHelper = dbHelper;
+            _cache = cache;
+
         }
 
         Helper helper = new Helper();
 
+        public const string cachekeys = "librarycache";
 
         //FOR CUSTOMER PANEL
 
@@ -58,18 +63,27 @@ namespace KutuphaneYonetimSistemi.Controllers
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+
+            CacheKeys.LibraryKeys.Add(cachekeys);
+            if(_cache.TryGetValue(cachekeys, out List <LibraryModels> data))
+            {
+                Response.Headers["X-Cache"] = "Cache Active";
+                return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, data));
+            }
+
             try
             {
-                using(var connection = _dbHelper.GetConnection())
+                using (var connection = _dbHelper.GetConnection())
                 {
 
-                 string query = "SELECT id,library_name,library_working_start_time,library_working_end_time,location,location_google_map_adress,phone_number,library_email FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
-                    var result = await connection.QueryAsync<LibraryModels>(query,connection);
+                    string query = "SELECT id,library_name,library_working_start_time,library_working_end_time,location,location_google_map_adress,phone_number,library_email FROM table_libraries WHERE is_deleted = false ORDER BY id ASC";
+                    var result = await connection.QueryAsync<LibraryModels>(query, connection);
+                    _cache.Set(cachekeys, result, TimeSpan.FromMinutes(10));
                     return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, result));
                 }
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
             }
@@ -137,6 +151,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(updatesql, models);
                     if(result > 1 || result == 1)
                     {
+                        foreach (var key in CacheKeys.BookKeys.ToList())
+                        {
+                            if (key.StartsWith(cachekeys))
+                            {
+                                _cache.Remove(key);
+                                CacheKeys.BookKeys.Remove(key);
+                            }
+                        }
                         return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordUpdated));
                     }
                     else
@@ -183,6 +205,14 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     string query = "INSERT INTO table_libraries(library_name,library_working_start_time,library_working_end_time,location_google_map_adress,location,library_email,phone_number,is_deleted) VALUES (@library_name,@library_working_start_time,@library_working_end_time,@location_google_map_adress,@location,@library_email,@phone_number,false)";
                     var result = await connection.ExecuteAsync(query, model);
+                    foreach (var key in CacheKeys.BookKeys.ToList())
+                    {
+                        if (key.StartsWith(cachekeys))
+                        {
+                            _cache.Remove(key);
+                            CacheKeys.BookKeys.Remove(key);
+                        }
+                    }
                     return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordAdded));
 
                 }
@@ -207,6 +237,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(query, new { id = id });
                     if(result == 1)
                     {
+                        foreach (var key in CacheKeys.BookKeys.ToList())
+                        {
+                            if (key.StartsWith(cachekeys))
+                            {
+                                _cache.Remove(key);
+                                CacheKeys.BookKeys.Remove(key);
+                            }
+                        }
                         return Ok(ResponseHelper.ResponseSuccesfully<object>(ReturnMessages.RecordDeleted));
                     }
                     else

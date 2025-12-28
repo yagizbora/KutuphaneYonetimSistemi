@@ -31,6 +31,14 @@ namespace KutuphaneYonetimSistemi.Common
                         CacheKeys.BookKeys.Remove(key);
                     }
                 }
+                foreach (var key in CacheKeys.BookKeys.ToList())
+                {
+                    if (key.StartsWith("librarycache"))
+                    {
+                        _cache.Remove(key);
+                        CacheKeys.BookKeys.Remove(key);
+                    }
+                }
 
                 await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
             }

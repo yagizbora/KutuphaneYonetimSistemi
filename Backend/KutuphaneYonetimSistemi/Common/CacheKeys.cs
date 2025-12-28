@@ -5,5 +5,6 @@
         public static HashSet<string> BookKeys = new HashSet<string>();
         public static HashSet<string> AuthorKeys = new HashSet<string>();
         public static HashSet<string> BookTypeKeys = new HashSet<string>();
+        public static HashSet<string> LibraryKeys = new HashSet<string>();
     }
 }

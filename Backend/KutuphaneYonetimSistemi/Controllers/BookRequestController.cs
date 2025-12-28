@@ -3,6 +3,7 @@ using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Reflection;
@@ -43,6 +44,9 @@ namespace KutuphaneYonetimSistemi.Controllers
         //        return BadRequest(ResponseHelper.ExceptionResponse(ex.Message));
         //    }
         //}
+
+
+
         [HttpPost("GetBookRequest")]
         public async Task<IActionResult> GetBookRequest([FromBody] BookRequest model)
         {
