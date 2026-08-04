@@ -18,6 +18,7 @@ import {
     Grid,
     Select,
     MenuItem,
+    ListSubheader,
     Stack
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -75,8 +76,9 @@ const Book = () => {
     const getbooktypesfilter = async () => {
         try {
             const response = await bookTypeService.getbooktypes();
-            if (response) {
+            if (response && response.data && response.data.data) {
                 setTypeofFilterbook(response.data.data);
+                console.log(response.data.data);
             }
         } catch (error) {
             console.error("Kitap türleri yüklenirken bir hata oluştu:", error);
@@ -177,7 +179,7 @@ const Book = () => {
     const handleShowModal = async (bookData) => {
         try {
             const response = await bookTypeService.getbooktypes();
-            if (response) {
+            if (response && response.data && response.data.data) {
                 setBookTypes(response.data.data);
             }
             const bookDetails = await bookService.getbooksbyid(bookData.id);
@@ -198,7 +200,7 @@ const Book = () => {
 
     const createbookmodalopen = async () => {
         const response = await bookTypeService.getbooktypes();
-        if (response) {
+        if (response && response.data && response.data.data) {
             setBookTypes(response.data.data);
             await fetchAuthors();
             await getlibraries();
@@ -461,11 +463,14 @@ const Book = () => {
                                 }))
                             }
                         >
-                            {Array.isArray(typeofFilterbook) && typeofFilterbook.map((type) => (
-                                <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
-                                    {type.aciklama}
-                                </MenuItem>
-                            ))}
+                            {Array.isArray(typeofFilterbook) && typeofFilterbook.map((group) => [
+                                <ListSubheader key={`header-${group.book_group_id}`}>{group.book_types_group}</ListSubheader>,
+                                ...(group.bookTypes || []).map((type) => (
+                                    <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                        {type.aciklama}
+                                    </MenuItem>
+                                ))
+                            ])}
                         </Select>
                     </FormControl>
                     <FormControl variant="outlined" sx={{ minWidth: 200 }}>
@@ -627,11 +632,14 @@ const Book = () => {
                                         }))
                                     }
                                 >
-                                    {bookTypes.map(type => (
-                                        <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
-                                            {type.aciklama}
-                                        </MenuItem>
-                                    ))}
+                                    {Array.isArray(bookTypes) && bookTypes.map(group => [
+                                        <ListSubheader key={`header-${group.book_group_id}`}>{group.book_types_group}</ListSubheader>,
+                                        ...(group.bookTypes || []).map(type => (
+                                            <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                                {type.aciklama}
+                                            </MenuItem>
+                                        ))
+                                    ])}
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth variant="outlined">
@@ -739,11 +747,14 @@ const Book = () => {
                                     onChange={handleInputChange}
                                     variant="outlined"
                                 >
-                                    {bookTypes.map((type) => (
-                                        <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
-                                            {type.aciklama}
-                                        </MenuItem>
-                                    ))}
+                                    {Array.isArray(bookTypes) && bookTypes.map((group) => [
+                                        <ListSubheader key={`header-${group.book_group_id}`}>{group.book_types_group}</ListSubheader>,
+                                        ...(group.bookTypes || []).map((type) => (
+                                            <MenuItem key={type.kitap_tur_kodu} value={type.kitap_tur_kodu}>
+                                                {type.aciklama}
+                                            </MenuItem>
+                                        ))
+                                    ])}
                                 </Select>
                                 <FormControl variant="outlined" sx={{ minWidth: 200 }}>
                                     <InputLabel id="library-select-label">Kütüphane</InputLabel>

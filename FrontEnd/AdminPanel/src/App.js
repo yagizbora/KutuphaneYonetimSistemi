@@ -26,6 +26,7 @@ import CustomerUserCreate from './pages/User/Customeruser/CustomerUserCreate.js'
 import CustomerUserList from './pages/User/Customeruser/CustomerUserList.js';
 import CustomerBooKRequest from './pages/CustomerBookRequest/CustomerBooKRequest.js';
 import RequestBookLogs from './pages/RequestBookLogs/RequestBookLogs.js';
+import BookTypeGroup from './pages/BookTypeGroup/BookTypeGroup.js'
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -94,6 +95,7 @@ function App() {
                 <Route path="/book" element={<Book />} />
                 <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="/book/categories" element={<BookType />} />
+                <Route path= "/book/book-type-group" element={<BookTypeGroup/>} />
                 <Route path="/book/return-book" element={<ReturnBook />} />
                 <Route path="/book/customer-book-request" element={<CustomerBooKRequest />} />
                 <Route path="/user" element={<User />} />

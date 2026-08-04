@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Npgsql;
@@ -25,26 +25,37 @@ namespace KutuphaneYonetimSistemi.Controllers
         [HttpGet("ListBookType")]
         public IActionResult GetAllBookTypes()
         {
+            /* 
             TokenController g = new TokenController(_dbHelper);
             var login = g.GetUserByToken(ControllerContext);
             if (!login.Status)
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
+            */
 
-            CacheKeys.BookTypeKeys.Add(cachekey);
-            if (_cache.TryGetValue(cachekey, out List<GetBookTypes> cachedBookTypes))
-            {
-                Response.Headers["X-Cache"] = "Cache Active";
-                return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, cachedBookTypes));
-            }
             try
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT * FROM table_kitap_turleri WHERE is_deleted = FALSE ORDER BY kitap_tur_kodu ASC";
-                    var bookTypes = connection.Query<GetBookTypes>(query).ToList();
+                    string query = "SELECT tk.*,tkg.id as book_group_id, tkg.book_types_group FROM table_kitap_turleri tk " +
+                                    "FULL JOIN table_kitap_turleri_group tkg ON tkg.id = tk.book_group_id " +
+                                    "WHERE is_deleted = FALSE ORDER BY kitap_tur_kodu ASC";
+                    var allBookTypes = connection.Query<GetBookTypes>(query).ToList();
 
-                    _cache.Set(cachekey, bookTypes, TimeSpan.FromMinutes(10));
-                    return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, bookTypes));
+                    var groupedBookTypes = allBookTypes
+                        .Where(x => x.book_group_id != 0)
+                        .GroupBy(x => new { x.book_group_id, x.book_types_group })
+                        .Select(g => new GetBookTypesNew
+                        {
+                            book_group_id = g.Key.book_group_id,
+                            book_types_group = g.Key.book_types_group,
+                            bookTypes = g.Where(x => x.kitap_tur_kodu != 0).Select(x => new GetBookTypesNames
+                            {
+                                kitap_tur_kodu = x.kitap_tur_kodu,
+                                aciklama = x.aciklama
+                            }).ToList()
+                        }).ToList();
+
+                    return Ok(ResponseHelper.OkResponse(ReturnMessages.DataFetched, groupedBookTypes));
 
                 }
             }
@@ -64,7 +75,9 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "SELECT * FROM table_kitap_turleri WHERE kitap_tur_kodu = @id AND is_deleted = FALSE";
+                    string query = "SELECT tk.*,tkg.id as book_group_id, tkg.book_types_group FROM table_kitap_turleri tk " +
+                                    "FULL JOIN table_kitap_turleri_group tkg ON tkg.id = tk.book_group_id " +
+                                    "WHERE is_deleted = FALSE AND tk.kitap_tur_kodu = @id ORDER BY kitap_tur_kodu ASC ";
                     var List = connection.Query<GetBookTypes>(query, new { id }).ToList();
                     if (List.Count == 0)
                     {
@@ -91,17 +104,9 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "UPDATE table_kitap_turleri SET aciklama = @aciklama WHERE kitap_tur_kodu = @kitap_tur_kodu";
-                    var list = new { aciklama = models.aciklama, kitap_tur_kodu = models.kitap_tur_kodu };
+                    string query = "UPDATE table_kitap_turleri SET aciklama = @aciklama,book_group_id = @book_group_id WHERE kitap_tur_kodu = @kitap_tur_kodu";
+                    var list = new { aciklama = models.aciklama, kitap_tur_kodu = models.kitap_tur_kodu, book_group_id = models.book_group_id };
                     connection.Execute(query, list);
-                    foreach (var key in CacheKeys.BookTypeKeys.ToList())
-                    {
-                        if (key.StartsWith(cachekey))
-                        {
-                            _cache.Remove(key);
-                            CacheKeys.BookKeys.Remove(key);
-                        }
-                    }
                     return Ok(ResponseHelper.ActionResponse("Book type updated successfully."));
                 }
             }
@@ -126,18 +131,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                 }
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string query = "INSERT INTO table_kitap_turleri (aciklama) VALUES (@aciklama)";
-                    var list = new { aciklama = models.aciklama };
+                    string query = "INSERT INTO table_kitap_turleri (aciklama,book_group_id) VALUES (@aciklama,@book_group_id)";
+                    var list = new { aciklama = models.aciklama, book_group_id = models.book_group_id };
                     connection.Execute(query, list);
 
-                    foreach (var key in CacheKeys.BookTypeKeys.ToList())
-                    {
-                        if (key.StartsWith(cachekey))
-                        {
-                            _cache.Remove(key);
-                            CacheKeys.BookKeys.Remove(key);
-                        }
-                    }
                     return Ok(ResponseHelper.ActionResponse("Book type created successfully."));
                 }
             }
@@ -169,26 +166,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.ExecuteAsync(deletebook, parameters);
                     if(result == 1 || result > 0)
                     {
-                        foreach (var key in CacheKeys.BookTypeKeys.ToList())
-                        {
-                            if (key.StartsWith(cachekey))
-                            {
-                                _cache.Remove(key);
-                                CacheKeys.BookKeys.Remove(key);
-                            }
-                        }
                         return Ok(ResponseHelper.ActionResponse(ReturnMessages.RecordUpdated));
                     }
                     else
                     {
-                        foreach (var key in CacheKeys.BookTypeKeys.ToList())
-                        {
-                            if (key.StartsWith(cachekey))
-                            {
-                                _cache.Remove(key);
-                                CacheKeys.BookKeys.Remove(key);
-                            }
-                        }
                         return BadRequest(ResponseHelper.ErrorResponse("Book Type is not found"));
                     }
                 }

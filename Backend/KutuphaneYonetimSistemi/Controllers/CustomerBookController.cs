@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using DocumentFormat.OpenXml.Math;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
@@ -123,7 +123,7 @@ ORDER BY tk.id ASC;";
             {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    string sql = "SELECT kr.id,kr.customer_user_id,kr.request_date as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
+                    string sql = "SELECT kr.id,kr.customer_user_id,kr.request_date::timestamp as request_date, tk.id as book_id,tk.kitap_adi,lb.library_name,cu.name_surname FROM table_kitaplar tk " +
                                  "LEFT JOIN table_kitap_request kr ON kr.book_id = tk.id " +
                                  "JOIN table_libraries lb ON lb.id = kr.library_id " +
                                  "JOIN table_customer_users cu ON cu.id = kr.customer_user_id " +

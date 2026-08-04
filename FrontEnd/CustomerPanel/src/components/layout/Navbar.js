@@ -97,7 +97,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
 
   return (
     <>
-      {/* {isMobile && (
+      {isMobile && (
         <button
           className="mobile-toggle-button"
           onClick={toggleNavbar}
@@ -105,7 +105,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
         >
           <i className={`fas fa-${isOpen ? 'times' : 'bars'}`}></i>
         </button>
-      )} */}
+      )}
 
       <div className={`main-navbar ${!isOpen ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}>
         <div className="navbar-content">
