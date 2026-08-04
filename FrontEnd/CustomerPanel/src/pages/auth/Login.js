@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
 import axios from '../../utils/axiosConfig';
 import './Login.css';
 
@@ -15,7 +14,6 @@ const Login = () => {
   const [userbuttoncontrol, setUserbuttoncontrol] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -35,9 +33,6 @@ const Login = () => {
     }));
   };
 
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -53,8 +48,7 @@ const Login = () => {
       } else {
         setError('Invalid credentials. Please try again.');
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Login error:', error);
       setError(
         error.response?.data?.message ||
@@ -67,104 +61,104 @@ const Login = () => {
   };
 
   return (
-    <Container fluid className="login-container">
-      <div className="login-overlay"></div>
-      <Container className="d-flex align-items-center justify-content-center min-vh-100">
-        <Card className="login-card">
-          <Card.Body className="p-5">
-            <div className="text-center mb-4">
-              <i className="fas fa-book-reader fa-3x text-primary mb-3"></i>
-              <h2 className="login-title">Library Customer System</h2>
-              <p className="text-muted">Welcome back! Please login to your account.</p>
+    <div className="login-container">
+      <div className="login-box">
+        <h2>
+          <i className="fas fa-book-reader"></i>
+          Library Customer System
+        </h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+          Welcome back! Please login to your account.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+            <label className="form-label">
+              <i className="fas fa-user text-primary"></i>
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              autoComplete="off"
+              required
+              className="form-control"
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '1.5rem', position: 'relative' }}>
+            <label className="form-label">
+              <i className="fas fa-lock text-primary"></i>
+              Password
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                autoComplete="off"
+                required
+                className="form-control"
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                style={{
+                  position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer'
+                }}
+              >
+                <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+              </button>
             </div>
+          </div>
 
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-4">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="fas fa-user text-primary"></i>
-                  </span>
-                  <Form.Control
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    placeholder="Username"
-                    autoComplete="off"
-                    required
-                    className="py-2"
-                  />
-                </div>
-              </Form.Group>
+          {error && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="fas fa-exclamation-circle"></i>
+              {error}
+            </div>
+          )}
 
-              <Form.Group className="mb-4">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="fas fa-lock text-primary"></i>
-                  </span>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Password"
-                    autoComplete="off"
-                    required
-                    className="py-2"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => setShowPassword(prev => !prev)}
-                  >
-                    <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
-                  </button>
-                </div>
-              </Form.Group>
-
-              {error && (
-                <Alert variant="danger" className="mb-4">
-                  <i className="fas fa-exclamation-circle me-2"></i>
-                  {error}
-                </Alert>
-              )}
-
-              {userbuttoncontrol ? (
-                <Button
-                  className="w-100 mb-3"
-                  variant="secondary"
-                  disabled={true}
-                >
-                  <i className="fas fa-user-plus me-2"></i>
-                  Login
-                </Button>
+          {userbuttoncontrol ? (
+            <button
+              className="btn btn-primary login-button w-100"
+              style={{ background: 'var(--text-muted)', cursor: 'not-allowed' }}
+              disabled
+            >
+              <i className="fas fa-user-plus me-2"></i>
+              Login Disabled
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="btn btn-primary login-button w-100"
+              disabled={loading}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}
+            >
+              {loading ? (
+                <>
+                  <i className="fas fa-spinner fa-spin"></i>
+                  Logging in...
+                </>
               ) : (
-                <Button
-                  type="submit"
-                  className="w-100 login-button py-2"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <i className="fas fa-spinner fa-spin me-2"></i>
-                      Logging in...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-sign-in-alt me-2"></i>
-                      Login
-                    </>
-                  )}
-                </Button>
-              )
-              }
-
-            </Form>
-          </Card.Body>
-        </Card>
-      </Container>
-    </Container>
+                <>
+                  <i className="fas fa-sign-in-alt"></i>
+                  Login
+                </>
+              )}
+            </button>
+          )}
+        </form>
+      </div>
+    </div>
   );
 };
 
-export default Login; 
+export default Login;

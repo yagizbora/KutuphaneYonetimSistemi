@@ -12,23 +12,19 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-
-      // Mobil moda geçildiğinde dropdown'u kapat
       if (mobile) {
         setActiveDropdown(null);
       }
     };
-
     window.addEventListener('resize', handleResize);
-
-    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const menuItems = [
-    { path: '/', icon: 'fas fa-home', text: 'Dashboard' },
+    { path: '/', icon: 'fas fa-home', text: 'Ana Sayfa' },
+    { path: '/dashboard', text: 'Dashboard', icon: 'fas fa-chart-line' },
     {
-      text: 'Kitap operasyonları',
+      text: 'Kitap Operasyonları',
       icon: 'fas fa-book',
       items: [
         { path: '/customer-book', text: 'Kitap', icon: 'fas fa-address-book' },
@@ -44,96 +40,76 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   ];
 
   const handleDropdownClick = (index) => {
-    setActiveDropdown((prevIndex) => (prevIndex === index ? null : index));
+    setActiveDropdown(activeDropdown === index ? null : index);
   };
 
   const renderMenuItem = (item, index) => {
     if (item.items) {
       const isActive = activeDropdown === index;
-
+      const isChildActive = item.items.some(sub => location.pathname === sub.path);
       return (
-        <div className="nav-item-container" key={item.text + index}>
+        <li className="nav-item-container" key={index}>
           <div
-            className={`nav-item ${isActive ? 'active' : ''}`}
+            className={`nav-link ${isActive || isChildActive ? 'active' : ''}`}
             onClick={() => handleDropdownClick(index)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleDropdownClick(index); }}
+            style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
           >
-            <i className={item.icon}></i>
-            <span className={`nav-text ${!isOpen ? 'hidden' : ''}`}>
-              {item.text}
-            </span>
-            {!isMobile && <i className={`fas fa-chevron-${isActive ? 'up' : 'down'} dropdown-icon`}></i>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <i className={item.icon}></i>
+              {!(!isOpen && !isMobile) && <span>{item.text}</span>}
+            </div>
+            {!(!isOpen && !isMobile) && <i className={`fas fa-chevron-${isActive ? 'up' : 'down'} text-xs opacity-50`}></i>}
           </div>
-          <div className={`submenu ${isActive ? 'show' : ''}`}>
-            {item.items.map(subItem => (
-              <Link
-                key={subItem.path}
-                to={subItem.path}
-                className={`submenu-item ${location.pathname === subItem.path ? 'active' : ''}`}
-              >
-                {subItem.text}
-              </Link>
-            ))}
-          </div>
-        </div>
+          {isActive && !(!isOpen && !isMobile) && (
+            <div className="submenu" style={{ display: 'flex', flexDirection: 'column', paddingLeft: '40px', marginTop: '8px', gap: '8px' }}>
+              {item.items.map(subItem => (
+                <Link
+                  key={subItem.path}
+                  to={subItem.path}
+                  className={`submenu-link ${location.pathname === subItem.path ? 'active-sub' : ''}`}
+                  style={{ textDecoration: 'none', color: location.pathname === subItem.path ? 'var(--primary-color)' : 'var(--text-muted)', fontSize: '14px', fontWeight: location.pathname === subItem.path ? '600' : '400' }}
+                >
+                  {subItem.text}
+                </Link>
+              ))}
+            </div>
+          )}
+        </li>
       );
     }
 
     return (
-      <Link
-        key={item.path}
-        to={item.path}
-        className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
-      >
-        <i className={item.icon}></i>
-        <span className={`nav-text ${!isOpen ? 'hidden' : ''}`}>
-          {item.text}
-        </span>
-      </Link>
+      <li key={index}>
+        <Link
+          to={item.path}
+          className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+        >
+          <i className={item.icon}></i>
+          {!(!isOpen && !isMobile) && <span>{item.text}</span>}
+        </Link>
+      </li>
     );
   };
 
   return (
-    <>
-      {isMobile && (
-        <button
-          className="mobile-toggle-button"
-          onClick={toggleNavbar}
-          aria-label="Toggle navigation"
-        >
-          <i className={`fas fa-${isOpen ? 'times' : 'bars'}`}></i>
+    <div className={`sidebar-nav ${!isOpen ? 'collapsed' : ''}`}>
+      <div className="navbar-brand">
+        <div className="navbar-header">
+          <i className="fas fa-layer-group"></i>
+          {isOpen && <span>CustomerSys</span>}
+        </div>
+      </div>
+      
+      {!isMobile && (
+        <button className="navbar-toggle" onClick={toggleNavbar}>
+          <i className={`fas fa-chevron-${isOpen ? 'left' : 'right'}`}></i>
         </button>
       )}
 
-      <div className={`main-navbar ${!isOpen ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}>
-        <div className="navbar-content">
-          {!isMobile && (
-            <>
-              <div className="navbar-brand-container">
-                <i className="fas fa-book-reader brand-icon"></i>
-                <span className={`brand-text ${!isOpen ? 'hidden' : ''}`}>
-                  Library System
-                </span>
-              </div>
-
-              <button
-                className="toggle-button"
-                onClick={toggleNavbar}
-                aria-label="Toggle navigation"
-              >
-                <i className={`fas fa-chevron-${isOpen ? 'left' : 'right'}`}></i>
-              </button>
-            </>
-          )}
-
-          <nav className="nav-links">
-            {menuItems.map((item, index) => renderMenuItem(item, index))}
-          </nav>
-        </div>
-      </div>
-    </>
+      <ul className="nav-menu" style={{ overflowY: 'auto', paddingBottom: '30px' }}>
+        {menuItems.map((item, index) => renderMenuItem(item, index))}
+      </ul>
+    </div>
   );
 };
 

@@ -26,7 +26,23 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" style={{ position: 'relative', zIndex: 1, minHeight: '80vh' }}>
+      <div 
+        style={{
+          position: 'absolute',
+          top: -32,
+          left: -32,
+          right: -32,
+          bottom: -100,
+          backgroundImage: "url('/library_background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          opacity: 0.12,
+          zIndex: -1,
+          pointerEvents: 'none'
+        }}
+      />
       <div className="dashboard-content">
         <div className="dashboard-card">
           <div className="card-header">
@@ -57,4 +73,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

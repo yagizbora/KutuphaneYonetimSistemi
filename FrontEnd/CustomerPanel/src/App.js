@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import CustomerBook from './pages/CustomerBook/CustomerBook';
 import Library from './pages/Library/Library';
 const ProtectedRoute = ({ children }) => {
@@ -70,7 +71,8 @@ function App() {
           <ProtectedRoute>
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/customer-book" element={<CustomerBook />} />
                 <Route path="/library" element={<Library />} />
                 {/* Add more protected routes here */}

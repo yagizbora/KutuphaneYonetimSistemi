@@ -35,7 +35,6 @@ const Dashboard = () => {
     getdata();
   }, []);
 
-
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'kitap_adi', headerName: 'Kitabın Adı', width: 200 },
@@ -54,80 +53,98 @@ const Dashboard = () => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography
-        variant="h5"
-        gutterBottom
-        sx={{
-          fontWeight: 600,
-          color: '#1E3A8A',
-          mb: 3,
-          textAlign: 'left',
+    <div style={{ position: 'relative', zIndex: 1, minHeight: '80vh' }}>
+      <div 
+        style={{
+          position: 'absolute',
+          top: -32,
+          left: -32,
+          right: -32,
+          bottom: -100,
+          backgroundImage: "url('/library_background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          opacity: 0.12,
+          zIndex: -1,
+          pointerEvents: 'none'
         }}
-      >
-        Dashboard
-      </Typography>
-
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          borderRadius: 2,
-          border: '1px solid #e0e0e0',
-          backgroundColor: '#fff',
-        }}
-      >
+      />
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, pt: 2 }}>
         <Typography
-          variant="h6"
+          variant="h5"
+          gutterBottom
           sx={{
-            mb: 2,
-            fontWeight: 500,
-            color: '#0D47A1',
+            fontWeight: 600,
+            color: '#1E3A8A',
+            mb: 3,
+            textAlign: 'left',
           }}
         >
-          Alınan Kitaplar
+          Dashboard
         </Typography>
-        <Divider sx={{ mb: 2 }} />
 
-        <Box sx={{ flex: 1 }}>
-          {customerBooks.length === 0 ? (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                width: '100%',
-              }}
-            >
-              <Alert
-                severity="info"
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            borderRadius: 2,
+            border: '1px solid #e0e0e0',
+            backgroundColor: '#fff',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
+              fontWeight: 500,
+              color: '#0D47A1',
+            }}
+          >
+            Alınan Kitaplar
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+
+          <Box sx={{ flex: 1 }}>
+            {customerBooks.length === 0 ? (
+              <Box
                 sx={{
-                  width: '70%',
-                  textAlign: 'center',
-                  backgroundColor: '#E3F2FD',
-                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  width: '100%',
                 }}
               >
-                {message || 'Gösterilecek veri bulunamadı.'}
-              </Alert>
-            </Box>
-          ) : (
-            <DataGrid
-              rows={customerBooks}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              components={{ Toolbar: GridToolbar }}
-              disableColumnFiltering
-              disableSelectionOnClick
-              disableColumnSorting
-              autoHeight
-            />
-          )}
-        </Box>
-      </Paper>
-    </Container>
+                <Alert
+                  severity="info"
+                  sx={{
+                    width: '70%',
+                    textAlign: 'center',
+                    backgroundColor: '#E3F2FD',
+                    borderRadius: 2,
+                  }}
+                >
+                  {message || 'Gösterilecek veri bulunamadı.'}
+                </Alert>
+              </Box>
+            ) : (
+              <DataGrid
+                rows={customerBooks}
+                columns={columns}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                components={{ Toolbar: GridToolbar }}
+                disableColumnFiltering
+                disableSelectionOnClick
+                disableColumnSorting
+                autoHeight
+              />
+            )}
+          </Box>
+        </Paper>
+      </Container>
+    </div>
   );
 };
 

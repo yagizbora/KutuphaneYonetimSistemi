@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import Book from './pages/Book/Book.js';
 import LendingBook from './pages/LendingBook/LendingBook.js';
 import BookType from './pages/BookType/BookType.js';
@@ -91,7 +92,8 @@ function App() {
           <ProtectedRoute>
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/book" element={<Book />} />
                 <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="/book/categories" element={<BookType />} />
