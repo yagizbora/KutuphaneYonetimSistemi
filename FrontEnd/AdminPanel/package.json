@@ -15,7 +15,7 @@
     "@testing-library/user-event": "^14.6.1",
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
-    "axios": "^1.10.0",
+    "axios": "^1.13.5",
     "bootstrap": "^5.3.7",
     "dayjs": "^1.11.13",
     "eslint": "^9.30.1",
