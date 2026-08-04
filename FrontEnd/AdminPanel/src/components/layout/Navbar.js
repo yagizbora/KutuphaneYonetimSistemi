@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Navbar.css';
 
 const Navbar = ({ isOpen, toggleNavbar }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -21,63 +23,63 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   }, []);
 
   const menuItems = [
-    { path: '/', icon: 'fas fa-home', text: 'Ana Sayfa' },
-    { path: '/dashboard', text: 'Dashboard', icon: 'fas fa-chart-line' },
+    { path: '/', icon: 'fas fa-home', text: t('home') },
+    { path: '/dashboard', text: t('dashboard'), icon: 'fas fa-chart-line' },
     {
-      text: 'Kitaplar',
+      text: t('books'),
       icon: 'fas fa-book',
       items: [
-        { path: '/book', text: 'Kitap Listesi' },
-        { path: '/book/categories', text: 'Kategoriler' },
-        { path: '/book/book-type-group', text: 'Kategori Grupları' }
+        { path: '/book', text: t('book_list') },
+        { path: '/book/categories', text: t('categories') },
+        { path: '/book/book-type-group', text: t('category_groups') }
       ]
     },
     {
-      text: 'İşlemler',
+      text: t('operations'),
       icon: 'fas fa-exchange-alt',
       items: [
-        { path: '/lending-book', text: 'Ödünç Verme' },
-        { path: '/book/return-book', text: 'Geri Alma' }
+        { path: '/lending-book', text: t('lending') },
+        { path: '/book/return-book', text: t('return') }
       ]
     },
     {
-      text: 'Üyeler',
+      text: t('members'),
       icon: 'fas fa-users',
       items: [
-        { path: '/user', text: 'Üye Listesi' }
+        { path: '/user', text: t('member_list') }
       ]
     },
     {
-      text: 'Kütüphaneler',
+      text: t('libraries'),
       icon: 'fas fa-building',
       items: [
-        { path: '/libraries', text: 'Kütüphane Listesi' }
+        { path: '/libraries', text: t('library_list') }
       ]
     },
     {
-      text: 'Request',
+      text: t('requests'),
       icon: 'fas fa-plus',
       items: [
-        { path: '/request/request-book', text: 'Kitap İstekleri' },
-        { path: '/book/customer-book-request', text: 'Müşteri Kitap İstekleri' }
+        { path: '/request/request-book', text: t('book_requests') },
+        { path: '/book/customer-book-request', text: t('customer_requests') }
       ]
     },
     {
-      text: 'Yazarlar',
+      text: t('authors'),
       icon: 'fas fa-pen',
       items: [
-        { path: '/author', text: 'Yazar Listesi' },
-        { path: '/author/create', text: 'Yazar Ekle' }
+        { path: '/author', text: t('author_list') },
+        { path: '/author/create', text: t('add_author') }
       ]
     },
     {
-      text: 'Loglar',
+      text: t('logs'),
       icon: 'fas fa-history',
       items: [
-        { path: '/logs/payment-logs', text: 'Ödeme Logları' },
-        { path: '/logs/user-login-operation-logs', text: 'Giriş Logları' },
-        { path: '/logs/user-operation-logs', text: 'Operasyon Logları' },
-        { path: '/logs/request-book-logs', text: 'İstek Logları' },
+        { path: '/logs/payment-logs', text: t('payment_logs') },
+        { path: '/logs/user-login-operation-logs', text: t('login_logs') },
+        { path: '/logs/user-operation-logs', text: t('operation_logs') },
+        { path: '/logs/request-book-logs', text: t('request_logs') },
       ]
     }
   ];

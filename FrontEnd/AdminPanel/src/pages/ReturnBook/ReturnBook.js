@@ -31,12 +31,13 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import DialogContentText from '@mui/material/DialogContentText';
 import Swal from 'sweetalert2';
 import ReturnBookService from '../../services/ReturnBookService';
-
+import { useTranslation } from 'react-i18next';
 
 const returnbookservice = new ReturnBookService();
 
 
-function norows() {
+function CustomNoRowsOverlay() {
+    const { t } = useTranslation();
     return (
         <Box sx={{
             display: 'flex',
@@ -44,13 +45,14 @@ function norows() {
             alignItems: 'center',
             justifyContent: 'center',
         }}>
-            <Alert severity="info">İade alınacak bir kitap bulunamadı. Rahatça bu sayfadan çıkabilirsiniz</Alert>
+            <Alert severity="info">{t('no_book_found')}</Alert>
         </Box>
     );
 }
 
 
 const ReturnBook = () => {
+    const { t } = useTranslation();
 
     const columns = [
         {
@@ -61,13 +63,13 @@ const ReturnBook = () => {
         },
         {
             field: 'kitap_adi',
-            headerName: 'Kitap Adı',
+            headerName: t('book_name_col'),
             width: 150,
             editable: false,
         },
         {
             field: 'Durum',
-            headerName: 'Durum',
+            headerName: t('status'),
             width: 150,
             editable: false,
             renderCell: (params) => {
@@ -86,13 +88,13 @@ const ReturnBook = () => {
         },
         {
             field: 'name_surname',
-            headerName: 'Ödünç Alan',
+            headerName: t('borrower_col'),
             width: 150,
             editable: false,
         },
         {
             field: 'odunc_alma_tarihi',
-            headerName: 'Tarih',
+            headerName: t('date_col'),
             width: 150,
             flex: 1,
             valueFormatter: (params) => {
@@ -116,7 +118,7 @@ const ReturnBook = () => {
         },
         {
             field: 'İşlemler',
-            headerName: 'İşlemler',
+            headerName: t('actions'),
             sortable: false,
             width: 269,
             editable: false,
@@ -130,7 +132,7 @@ const ReturnBook = () => {
                         sx={{ backgroundColor: 'green' }}
                         onClick={() => calculateFine(params.row)}
                     >
-                        Ödeme Ekranını aç
+                        {t('open_payment_screen')}
                     </Button>
                 </Stack>
             )
@@ -178,8 +180,8 @@ const ReturnBook = () => {
             console.error('Error fetching data:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+                title: t('error'),
+                text: t('error_occurred'),
             });
         }
     }
@@ -194,8 +196,8 @@ const ReturnBook = () => {
             if (response.data.status || response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: response.data.messsage || 'Kitap başarıyla iade edildi.',
+                    title: t('success'),
+                    text: response.data.messsage || t('book_returned_successfully'),
                 });
                 setOpeneditdialog(false);
                 getreturnbook();
@@ -205,8 +207,8 @@ const ReturnBook = () => {
             console.error('Error fetching data:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyin.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_occurred'),
             });
             setOpeneditdialog(false);
         }
@@ -233,8 +235,8 @@ const ReturnBook = () => {
             console.error('Error fetching data:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+                title: t('error'),
+                text: t('error_occurred'),
             });
         }
     }
@@ -248,7 +250,7 @@ const ReturnBook = () => {
             <Container maxWidth="lg" sx={{ marginTop: 2 }}>
                 <Box sx={{ height: 400, width: '100%' }}>
                     <Typography variant="h4" gutterBottom align="center">
-                        Kitap İade İşlemleri
+                        {t('book_return_operations')}
                     </Typography>
 
                     <Paper spacing={2}>
@@ -260,7 +262,7 @@ const ReturnBook = () => {
                                     pageSize={5}
                                     rowsPerPageOptions={[5]}
                                     slots={{
-                                        noRowsOverlay: norows
+                                        noRowsOverlay: CustomNoRowsOverlay
                                     }}
                                     autoHeight
                                     disableSelectionOnClick
@@ -277,14 +279,14 @@ const ReturnBook = () => {
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>Kitap para ödeme ekranı</DialogTitle>
+                <DialogTitle>{t('book_payment_screen')}</DialogTitle>
                 <DialogContent>
                     <div className="dialog-container">
                         <Grid container spacing={2}>
 
                             {/* Ödenicek minimum Tutar */}
                             <Grid item xs={12} md={4}>
-                                <p>Ödenecek minimum Tutar</p>
+                                <p>{t('minimum_amount_to_pay')}</p>
                                 <TextField
                                     disabled
                                     fullWidth
@@ -294,32 +296,32 @@ const ReturnBook = () => {
 
                             {/* Ödeme Türü */}
                             <Grid item xs={12} md={4}>
-                                <p>Ödeme Türü</p>
+                                <p>{t('payment_type')}</p>
                                 <FormControl sx={{ width: 300, }}>
                                     <Select
                                         fullWidth
                                         type="number"
-                                        placeholder="Ödenen Miktar"
+                                        placeholder={t('paid_amount')}
                                         value={paymentdata.payment_type}
                                         onChange={(e) =>
                                             setPaymentdata({ ...paymentdata, payment_type: e.target.value })
                                         }
                                     >
-                                        <MenuItem value={"Yok"}>Yok</MenuItem>
-                                        <MenuItem value={"Kart"}>Kart</MenuItem>
-                                        <MenuItem value={"Nakit"}>Nakit</MenuItem>
-                                        <MenuItem value={"Hediye Çeki"}>Hediye Çeki</MenuItem>
+                                        <MenuItem value={"Yok"}>{t('none')}</MenuItem>
+                                        <MenuItem value={"Kart"}>{t('card')}</MenuItem>
+                                        <MenuItem value={"Nakit"}>{t('cash')}</MenuItem>
+                                        <MenuItem value={"Hediye Çeki"}>{t('gift_card')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
 
                             {/* Ödünç Verme Tarihi */}
                             <Grid item xs={12} md={4}>
-                                <p>Ödünç Verme Tarihi</p>
+                                <p>{t('lending_date')}</p>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={["DatePicker"]}>
                                         <DatePicker
-                                            label="Tarih Seç"
+                                            label={t('select_date')}
                                             value={paymentdata.geri_verme_tarihi}
                                             onChange={async (newValue) => {
                                                 const updatedData = {
@@ -341,11 +343,11 @@ const ReturnBook = () => {
 
                             {/* Ödenen Miktar */}
                             <Grid item xs={12} md={4}>
-                                <p>Ödenen Miktar</p>
+                                <p>{t('paid_amount')}</p>
                                 <TextField
                                     fullWidth
                                     type="number"
-                                    placeholder="Ödenen Miktar"
+                                    placeholder={t('paid_amount')}
                                     value={paymentdata.payment_amount}
                                     onChange={(e) =>
                                         setPaymentdata({ ...paymentdata, payment_amount: e.target.value })
@@ -355,10 +357,10 @@ const ReturnBook = () => {
 
                             {/* Fiş No */}
                             <Grid item xs={12} md={4}>
-                                <p>Fiş No</p>
+                                <p>{t('receipt_no')}</p>
                                 <TextField
                                     fullWidth
-                                    placeholder="Fiş No"
+                                    placeholder={t('receipt_no')}
                                     value={paymentdata.receipt_no}
                                     onChange={(e) =>
                                         setPaymentdata({ ...paymentdata, receipt_no: e.target.value })
@@ -374,7 +376,7 @@ const ReturnBook = () => {
                         onClick={() => returnbook(false)}
                         variant="outlined"
                         sx={{ margin: 1 }}
-                    >Ödemeyi Yap</Button>
+                    >{t('make_payment')}</Button>
                 </DialogActions>
             </Dialog>
         </div>

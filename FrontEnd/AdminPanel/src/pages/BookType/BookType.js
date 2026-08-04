@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import DialogContentText from '@mui/material/DialogContentText';
-
+import { useTranslation } from 'react-i18next';
 import BookTypeService from '../../services/BookTypeService';
 import BookTypeGroupService from '../../services/BookTypeGroupService';
 
@@ -26,6 +26,7 @@ const booktypeservice = new BookTypeService();
 const bookTypeGroupService = new BookTypeGroupService();
 
 const BookType = () => {
+    const { t } = useTranslation();
 
     const [data, setData] = useState([]);
     const [groups, setGroups] = useState([]);
@@ -54,7 +55,7 @@ const BookType = () => {
                 setGroups(formattedData);
             }
         } catch (error) {
-            console.error("Gruplar alınırken hata oluştu", error);
+            console.error(t('error_loading_groups'), error);
         }
     };
 
@@ -64,8 +65,8 @@ const BookType = () => {
             if (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: response?.message || 'Kitap türü başarıyla silindi',
+                    title: t('success'),
+                    text: response?.message || t('book_type_deleted_successfully'),
                 })
                 getbooktype();
             }
@@ -73,8 +74,8 @@ const BookType = () => {
         catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü silinemedi',
+                title: t('error'),
+                text: error?.response?.data?.message || t('book_type_could_not_be_deleted'),
             })
             console.error(error);
         }
@@ -95,8 +96,8 @@ const BookType = () => {
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü bilgileri alınamadı',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_fetching_book_type_details'),
             });
         }
     };
@@ -122,8 +123,8 @@ const BookType = () => {
             if (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: 'Kitap türü başarıyla güncellendi',
+                    title: t('success'),
+                    text: t('book_type_updated_successfully'),
                 });
                 setOpeneditdialog(false);
                 getbooktype();
@@ -131,8 +132,8 @@ const BookType = () => {
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü güncellenirken bir hata oluştu',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_updating_book_type'),
             });
         }
     };
@@ -141,8 +142,8 @@ const BookType = () => {
         if (!createbooktype.aciklama || !createbooktype.book_group_id) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: 'Tür grubu ve açıklama alanları boş olamaz',
+                title: t('error'),
+                text: t('type_group_and_description_cannot_be_empty'),
             });
             return;
         }
@@ -154,8 +155,8 @@ const BookType = () => {
             if (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: response?.message || 'Kitap türü başarıyla eklendi',
+                    title: t('success'),
+                    text: response?.message || t('book_type_added_successfully'),
                 });
                 setcreatebooktype({
                     aciklama: '',
@@ -167,8 +168,8 @@ const BookType = () => {
         catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü eklenirken bir hata oluştu',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_adding_book_type'),
             });
         }
     }
@@ -183,8 +184,8 @@ const BookType = () => {
         catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap türü bilgileri alınamadı' || error,
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_fetching_book_type_details') || error,
             })
         }
     }
@@ -194,17 +195,17 @@ const BookType = () => {
             <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                 <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Kitap Türü Listesi
+                        {t('book_type_list')}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
-                        Kütüphanedeki tüm kitap türlerini buradan yönetebilirsiniz.
+                        {t('manage_all_book_types')}
                     </Typography>
                 </Box>
                 <Paper elevation={3} sx={{ width: '60%', mb: 4, p: 2, mx: 'auto' }}>
                     <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
                         <TextField
                             select
-                            label="Tür Grubu"
+                            label={t('type_group')}
                             variant="outlined"
                             value={createbooktype.book_group_id}
                             onChange={(e) => setcreatebooktype({ ...createbooktype, book_group_id: e.target.value })}
@@ -217,7 +218,7 @@ const BookType = () => {
                             ))}
                         </TextField>
                         <TextField
-                            label="Açıklama"
+                            label={t('description')}
                             variant="outlined"
                             value={createbooktype.aciklama}
                             onChange={(e) => setcreatebooktype({ ...createbooktype, aciklama: e.target.value })}
@@ -227,7 +228,7 @@ const BookType = () => {
                     <Button variant="contained"
                         onClick={createbooktyperequest}
                         disabled={disabledbuttonandinput()}
-                    >Kitap Türü Ekle</Button>
+                    >{t('add_book_type')}</Button>
                 </Paper>
 
                 <Box sx={{ width: '60%', mx: 'auto', p: 4, borderRadius: 2, mb: 4 }}>
@@ -260,7 +261,7 @@ const BookType = () => {
                                                     size="small" 
                                                     color="primary"
                                                     onClick={() => handleEditClick({ id: type.kitap_tur_kodu, aciklama: type.aciklama })}
-                                                    title="Düzenle"
+                                                    title={t('edit')}
                                                 >
                                                     <EditIcon fontSize="small" />
                                                 </IconButton>
@@ -268,7 +269,7 @@ const BookType = () => {
                                                     size="small" 
                                                     color="error"
                                                     onClick={() => handleDelete(type.kitap_tur_kodu)}
-                                                    title="Sil"
+                                                    title={t('delete')}
                                                 >
                                                     <DeleteIcon fontSize="small" />
                                                 </IconButton>
@@ -290,7 +291,7 @@ const BookType = () => {
             >
                 <DialogTitle>
                     <DialogContentText>
-                        Kitap Türü Düzenle
+                        {t('edit_book_type')}
                     </DialogContentText>
                 </DialogTitle>
                 <DialogContent>
@@ -298,7 +299,7 @@ const BookType = () => {
                         select
                         fullWidth
                         margin="normal"
-                        label="Tür Grubu"
+                        label={t('type_group')}
                         value={editdata.book_group_id}
                         onChange={(e) => setEditdata({ ...editdata, book_group_id: e.target.value })}
                     >
@@ -311,15 +312,15 @@ const BookType = () => {
                     <TextField
                         fullWidth
                         margin="normal"
-                        label="Açıklama"
+                        label={t('description')}
                         value={editdata.aciklama}
                         onChange={(e) => setEditdata({ ...editdata, aciklama: e.target.value })}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpeneditdialog(false)}>İptal</Button>
+                    <Button onClick={() => setOpeneditdialog(false)}>{t('cancel')}</Button>
                     <Button onClick={handleEditSubmit} variant="contained" color="primary">
-                        Kaydet
+                        {t('save')}
                     </Button>
                 </DialogActions>
             </Dialog>

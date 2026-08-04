@@ -12,6 +12,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
+import { useTranslation } from 'react-i18next';
 
 import Swal from 'sweetalert2';
 import LogService from "../../services/LogService.js";
@@ -20,6 +21,7 @@ import { DataGrid } from '@mui/x-data-grid';
 const logservice = new LogService();
 
 const UserLoginOperationLogs = () => {
+    const { t } = useTranslation();
     const [data, setData] = useState([]);
     const [selectboxdata, setSelectBoxData] = useState([]);
     const [eventdata, setEventData] = useState([]);
@@ -50,8 +52,8 @@ const UserLoginOperationLogs = () => {
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -69,8 +71,8 @@ const UserLoginOperationLogs = () => {
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -94,8 +96,8 @@ const UserLoginOperationLogs = () => {
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -117,16 +119,16 @@ const UserLoginOperationLogs = () => {
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                    Kullanıcı Giriş Logları
+                    {t('user_login_logs')}
                 </Typography>
                 <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-name-label">Event</InputLabel>
+                    <InputLabel id="demo-multiple-name-label">{t('event')}</InputLabel>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Select
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
                             value={event}
-                            label="Event"
+                            label={t('event')}
                             onChange={(e) => setEvent(e.target.value)}
                             sx={{ flexGrow: 1 }}
                         >
@@ -148,14 +150,14 @@ const UserLoginOperationLogs = () => {
                 </FormControl>
                 <Box sx={{ width: '100%', mt: 2 }}>
                     <Typography variant="subtitle1" gutterBottom>
-                        Toplam Kayıt: {pagination.count}
+                        {t('total_records')}: {pagination.count}
                     </Typography>
                     <DataGrid
                         rows={data}
                         columns={[
-                            { field: 'id', headerName: 'ID', width: 70 },
-                            { field: 'event', headerName: 'Olay', width: 200 },
-                            { field: 'event_description', headerName: 'Olay Açıklaması', flex: 1 },
+                            { field: 'id', headerName: t('id'), width: 70 },
+                            { field: 'event', headerName: t('event_col'), width: 200 },
+                            { field: 'event_description', headerName: t('event_description'), flex: 1 },
                         ]}
                         pageSize={5}
                         rowsPerPageOptions={[5]}

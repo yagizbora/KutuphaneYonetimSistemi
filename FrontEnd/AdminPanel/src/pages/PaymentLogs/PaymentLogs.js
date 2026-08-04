@@ -25,10 +25,12 @@ import {
 import Swal from 'sweetalert2';
 import PaymentLogsDataTable from './PaymentLogsDataTable';
 import LogService from "../../services/LogService.js";
+import { useTranslation } from 'react-i18next';
 
 const logservice = new LogService();
 
 const PaymentLogs = () => {
+    const { t } = useTranslation();
 
     const [data, setPaymentLogs] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
@@ -48,8 +50,8 @@ const PaymentLogs = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -62,11 +64,11 @@ const PaymentLogs = () => {
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                    Ödeme Logları
+                    {t('payment_logs')}
                 </Typography>
                 <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)} centered>
-                    <Tab label="Tamamlanmış Ödemeler" />
-                    <Tab label="Tamamlanmamış Ödemeler" />
+                    <Tab label={t('completed_payments')} />
+                    <Tab label={t('uncompleted_payments')} />
                 </Tabs>
 
                 <PaymentLogsDataTable data={data} index={tabIndex} />

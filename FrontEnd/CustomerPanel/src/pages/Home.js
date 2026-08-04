@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
+  const { t } = useTranslation();
+
   return (
     <div 
       className="dashboard" 
@@ -44,10 +47,10 @@ const Home = () => {
         }}
       >
         <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
-          Kütüphane Müşteri Sistemine Hoş Geldiniz
+          {t('welcome')}
         </h1>
         <p style={{ fontSize: '1.25rem', opacity: 0.9, maxWidth: '600px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-          Yeni kitaplar keşfedin, okuma geçmişinizi takip edin ve kütüphane deneyiminizi kolayca yönetin.
+          {t('subtitle')}
         </p>
       </div>
     </div>

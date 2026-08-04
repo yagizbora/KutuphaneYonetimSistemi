@@ -10,10 +10,12 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import AuthorService from '../../services/AuthorService.js';
+import { useTranslation } from 'react-i18next';
 
 const authorService = new AuthorService();
 
 const AuthorEdit = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ const AuthorEdit = () => {
             });
         } catch (err) {
             console.log(err)
-            Swal.fire('Error', err?.response?.data?.message || 'Author could not be loaded.', 'error');
+            Swal.fire(t('error'), err?.response?.data?.message || t('error_loading_author'), 'error');
         }
     };
 
@@ -49,22 +51,22 @@ const AuthorEdit = () => {
         e.preventDefault();
         try {
             await authorService.EditAuthor(author);
-            Swal.fire('Updated!', 'Author has been updated.', 'success');
+            Swal.fire(t('updated'), t('author_updated_successfully'), 'success');
             navigate('/author');
         } catch (err) {
-            Swal.fire('Error', 'Failed to update author.', 'error');
+            Swal.fire(t('error'), t('error_updating_author'), 'error');
         }
     };
 
     return (
         <Container sx={{ mt: 4 }}>
             <Typography variant="h5" align="left" gutterBottom>
-                Edit Author
+                {t('edit_author')}
             </Typography>
             <Paper sx={{ p: 3 }}>
                 <Box component="form" noValidate onSubmit={handleSubmit}>
                     <TextField
-                        label="Name Surname"
+                        label={t('name_surname')}
                         name="name_surname"
                         value={author.name_surname || ''}
                         onChange={handleChange}
@@ -74,7 +76,7 @@ const AuthorEdit = () => {
                     />
 
                     <TextField
-                        label="Birthday Date"
+                        label={t('birthday')}
                         name="birthday_date"
                         type="date"
                         value={author.birthday_date || ''}
@@ -85,7 +87,7 @@ const AuthorEdit = () => {
                         required
                     />
                     <TextField
-                        label="Biography"
+                        label={t('biography')}
                         name="biography"
                         value={author.biography || ''}
                         onChange={handleChange}
@@ -97,7 +99,7 @@ const AuthorEdit = () => {
 
                     <Box mt={2} textAlign="right">
                         <Button type="submit" variant="contained" color="primary">
-                            Save
+                            {t('save')}
                         </Button>
                     </Box>
                 </Box>

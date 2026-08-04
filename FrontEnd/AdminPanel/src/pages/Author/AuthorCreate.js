@@ -11,10 +11,12 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import AuthorService from "../../services/AuthorService.js";
+import { useTranslation } from 'react-i18next';
 
 const authorService = new AuthorService();
 
 const AuthorCreate = () => {
+    const { t } = useTranslation();
     const [author, setAuthor] = useState({
         name_surname: "",
         birthday_date: "",
@@ -32,14 +34,14 @@ const AuthorCreate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!author.name_surname || !author.birthday_date || !author.biography) {
-            Swal.fire('Error', 'All fields are required!', 'error');
+            Swal.fire(t('error'), t('all_fields_required'), 'error');
             return;
         }
 
         try {
             const response = await authorService.createauthor(author);
             if (response) {
-                Swal.fire('Success', response.data.message || 'Author created successfully!', 'success');
+                Swal.fire(t('success'), response.data.message || t('author_created_successfully'), 'success');
                 setAuthor({
                     name_surname: "",
                     birthday_date: "",
@@ -48,8 +50,8 @@ const AuthorCreate = () => {
             }
 
         } catch (error) {
-            Swal.fire('Error', error.response.data.message || 'Something went wrong!', 'error');
-            console.log(error.response.data.message);
+            Swal.fire(t('error'), error.response?.data?.message || t('something_went_wrong'), 'error');
+            console.log(error.response?.data?.message);
         }
     };
 
@@ -64,12 +66,12 @@ const AuthorCreate = () => {
     return (
         <Container sx={{ mt: 4 }}>
             <Typography variant="h5" align="left" gutterBottom>
-                Create Author
+                {t('create_author')}
             </Typography>
             <Paper sx={{ p: 3 }}>
                 <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit}>
                     <TextField
-                        label="Name Surname"
+                        label={t('name_surname')}
                         name="name_surname"
                         value={author.name_surname}
                         onChange={handleChange}
@@ -78,7 +80,7 @@ const AuthorCreate = () => {
                         required
                     />
                     <TextField
-                        label="Birthday"
+                        label={t('birthday')}
                         name="birthday_date"
                         type="date"
                         value={author.birthday_date}
@@ -91,7 +93,7 @@ const AuthorCreate = () => {
                         required
                     />
                     <TextField
-                        label="Biography"
+                        label={t('biography')}
                         name="biography"
                         value={author.biography}
                         onChange={handleChange}
@@ -103,7 +105,7 @@ const AuthorCreate = () => {
                     />
                     <Box mt={2} display="flex" justifyContent="space-between">
                         <Button variant="contained" color="primary" type="submit">
-                            Save
+                            {t('save')}
                         </Button>
                         <IconButton onClick={handleReset} color="error">
                             <DeleteIcon />

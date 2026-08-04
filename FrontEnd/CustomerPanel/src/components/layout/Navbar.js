@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Navbar.css';
 
 const Navbar = ({ isOpen, toggleNavbar }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -21,20 +23,20 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
   }, []);
 
   const menuItems = [
-    { path: '/', icon: 'fas fa-home', text: 'Ana Sayfa' },
-    { path: '/dashboard', text: 'Dashboard', icon: 'fas fa-chart-line' },
+    { path: '/', icon: 'fas fa-home', text: t('home') },
+    { path: '/dashboard', text: t('dashboard'), icon: 'fas fa-chart-line' },
     {
-      text: 'Kitap Operasyonları',
+      text: t('book_operations'),
       icon: 'fas fa-book',
       items: [
-        { path: '/customer-book', text: 'Kitap', icon: 'fas fa-address-book' },
+        { path: '/customer-book', text: t('books'), icon: 'fas fa-address-book' },
       ],
     },
     {
-      text: 'Kütüphaneler',
+      text: t('libraries'),
       icon: 'fas fa-university',
       items: [
-        { path: '/library', text: 'Kütüphaneler', icon: 'fas fa-plus' },
+        { path: '/library', text: t('libraries'), icon: 'fas fa-plus' },
       ]
     }
   ];

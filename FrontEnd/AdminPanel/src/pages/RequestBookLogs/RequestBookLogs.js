@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Typography,
@@ -24,6 +25,7 @@ import dayjs from 'dayjs';
 const logservice = new LogService();
 
 const RequestBookLogs = () => {
+    const { t } = useTranslation();
     const [data, setData] = useState([]);
 
     const getData = async () => {
@@ -35,8 +37,8 @@ const RequestBookLogs = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -46,9 +48,9 @@ const RequestBookLogs = () => {
     }, []);
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'id', headerName: t('id'), width: 90 },
         {
-            field: 'auth_person', headerName: 'Yetkili kişi', width: 150,
+            field: 'auth_person', headerName: t('authorized_person'), width: 150,
             valueFormatter: (params) => {
                 if (params === null || params === undefined) {
                     return 'N/A';
@@ -56,16 +58,16 @@ const RequestBookLogs = () => {
                 return params.auth_person;
             }
         },
-        { field: 'kitap_adi', headerName: 'Kitap', width: 200 },
+        { field: 'kitap_adi', headerName: t('book'), width: 200 },
         {
-            field: 'request_date', headerName: 'İstek zamanı', width: 200,
+            field: 'request_date', headerName: t('request_time'), width: 200,
             valueFormatter: (params) => {
                 const date = dayjs(params).format('DD/MM/YYYY');
                 return date;
             }
         },
         {
-            field: 'request_status', headerName: 'İşlem durumu', width: 150,
+            field: 'request_status', headerName: t('operation_status'), width: 150,
             renderCell: (params) => {
                 return (
                     <>
@@ -76,7 +78,7 @@ const RequestBookLogs = () => {
         },
         {
             field: 'is_approved',
-            headerName: 'İstek kabul edildi mi?',
+            headerName: t('is_request_accepted'),
             width: 180,
             renderCell: (params) => {
                 const value = params?.value;
@@ -85,7 +87,7 @@ const RequestBookLogs = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         {value === null || value === undefined ? (
                             <span style={{ color: '#9e9e9e', fontStyle: 'italic', fontSize: 12 }}>
-                                Bilinmiyor
+                                {t('unknown')}
                             </span>
                         ) : null}
 
@@ -105,16 +107,16 @@ const RequestBookLogs = () => {
             const response = await logservice.RequestBookLogsExcel();
             if (response && response.data) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: 'Excel dosyası başarıyla indirildi.',
+                    title: t('success'),
+                    text: t('excel_downloaded_successfully'),
                     icon: 'success'
                 });
             }
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_downloading_excel'),
                 icon: 'error'
             });
         }
@@ -125,11 +127,11 @@ const RequestBookLogs = () => {
 
             <Container>
                 <Typography variant="h4" gutterBottom>
-                    Kitap İstek Logları
+                    {t('request_book_logs')}
                 </Typography>
                 <Paper style={{ height: 600, width: '100%', padding: '20px' }}>
                     <Button startIcon={<OpenInNewIcon />} variant="outlined" color="primary" style={{ marginBottom: '10px' }} onClick={getExcel}>
-                        Excel
+                        {t('excel')}
                     </Button>
                     <DataGrid
                         rows={data}

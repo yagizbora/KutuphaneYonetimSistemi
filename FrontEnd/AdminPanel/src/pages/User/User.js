@@ -30,15 +30,12 @@ import UserService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import 'dayjs/locale/tr';
+import { useTranslation } from 'react-i18next';
 
 const userservice = new UserService();
 
-
-
-
-
-const user = () => {
-
+const User = () => {
+    const { t } = useTranslation();
     const [data, setUsers] = useState([]);
 
     useEffect(() => {
@@ -54,8 +51,8 @@ const user = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kullanıcılar yüklenirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_loading_users'),
                 icon: 'error'
             })
         }
@@ -67,23 +64,23 @@ const user = () => {
 
             if (response?.statusCode === 200 && response?.status === true) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: response.message || 'Kullanıcı başarıyla silindi.',
+                    title: t('success'),
+                    text: response.message || t('user_deleted_successfully'),
                     icon: 'success'
                 });
                 await listallusers();
             } else {
                 Swal.fire({
-                    title: 'Hata',
-                    text: response.message || 'Kullanıcı silinemedi.',
+                    title: t('error'),
+                    text: response.message || t('user_could_not_be_deleted'),
                     icon: 'error'
                 });
             }
         } catch (error) {
 
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kullanıcı silinirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_deleting_user'),
                 icon: 'error'
             });
         }
@@ -92,14 +89,14 @@ const user = () => {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'username', headerName: 'Kullanıcı adı', width: 150 },
+        { field: 'username', headerName: t('user_name'), width: 150 },
         {
-            field: 'login_date', headerName: 'Giriş Tarihi', width: 150,
+            field: 'login_date', headerName: t('login_date'), width: 150,
 
 
             type: 'dateTime', valueFormatter: (params) => {
                 if (!params) {
-                    return 'Giriş yapılmadı';
+                    return t('not_logged_in');
 
                 }
                 return dayjs(params).format('DD/MM/YYYY HH:mm:ss');
@@ -114,19 +111,19 @@ const user = () => {
             )
         },
         {
-            field: 'actions', headerName: 'İşlemler', width: 75, flex: 1, renderCell: (params) => (
+            field: 'actions', headerName: t('actions'), width: 75, flex: 1, renderCell: (params) => (
 
                 <Box spacing={1} gap={1} sx={{ display: 'flex' }}>
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={() => Swal.fire({
-                            Title: 'Sil',
-                            text: 'Kullanıcıyı silmek istediğinize emin misiniz?',
+                            title: t('delete'),
+                            text: t('are_you_sure_delete_user'),
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonText: 'Evet',
-                            cancelButtonText: 'Hayır',
+                            confirmButtonText: t('yes'),
+                            cancelButtonText: t('no'),
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
                         }).then((result) => {
@@ -136,7 +133,7 @@ const user = () => {
                             }
                         })}
                     >
-                        Kullanıcı Sil
+                        {t('delete_user')}
                     </Button>
                     <Button
                         variant="contained"
@@ -144,7 +141,7 @@ const user = () => {
                         href={`/user/edit-user/${params.row.id}`}
                         disabled={(localStorage.getItem('user_id') == params.row.id)}
                     >
-                        Kullanıcıyı düzenle
+                        {t('edit_user')}
                     </Button>
                 </Box>
             )
@@ -155,19 +152,19 @@ const user = () => {
         <Container maxWidth="xl">
             <Box sx={{ padding: 2 }}>
                 <Typography variant="h4" sx={{ marginBottom: 2, justifyContent: 'center', display: 'flex' }}>
-                    Kullanıcılar
+                    {t('users')}
                 </Typography>
             </Box>
             <Box spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2, bgcolor: '#cfe8fc' }}>
                 <Button variant="contained" color="primary" href="/user/create">
-                    Kullanıcı Ekle
+                    {t('add_user')}
                 </Button>
                 <Button variant="contained" color="primary" href="/user/customer-user-list">
-                    Müşteri Kullanıcı Listesi
+                    {t('customer_user_list')}
                 </Button>
 
                 <Button variant="contained" color="primary" href="/user/customer-user-create">
-                    Müşteri Kullanıcı Ekle
+                    {t('add_customer_user')}
                 </Button>
             </Box>
             <Stack>
@@ -201,6 +198,4 @@ const user = () => {
 
 }
 
-
-
-export default user;
+export default User;

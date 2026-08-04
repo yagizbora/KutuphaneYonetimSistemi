@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import DashboardService from '../services/DashboardServices';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [dashboardData, setDashboardData] = useState({
     taken_books: 0,
     books_count: 0,
@@ -46,7 +48,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Toplam Kitaplar</h3>
+            <h3>{t('total_books')}</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.books_count}</p>
@@ -54,7 +56,7 @@ const Dashboard = () => {
         </div>
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Ödünç Alınan Kitaplar</h3>
+            <h3>{t('borrowed_books')}</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.taken_books}</p>
@@ -62,7 +64,7 @@ const Dashboard = () => {
         </div>
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Ödünç alınmayan Kitap sayısı</h3>
+            <h3>{t('unborrowed_books')}</h3>
           </div>
           <div className="card-content">
             <p className="card-value">{dashboardData.untaken_books}</p>

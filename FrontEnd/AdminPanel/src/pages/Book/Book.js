@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
@@ -38,6 +39,7 @@ const bookTypeService = new BookTypeService();
 import { formatCurrency } from '../../utils/helper.js';
 
 const Book = () => {
+    const { t } = useTranslation();
     const [data, setBooks] = useState([]);
 
     const [loading, setLoading] = useState(true);
@@ -81,7 +83,7 @@ const Book = () => {
                 console.log(response.data.data);
             }
         } catch (error) {
-            console.error("Kitap türleri yüklenirken bir hata oluştu:", error);
+            console.error(t('error_loading_book_types'), error);
         }
     }
     const getlibraries = async () => {
@@ -91,7 +93,7 @@ const Book = () => {
                 setLibraries(response.data.data);
             }
         } catch (error) {
-            console.error("Kütüphaneler yüklenirken bir hata oluştu:", error);
+            console.error(t('error_loading_libraries'), error);
         }
     }
 
@@ -110,11 +112,11 @@ const Book = () => {
             } else if (response && Array.isArray(response.data)) {
                 setBooks(response.data);
             } else {
-                setError("API yanıtı beklenen formatta değil");
+                setError(t('api_response_not_expected_format'));
                 setBooks([]);
             }
         } catch (error) {
-            setError(error?.response?.data?.message || "Kitaplar yüklenirken bir hata oluştu.");
+            setError(error?.response?.data?.message || t('error_loading_books'));
             setBooks([]);
         } finally {
             setLoading(false);
@@ -127,15 +129,15 @@ const Book = () => {
             const response = await bookService.getbookexcel(filterbooks);
             if (response) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: 'Excel dosyası indirildi.',
+                    title: t('success'),
+                    text: t('excel_downloaded'),
                     icon: 'success'
                 });
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error.response?.data?.message || 'Excel dosyası indirilirken bir hata oluştu.',
+                title: t('error'),
+                text: error.response?.data?.message || t('error_downloading_excel'),
                 icon: 'error'
             });
         }
@@ -148,7 +150,7 @@ const Book = () => {
             const response = await authorService.getAllAuthors();
             setAuthors(response.data);
         } catch (error) {
-            Swal.fire('Error', 'Failed to fetch authors', 'error');
+            Swal.fire(t('error'), t('error_fetching_authors'), 'error');
         } finally {
             setLoading(false);
         }
@@ -163,7 +165,7 @@ const Book = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
+                title: t('error'),
                 text: error?.response?.data?.message,
                 icon: 'error'
             })
@@ -191,7 +193,7 @@ const Book = () => {
             setShowModal(true);
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
+                title: t('error'),
                 text: error?.response?.message,
                 icon: 'error'
             });
@@ -221,8 +223,8 @@ const Book = () => {
 
         if (response) {
             Swal.fire({
-                title: "Başarılı",
-                text: response?.message || "Kitap başarıyla eklendi!",
+                title: t('success'),
+                text: response?.message || t('book_added_successfully'),
                 icon: "success",
             });
             await getBooks();
@@ -252,8 +254,8 @@ const Book = () => {
             const response = await bookService.updateBook(editedBook.id, editedBook);
             if (response.status === 200 || response) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: response?.message || 'Kitap başarıyla güncellendi!',
+                    title: t('success'),
+                    text: response?.message || t('book_updated_successfully'),
                     icon: 'success'
                 });
                 await getBooks();
@@ -261,8 +263,8 @@ const Book = () => {
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Güncelleme sırasında bir hata oluştu!',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_during_update'),
                 icon: 'error'
             });
         }
@@ -271,14 +273,14 @@ const Book = () => {
     const handleDelete = async (id) => {
         try {
             const result = await Swal.fire({
-                title: 'Emin misiniz?',
-                text: "Bu kitabı silmek istediğinize emin misiniz?",
+                title: t('are_you_sure'),
+                text: t('are_you_sure_delete_book'),
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Evet, sil!',
-                cancelButtonText: 'İptal'
+                confirmButtonText: t('yes_delete'),
+                cancelButtonText: t('cancel')
             });
 
             if (result.isConfirmed) {
@@ -286,15 +288,15 @@ const Book = () => {
                 await getBooks();
 
                 Swal.fire({
-                    title: 'Başarılı!',
-                    text: response?.message || 'Kitap başarıyla silindi!',
+                    title: t('success') + '!',
+                    text: response?.message || t('book_deleted_successfully'),
                     icon: 'success'
                 });
             }
         } catch (error) {
             Swal.fire({
-                title: 'Hata!',
-                text: error?.response?.data?.message || 'Silme işlemi sırasında bir hata oluştu!',
+                title: t('error') + '!',
+                text: error?.response?.data?.message || t('error_during_deletion'),
                 icon: 'error'
             });
         }
@@ -302,12 +304,12 @@ const Book = () => {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
-        { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
+        { field: 'kitap_adi', headerName: t('book_name'), width: 200, flex: 1 },
+        { field: 'author_name', headerName: t('author_name_surname'), width: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 130 },
         {
             field: 'daily_lending_fee',
-            headerName: 'Günlük Ödünç Ücreti',
+            headerName: t('daily_lending_fee'),
             width: 150,
             renderCell: (params) => {
                 return formatCurrency(params.value);
@@ -316,7 +318,7 @@ const Book = () => {
         },
         {
             field: 'durum',
-            headerName: 'Durum',
+            headerName: t('status'),
             width: 120,
             renderCell: (params) => (
                 <Checkbox
@@ -326,7 +328,7 @@ const Book = () => {
             )
         },
         {
-            field: 'library_name', headerName: 'Kütüphane Adı', width: 150, flex: 1,
+            field: 'library_name', headerName: t('library_name'), width: 150, flex: 1,
             renderCell: (params) => {
                 if (params?.row?.location_google_map_adress) {
                     return (
@@ -336,14 +338,14 @@ const Book = () => {
                     );
                 }
                 else {
-                    return params.value ? params.value : "Kütüphane Atanmamış";
+                    return params.value ? params.value : t('library_not_assigned');
                 }
             }
         },
-        { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
+        { field: 'kitap_tur', headerName: t('book_type'), width: 150, flex: 1 },
         {
             field: 'actions',
-            headerName: 'İşlemler',
+            headerName: t('operations'),
             width: 200,
             sortable: false,
             renderCell: (params) => (
@@ -354,7 +356,7 @@ const Book = () => {
                         onClick={() => handleShowModal(params.row)}
                         startIcon={<EditIcon />}
                     >
-                        Detay
+                        {t('details')}
                     </Button>
                     <Button
                         variant="contained"
@@ -363,7 +365,7 @@ const Book = () => {
                         onClick={() => handleDelete(params.row.id)}
                         startIcon={<DeleteIcon />}
                     >
-                        Sil
+                        {t('delete')}
                     </Button>
                 </Stack>
             )
@@ -374,10 +376,10 @@ const Book = () => {
         <Container maxWidth="xl">
             <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Kitap Listesi
+                    {t('book_list')}
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                    Kütüphanedeki tüm kitapları buradan yönetebilirsiniz.
+                    {t('manage_all_books')}
                 </Typography>
             </Box>
             <div>
@@ -387,34 +389,34 @@ const Book = () => {
                         color="primary"
                         onClick={() => createbookmodalopen(true)}
                     >
-                        Yeni Kitap Ekle
+                        {t('add_new_book')}
                     </Button>
                     <Button
                         variant="contained"
                         color="secondary"
                         onClick={() => getbookexcel()}
                     >
-                        Excel İndir
+                        {t('download_excel')}
                     </Button>
                 </Box>
             </div>
             <Typography variant="h6" gutterBottom>
-                Filtre
+                {t('filter')}
             </Typography>
             <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
                     <TextField
-                        label="Kitap Adı"
+                        label={t('book_name')}
                         value={filterbooks.kitap_adi || ""}
                         onChange={(e) => setFilterBooks(prev => ({ ...prev, kitap_adi: e.target.value }))}
                     />
 
                     <FormControl variant="outlined" sx={{ minWidth: 200 }}>
-                        <InputLabel id="demo-multiple-name-label">Yazarlar</InputLabel>
+                        <InputLabel id="demo-multiple-name-label">{t('authors')}</InputLabel>
                         <Select
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
-                            label="Yazarlar"
+                            label={t('authors')}
                             value={filterbooks.author_id ?? ""}
                             onChange={(e) =>
                                 setFilterBooks((prev) => ({
@@ -445,16 +447,16 @@ const Book = () => {
                                 onChange={(e) => setFilterBooks(prev => ({ ...prev, durum: e.target.checked }))}
                             />
                         }
-                        label="Durum"
+                        label={t('status')}
                         sx={{ alignItems: 'center', display: 'flex' }}
                     />
 
                     <FormControl variant="outlined" sx={{ minWidth: 200 }}>
-                        <InputLabel id="demo-multiple-name-label">Kitap Türü</InputLabel>
+                        <InputLabel id="demo-multiple-name-label">{t('book_type')}</InputLabel>
                         <Select
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
-                            label="Kitap Türü"
+                            label={t('book_type')}
                             value={filterbooks.kitap_tur_kodu ?? ""}
                             onChange={(e) =>
                                 setFilterBooks((prev) => ({
@@ -474,11 +476,11 @@ const Book = () => {
                         </Select>
                     </FormControl>
                     <FormControl variant="outlined" sx={{ minWidth: 200 }}>
-                        <InputLabel id="library-select-label">Kütüphane</InputLabel>
+                        <InputLabel id="library-select-label">{t('library')}</InputLabel>
                         <Select
                             labelId="library-select-label"
                             id="library-select"
-                            label="Kütüphane"
+                            label={t('library')}
                             value={filterbooks.library_id ?? ""}
                             onChange={(e) =>
                                 setFilterBooks((prev) => ({
@@ -497,7 +499,7 @@ const Book = () => {
                     <FormControl variant="outlined" sx={{ minWidth: 200 }}>
 
                         <TextField
-                            label="Kütüphane Lokasyonu"
+                            label={t('library_location')}
                             value={filterbooks.library_location ?? ""}
                             onChange={(e) =>
                                 setFilterBooks((prev) => ({
@@ -552,7 +554,7 @@ const Book = () => {
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>Yeni Kitap Ekle</DialogTitle>
+                <DialogTitle>{t('add_new_book')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2 }}>
                         <Stack spacing={3}>
@@ -560,7 +562,7 @@ const Book = () => {
                             {/* Kitap Adı */}
                             <TextField
                                 fullWidth
-                                label="Kitap Adı"
+                                label={t('book_name')}
                                 name="kitap_adi"
                                 value={createofbook.kitap_adi || ''}
                                 onChange={(e) =>
@@ -571,11 +573,11 @@ const Book = () => {
 
                             {/* Yazarlar Select */}
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel id="author-select-label">Yazarlar</InputLabel>
+                                <InputLabel id="author-select-label">{t('authors')}</InputLabel>
                                 <Select
                                     labelId="demo-multiple-name-label"
                                     id="demo-multiple-name"
-                                    label="Yazarlar"
+                                    label={t('authors')}
                                     value={createofbook.author_id ?? ""}
                                     onChange={(e) => {
                                         setCreateofbook((prev) => ({
@@ -607,7 +609,7 @@ const Book = () => {
                             {/* Günlük kitap kiralama */}
                             <TextField
                                 fullWidth
-                                label="Günlük kitap kiralama ücreti"
+                                label={t('daily_book_rental_fee')}
                                 name="Günlük kitap kiralama ücreti"
                                 type="number"
                                 value={createofbook.daily_lending_fee || ''}
@@ -619,12 +621,12 @@ const Book = () => {
 
                             {/* Kitap Türü Select */}
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel id="kitap-tur-select-label">Kitap Türü</InputLabel>
+                                <InputLabel id="kitap-tur-select-label">{t('book_type')}</InputLabel>
                                 <Select
                                     labelId="kitap-tur-select-label"
                                     id="kitap-tur-select"
                                     value={createofbook.kitap_tur_kodu || ""}
-                                    label="Kitap Türü"
+                                    label={t('book_type')}
                                     onChange={(e) =>
                                         setCreateofbook(prev => ({
                                             ...prev,
@@ -643,12 +645,12 @@ const Book = () => {
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth variant="outlined">
-                                <InputLabel id="library-select-label">Kütüphaneler</InputLabel>
+                                <InputLabel id="library-select-label">{t('libraries')}</InputLabel>
                                 <Select
                                     labelId="library-select-label"
                                     id="library-select"
                                     value={createofbook.library_id || ""}
-                                    label="Kitap Türü"
+                                    label={t('libraries')}
                                     onChange={(e) =>
                                         setCreateofbook(prev => ({
                                             ...prev,
@@ -669,7 +671,7 @@ const Book = () => {
                 </DialogContent>
                 <DialogActions sx={{ pr: 3, pb: 2 }}>
                     <Button onClick={createbook} variant="contained" color="primary">
-                        Kitap Oluştur
+                        {t('create_book')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -680,14 +682,14 @@ const Book = () => {
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>Kitap Detayları</DialogTitle>
+                <DialogTitle>{t('book_details')}</DialogTitle>
                 <DialogContent>
                     {editedBook ? (
                         <Box component="form" sx={{ mt: 2 }}>
                             <Stack spacing={3}>
                                 <TextField
                                     fullWidth
-                                    label="Kitap Adı"
+                                    label={t('book_name')}
                                     name="kitap_adi"
                                     value={editedBook.kitap_adi || ''}
                                     onChange={handleInputChange}
@@ -695,11 +697,11 @@ const Book = () => {
                                 />
 
                                 <FormControl variant="outlined" sx={{ minWidth: 200 }}>
-                                    <InputLabel id="demo-multiple-name-label">Yazarlar</InputLabel>
+                                    <InputLabel id="demo-multiple-name-label">{t('authors')}</InputLabel>
                                     <Select
                                         labelId="demo-multiple-name-label"
                                         id="demo-multiple-name"
-                                        label="Yazarlar"
+                                        label={t('authors')}
                                         value={editedBook.author_id ?? ""}
                                         onChange={(e) => {
                                             const selectedAuthorId = parseInt(e.target.value);
@@ -727,7 +729,7 @@ const Book = () => {
                                 />
                                 <TextField
                                     fullWidth
-                                    label="Günlük kitap kiralama ücreti"
+                                    label={t('daily_book_rental_fee')}
                                     name="Günlük kitap kiralama ücreti"
                                     type="number"
                                     value={editedBook.daily_lending_fee || ''}
@@ -741,7 +743,7 @@ const Book = () => {
                                 />
                                 <Select
                                     fullWidth
-                                    label="Kitap Türü"
+                                    label={t('book_type')}
                                     name="kitap_tur_kodu"
                                     value={editedBook.kitap_tur_kodu || ''}
                                     onChange={handleInputChange}
@@ -757,11 +759,11 @@ const Book = () => {
                                     ])}
                                 </Select>
                                 <FormControl variant="outlined" sx={{ minWidth: 200 }}>
-                                    <InputLabel id="library-select-label">Kütüphane</InputLabel>
+                                    <InputLabel id="library-select-label">{t('library')}</InputLabel>
                                     <Select
                                         labelId="library-select-label"
                                         id="library-select"
-                                        label="Kütüphane"
+                                        label={t('library')}
                                         value={editedBook.library_id || ''}
                                         onChange={(e) =>
                                             setEditedBook((prev) => ({
@@ -786,21 +788,21 @@ const Book = () => {
                                             disabled={true}
                                         />
                                     }
-                                    label="Durum" />
+                                    label={t('status')} />
                             </Stack>
                         </Box>
                     ) : (
                         <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                            <Typography>Yükleniyor...</Typography>
+                            <Typography>{t('loading')}</Typography>
                         </Box>
                     )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseModal} color="inherit">
-                        İptal
+                        {t('cancel')}
                     </Button>
                     <Button onClick={handleUpdate} variant="contained">
-                        Kaydet
+                        {t('save')}
                     </Button>
                 </DialogActions>
             </Dialog>

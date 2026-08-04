@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
@@ -30,6 +31,7 @@ import LibraryService from '../../services/LibraryService';
 const libraryService = new LibraryService();
 
 const Library = () => {
+    const { t } = useTranslation();
     const [libraries, setLibraries] = useState([]);
 
 
@@ -44,8 +46,8 @@ const Library = () => {
         catch (error) {
             console.error("Error fetching libraries:", error);
             Swal.fire({
-                title: 'Hata',
-                text: 'Kütüphaneler getirilirken bir hata oluştu.' || error.message,
+                title: t('error'),
+                text: t('error_fetching_libraries') || error.message,
                 icon: 'error'
             })
         }
@@ -53,12 +55,12 @@ const Library = () => {
 
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90, sortable: false, },
-        { field: 'library_name', headerName: 'Kütüphane Adı', width: 150, sortable: false, },
-        { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date', sortable: false, },
-        { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date', sortable: false, },
+        { field: 'id', headerName: t('id'), width: 90, sortable: false, },
+        { field: 'library_name', headerName: t('library_name'), width: 150, sortable: false, },
+        { field: 'library_working_start_time', headerName: t('opening_date'), width: 150, type: 'Date', sortable: false, },
+        { field: 'library_working_end_time', headerName: t('closing_date'), width: 180, type: 'Date', sortable: false, },
         {
-            field: 'phone_number', headerName: 'Telefon Numarası', width: 150, sortable: false,
+            field: 'phone_number', headerName: t('phone_number'), width: 150, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.phone_number ? (
@@ -69,21 +71,21 @@ const Library = () => {
                 </>
             )
         },
-        { field: 'location', headerName: 'Konum', width: 150, sortable: false, },
+        { field: 'location', headerName: t('location'), width: 150, sortable: false, },
         {
-            field: 'location_google_map_adress', headerName: 'Konum Adresi', width: 200, sortable: false,
+            field: 'location_google_map_adress', headerName: t('location_address'), width: 200, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.location_google_map_adress ? (
                         <a href={params.row.location_google_map_adress} target="_blank" rel="noopener noreferrer">
-                            Adres
+                            {t('address')}
                         </a>
                     ) : null}
                 </>
             )
         },
         {
-            field: 'library_email', headerName: 'Elektronik Posta', width: 200, sortable: false,
+            field: 'library_email', headerName: t('email'), width: 200, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.library_email ? (
@@ -106,7 +108,7 @@ const Library = () => {
                 <Paper>
                     <Box>
                         <Typography component="h2" variant="h6" color="primary" gutterBottom sx={{ p: 2 }}>
-                            Kütüphaneler
+                            {t('libraries')}
                         </Typography>
                     </Box>
                 </Paper>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
@@ -31,6 +32,7 @@ import dayjs from 'dayjs';
 const customerbookrequestservice = new CustomerBookRequestService();
 
 const CustomerBooKRequest = () => {
+    const { t } = useTranslation();
     const [data, setCustomerBookRequests] = useState([]);
 
     useEffect(() => {
@@ -47,8 +49,8 @@ const CustomerBooKRequest = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -66,8 +68,8 @@ const CustomerBooKRequest = () => {
             const response = await customerbookrequestservice.CustomerRequestResult(payload);
             if (response) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: 'İşlem başarılı.',
+                    title: t('success'),
+                    text: t('operation_successful'),
                     icon: 'success'
                 });
                 getdata();
@@ -75,8 +77,8 @@ const CustomerBooKRequest = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('an_error_occurred'),
                 icon: 'error'
             });
         }
@@ -84,18 +86,18 @@ const CustomerBooKRequest = () => {
 
 
     const columns = [
-        { field: 'name_surname', headerName: 'Müşteri Adı', width: 200 },
-        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
-        { field: 'library_name', headerName: 'Kütüphane', width: 200 },
+        { field: 'name_surname', headerName: t('customer_name'), width: 200 },
+        { field: 'kitap_adi', headerName: t('book_name'), width: 200 },
+        { field: 'library_name', headerName: t('library'), width: 200 },
         {
             field: 'request_date',
-            headerName: 'İstek Tarihi',
+            headerName: t('request_date'),
             width: 200,
             valueGetter: (params) => dayjs(params.request_date).format('YYYY-MM-DD')
         },
         {
             field: 'operations',
-            headerName: 'İşlemler',
+            headerName: t('operations'),
             width: 150,
             renderCell: (params) => (
                 <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -105,7 +107,7 @@ const CustomerBooKRequest = () => {
                         size="small"
                         onClick={() => handleCustomerRequestResult({ ...params.row, result: true })}
                     >
-                        Onayla
+                        {t('approve')}
                     </Button>
                     <Button
                         variant="contained"
@@ -113,7 +115,7 @@ const CustomerBooKRequest = () => {
                         size="small"
                         onClick={() => handleCustomerRequestResult({ ...params.row, result: false })}
                     >
-                        Reddet
+                        {t('reject')}
                     </Button>
                 </Stack>
             )
@@ -125,7 +127,7 @@ const CustomerBooKRequest = () => {
             <Container>
                 <Box my={4}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Müşteri Kitap İstekleri
+                        {t('customer_requests')}
                     </Typography>
                     <Paper>
                         <DataGrid

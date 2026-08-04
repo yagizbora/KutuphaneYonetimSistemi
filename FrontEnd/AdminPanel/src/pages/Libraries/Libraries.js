@@ -32,19 +32,21 @@ import dayjs from 'dayjs';
 import LibraryService from '../../services/LibraryService.js';
 import LibraryTable from './LibraryTables/LibraryTable.js';
 import CreateLibrary from './CreateLibrary/CreateLibrary.js';
+import { useTranslation } from 'react-i18next';
 
 
 
 const Libraries = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90, sortable: false, },
-        { field: 'library_name', headerName: 'Kütüphane Adı', width: 150, sortable: false, },
-        { field: 'library_working_start_time', headerName: 'Açılış Tarihi', width: 150, type: 'Date', sortable: false, },
-        { field: 'library_working_end_time', headerName: 'Kapanış Tarihi', width: 180, type: 'Date', sortable: false, },
+        { field: 'id', headerName: t('id'), width: 90, sortable: false, },
+        { field: 'library_name', headerName: t('library_name'), width: 150, sortable: false, },
+        { field: 'library_working_start_time', headerName: t('opening_date'), width: 150, type: 'Date', sortable: false, },
+        { field: 'library_working_end_time', headerName: t('closing_date'), width: 180, type: 'Date', sortable: false, },
         {
-            field: 'phone_number', headerName: 'Telefon Numarası', width: 150, sortable: false,
+            field: 'phone_number', headerName: t('phone_number'), width: 150, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.phone_number ? (
@@ -55,21 +57,21 @@ const Libraries = () => {
                 </>
             )
         },
-        { field: 'location', headerName: 'Konum', width: 150, sortable: false, },
+        { field: 'location', headerName: t('location'), width: 150, sortable: false, },
         {
-            field: 'location_google_map_adress', headerName: 'Konum Adresi', width: 200, sortable: false,
+            field: 'location_google_map_adress', headerName: t('location_address'), width: 200, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.location_google_map_adress ? (
                         <a href={params.row.location_google_map_adress} target="_blank" rel="noopener noreferrer">
-                            Adres
+                            {t('address')}
                         </a>
                     ) : null}
                 </>
             )
         },
         {
-            field: 'library_email', headerName: 'Elektronik Posta', width: 200, sortable: false,
+            field: 'library_email', headerName: t('email'), width: 200, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.library_email ? (
@@ -82,7 +84,7 @@ const Libraries = () => {
         },
         {
             field: 'actions',
-            headerName: 'İşlemler',
+            headerName: t('actions'),
             minWidth: 250,
             flex: 1,
             sortable: false,
@@ -94,13 +96,14 @@ const Libraries = () => {
                             color="error"
                             onClick={() => {
                                 Swal.fire({
-                                    title: 'Kütüphane Sil',
-                                    text: "Bu kütüphaneyi silmek istediğinize emin misiniz?",
+                                    title: t('delete_library'),
+                                    text: t('are_you_sure_delete_library'),
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonColor: '#3085d6',
                                     cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Evet, sil!'
+                                    confirmButtonText: t('yes_delete'),
+                                    cancelButtonText: t('cancel')
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         deletedata(params.row.id);
@@ -108,7 +111,7 @@ const Libraries = () => {
                                 });
                             }}
                         >
-                            Sil
+                            {t('delete')}
                         </Button>
                         <Button
                             variant="contained"
@@ -117,7 +120,7 @@ const Libraries = () => {
                                 navigate(`/libraries/edit/${params.row.id}`);
                             }}
                         >
-                            Düzenle
+                            {t('edit')}
                         </Button>
                     </Stack>
                 </>
@@ -141,8 +144,8 @@ const Libraries = () => {
             console.error("Error fetching libraries:", error);
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: 'Kütüphaneler alınırken bir hata oluştu.',
+                title: t('error'),
+                text: t('error_fetching_libraries'),
             });
         }
     }
@@ -153,15 +156,15 @@ const Libraries = () => {
             if (response.status === 200) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: response.data.message || 'Kütüphane başarıyla silindi.',
+                    title: t('success'),
+                    text: response.data.message || t('library_deleted_successfully'),
                 });
                 getdata();
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Hata',
-                    text: response.data.message || 'Kütüphane silinirken bir hata oluştu.',
+                    title: t('error'),
+                    text: response.data.message || t('error_deleting_library'),
                 });
             }
         }
@@ -169,8 +172,8 @@ const Libraries = () => {
             console.error("Error deleting library:", error);
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error.response.data.message || 'Kütüphane silinirken bir hata oluştu.',
+                title: t('error'),
+                text: error.response?.data?.message || t('error_deleting_library'),
             });
         }
     }
@@ -179,7 +182,7 @@ const Libraries = () => {
         <>
             <Container >
                 <Typography variant="h4" gutterBottom>
-                    Kütüphaneler
+                    {t('libraries')}
                 </Typography>
                 <Grid
                     container

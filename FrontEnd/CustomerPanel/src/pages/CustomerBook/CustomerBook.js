@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomerBookService from '../../services/CustomerBookService';
 import {
     Container,
@@ -30,7 +31,7 @@ import SearchIcon from '@mui/icons-material/Search';
 const customerBookService = new CustomerBookService();
 
 const CustomerBook = () => {
-
+    const { t } = useTranslation();
     const [customerBooks, setCustomerBooks] = useState([]);
 
     const getdata = async () => {
@@ -48,14 +49,14 @@ const CustomerBook = () => {
             const response = await customerBookService.customerbookrequest(data);
             if (response.data.status) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: 'Kitap talep edildi.',
+                    title: t('success'),
+                    text: t('book_requested'),
                     icon: 'success'
                 });
                 getdata();
             } else {
                 Swal.fire({
-                    title: 'Hata',
+                    title: t('error'),
                     text: response.data.message,
                     icon: 'error'
                 });
@@ -64,8 +65,8 @@ const CustomerBook = () => {
         catch (error) {
             console.error("Error requesting book:", error);
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap talep edilirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_requesting_book'),
                 icon: 'error'
             });
         }
@@ -76,22 +77,22 @@ const CustomerBook = () => {
     }, []);
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
-        { field: 'author_name', headerName: 'Yazar', width: 180 },
-        { field: 'library_name', headerName: 'Kütüphane', width: 200 },
-        { field: 'location', headerName: 'Lokasyon', width: 250 },
+        { field: 'id', headerName: t('id'), width: 90 },
+        { field: 'kitap_adi', headerName: t('book_name'), width: 200 },
+        { field: 'author_name', headerName: t('author'), width: 180 },
+        { field: 'library_name', headerName: t('library'), width: 200 },
+        { field: 'location', headerName: t('location'), width: 250 },
         {
             field: 'durum',
-            headerName: 'Durum',
+            headerName: t('status'),
             width: 120,
             renderCell: (params) => (
-                params.value ? 'Uygun' : 'Değil'
+                params.value ? t('available') : t('unavailable')
             )
         },
         {
             field: 'actions',
-            headerName: 'İşlemler',
+            headerName: t('actions'),
             width: 150,
             renderCell: (params) => {
                 return (
@@ -100,7 +101,7 @@ const CustomerBook = () => {
                             color="primary"
                             onClick={() => requestbook({ book_id: params.row.id, library_id: params.row.library_id })}
                         >
-                            Talep Et
+                            {t('request')}
                         </Button>
                     </Stack>
                 );
@@ -113,7 +114,7 @@ const CustomerBook = () => {
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Typography variant="h6" gutterBottom>
-                        Kitap Listesi
+                        {t('book_list')}
                     </Typography>
                     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                         <DataGrid

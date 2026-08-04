@@ -10,9 +10,11 @@ import {
 } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 const customerBookService = new CustomerBookService();
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [customerBooks, setCustomerBooks] = useState([]);
   const [message, setMessage] = useState('');
 
@@ -23,11 +25,11 @@ const Dashboard = () => {
       setCustomerBooks(data);
 
       if (data.length === 0) {
-        setMessage(response.data.message || 'Gösterilecek veri bulunamadı.');
+        setMessage(response.data.message || t('no_data'));
       }
     } catch (error) {
       console.error('Error fetching customer books:', error);
-      setMessage('Veri alınırken bir hata oluştu.');
+      setMessage(t('error_fetching'));
     }
   };
 
@@ -101,7 +103,7 @@ const Dashboard = () => {
               color: '#0D47A1',
             }}
           >
-            Alınan Kitaplar
+            {t('borrowed_books')}
           </Typography>
           <Divider sx={{ mb: 2 }} />
 
@@ -125,7 +127,7 @@ const Dashboard = () => {
                     borderRadius: 2,
                   }}
                 >
-                  {message || 'Gösterilecek veri bulunamadı.'}
+                  {message || t('no_data')}
                 </Alert>
               </Box>
             ) : (

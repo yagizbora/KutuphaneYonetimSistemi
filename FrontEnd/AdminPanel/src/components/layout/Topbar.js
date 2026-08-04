@@ -11,12 +11,15 @@ import userService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import Clock from './Clock';
 import Date from './Date';
+import { useTranslation } from 'react-i18next';
 const userservice = new userService();
 
 const Topbar = () => {
+  const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [userchangemodal, setUserChangeModal] = useState(false);
   const [userchangepasswordmodal, setUserChangePasswordModal] = useState(false);
+  const [langAnchorEl, setLangAnchorEl] = useState(null); // Language menu anchor
   const openuserchangepasswordmodal = () => {
     setPassword({
       password: "",
@@ -52,6 +55,20 @@ const Topbar = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLangMenuClick = (event) => {
+    setLangAnchorEl(event.currentTarget);
+  };
+
+  const handleLangMenuClose = () => {
+    setLangAnchorEl(null);
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+    handleLangMenuClose();
   };
 
   // Logout işlemi
@@ -184,13 +201,30 @@ const Topbar = () => {
           <div className="user-profile">
             <Clock />
             <Button
+              onClick={handleLangMenuClick}
+              sx={{ color: 'var(--text-main)', minWidth: '40px', fontWeight: 'bold' }}
+            >
+              {i18n.language ? i18n.language.toUpperCase() : 'TR'}
+            </Button>
+            <Menu
+              anchorEl={langAnchorEl}
+              keepMounted
+              open={Boolean(langAnchorEl)}
+              onClose={handleLangMenuClose}
+            >
+              <MenuItem onClick={() => changeLanguage('tr')}>TR</MenuItem>
+              <MenuItem onClick={() => changeLanguage('en')}>EN</MenuItem>
+              <MenuItem onClick={() => changeLanguage('de')}>DE</MenuItem>
+              <MenuItem onClick={() => changeLanguage('fr')}>FR</MenuItem>
+            </Menu>
+            <Button
               id="user-profile-button"
               aria-controls="user-profile-menu"
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl)}
               onClick={handleMenuClick}
             >
-              User Settings
+              {t('user_settings')}
             </Button>
             <Menu
               id="user-profile-menu"
@@ -199,9 +233,9 @@ const Topbar = () => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              <MenuItem onClick={() => setUserChangeModal(true)}>Change Username</MenuItem>
-              <MenuItem onClick={() => openuserchangepasswordmodal()}>Change Password</MenuItem>
+              <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
+              <MenuItem onClick={() => setUserChangeModal(true)}>{t('change_username')}</MenuItem>
+              <MenuItem onClick={() => openuserchangepasswordmodal()}>{t('change_password')}</MenuItem>
             </Menu>
           </div>
         </div>

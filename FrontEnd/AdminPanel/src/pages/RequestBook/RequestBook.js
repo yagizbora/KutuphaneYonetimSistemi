@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Paper,
@@ -23,6 +24,7 @@ import RequestService from '../../services/RequestService';
 const requestservice = new RequestService();
 
 const RequestBook = () => {
+    const { t } = useTranslation();
     const [tabIndex, setTabIndex] = useState(0);
     const [data, setData] = useState([]);
     const [createRequest, setCreateRequest] = useState({
@@ -34,26 +36,26 @@ const RequestBook = () => {
     });
 
     const columnsCommon = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'book_name', headerName: 'Kitap Adı', width: 150 },
+        { field: 'id', headerName: t('id'), width: 70 },
+        { field: 'book_name', headerName: t('book_name'), width: 150 },
         {
             field: 'request_start_time',
-            headerName: 'İstek Başlangıç',
+            headerName: t('request_start_time'),
             width: 180,
             type: 'dateTime',
             valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
         {
             field: 'request_deadline',
-            headerName: 'Son Tarih',
+            headerName: t('deadline'),
             width: 180,
             type: 'dateTime',
             valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
-        { field: 'comment', headerName: 'Yorum', width: 200 },
+        { field: 'comment', headerName: t('comment'), width: 200 },
         {
             field: 'is_complated',
-            headerName: 'Tamamlandı mı?',
+            headerName: t('is_completed'),
             width: 150,
             renderCell: (params) => (
                 <Checkbox checked={params.value || false} disabled />
@@ -65,7 +67,7 @@ const RequestBook = () => {
         ...columnsCommon,
         {
             field: 'operations',
-            headerName: 'Operasyonlar',
+            headerName: t('operations'),
             width: 300,
             renderCell: (params) => (
                 <Stack direction="row" spacing={2}>
@@ -77,7 +79,7 @@ const RequestBook = () => {
                         color="primary"
                         href={`/request/complate-request/${params.row.id}`}
                     >
-                        Tamamlama sayfasına git
+                        {t('go_to_completion_page')}
                     </Button>
                 </Stack>
             )
@@ -88,12 +90,12 @@ const RequestBook = () => {
         ...columnsCommon,
         {
             field: 'closed_subject_details',
-            headerName: 'Kapanış Notu',
+            headerName: t('closing_note'),
             width: 250,
         },
         {
             field: 'operations',
-            headerName: 'Operasyonlar',
+            headerName: t('operations'),
             width: 300,
             renderCell: (params) => (
                 <Stack direction="row" spacing={2}>
@@ -105,7 +107,7 @@ const RequestBook = () => {
                         color="primary"
                         href={`/request/complate-request/${params.row.id}`}
                     >
-                        Tamamlama sayfasına git
+                        {t('go_to_completion_page')}
                     </Button>
                 </Stack>
             )
@@ -114,17 +116,17 @@ const RequestBook = () => {
 
     const handleDelete = async (row) => {
         Swal.fire({
-            title: 'Emin misiniz?',
-            text: 'Bu işlem geri alınamaz!',
+            title: t('are_you_sure'),
+            text: t('this_action_cannot_be_undone'),
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Evet, sil',
-            cancelButtonText: 'Vazgeç'
+            confirmButtonText: t('yes_delete_confirm'),
+            cancelButtonText: t('cancel')
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const res = await requestservice.deletebookrequest(row);
                 if (res) {
-                    Swal.fire('Silindi!', res.data.message, 'success');
+                    Swal.fire(t('deleted'), res.data.message, 'success');
                     getRequests(tabIndex);
                 }
             }
@@ -150,7 +152,7 @@ const RequestBook = () => {
         try {
             const res = await requestservice.createbookrequest(createRequest);
             if (res) {
-                Swal.fire('Başarılı', res.data.message, 'success');
+                Swal.fire(t('success'), res.data.message, 'success');
                 setCreateRequest({
                     book_name: '',
                     request_start_time: '',
@@ -172,7 +174,7 @@ const RequestBook = () => {
     return (
         <Container>
             <Box my={3}>
-                <Typography variant="h4" align="center">Kitap İstekleri</Typography>
+                <Typography variant="h4" align="center">{t('book_requests')}</Typography>
             </Box>
 
             {/* Form */}
@@ -181,7 +183,7 @@ const RequestBook = () => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="Kitap Adı"
+                            label={t('book_name')}
                             value={createRequest.book_name}
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, book_name: e.target.value }))}
                         />
@@ -189,7 +191,7 @@ const RequestBook = () => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="Yorum"
+                            label={t('comment')}
                             value={createRequest.comment}
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, comment: e.target.value }))}
                         />
@@ -197,7 +199,7 @@ const RequestBook = () => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="Başlangıç"
+                            label={t('start')}
                             type="date"
                             InputLabelProps={{ shrink: true }}
                             value={createRequest.request_start_time}
@@ -207,7 +209,7 @@ const RequestBook = () => {
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
-                            label="Bitiş"
+                            label={t('end')}
                             type="date"
                             InputLabelProps={{ shrink: true }}
                             value={createRequest.request_deadline}
@@ -222,11 +224,11 @@ const RequestBook = () => {
                                     onChange={(e) => setCreateRequest(prev => ({ ...prev, is_complated: e.target.checked }))}
                                 />
                             }
-                            label="Tamamlandı mı?"
+                            label={t('is_completed')}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={createRequestFunc}>Ekle</Button>
+                        <Button variant="contained" onClick={createRequestFunc}>{t('add')}</Button>
                     </Grid>
                 </Grid>
             </Paper>
@@ -234,8 +236,8 @@ const RequestBook = () => {
             {/* Tabs */}
             <Paper sx={{ padding: 2 }}>
                 <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)} centered>
-                    <Tab label="Aktif İstekler" />
-                    <Tab label="Tamamlanmış İstekler" />
+                    <Tab label={t('active_requests')} />
+                    <Tab label={t('completed_requests')} />
                 </Tabs>
 
                 <Box mt={3}>

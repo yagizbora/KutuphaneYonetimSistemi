@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
@@ -23,7 +24,7 @@ import BookTypeGroupService from '../../services/BookTypeGroupService';
 const bookTypeGroupService = new BookTypeGroupService();
 
 const BookTypeGroup = () => {
-
+    const { t } = useTranslation();
     const [data, setData] = useState([]);
     const [createGroup, setCreateGroup] = useState({
         book_types_group: ''
@@ -37,19 +38,19 @@ const BookTypeGroup = () => {
     const columns = [
         {
             field: 'id',
-            headerName: 'ID',
+            headerName: t('id'),
             width: 150,
             editable: false,
         },
         {
             field: 'book_types_group',
-            headerName: 'Kitap Tür Grubu',
+            headerName: t('book_type_group'),
             width: 300,
             editable: true,
         },
         {
             field: 'İşlemler',
-            headerName: 'İşlemler',
+            headerName: t('actions'),
             sortable: false,
             width: 150,
             editable: false,
@@ -62,7 +63,7 @@ const BookTypeGroup = () => {
                         startIcon={<EditIcon />}
                         onClick={() => handleEditClick(params.row)}
                     >
-                        Düzenle
+                        {t('edit')}
                     </Button>
                 </Stack>
             )
@@ -87,8 +88,8 @@ const BookTypeGroup = () => {
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap tür grupları alınamadı',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_fetching_book_type_groups'),
             });
         }
     };
@@ -105,8 +106,8 @@ const BookTypeGroup = () => {
         if (!editData.book_types_group) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Uyarı',
-                text: 'Kitap tür grubu alanı boş olamaz',
+                title: t('warning'),
+                text: t('book_type_group_empty'),
             });
             return;
         }
@@ -118,8 +119,8 @@ const BookTypeGroup = () => {
             if (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: 'Kitap tür grubu başarıyla güncellendi',
+                    title: t('success'),
+                    text: t('book_type_group_updated_successfully'),
                 });
                 setOpenEditDialog(false);
                 getGroups();
@@ -127,8 +128,8 @@ const BookTypeGroup = () => {
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Güncellenirken bir hata oluştu',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_updating'),
             });
         }
     };
@@ -137,8 +138,8 @@ const BookTypeGroup = () => {
         if (!createGroup.book_types_group) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Uyarı',
-                text: 'Kitap tür grubu alanı boş olamaz',
+                title: t('warning'),
+                text: t('book_type_group_empty'),
             });
             return;
         }
@@ -149,8 +150,8 @@ const BookTypeGroup = () => {
             if (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Başarılı',
-                    text: 'Kitap tür grubu başarıyla eklendi',
+                    title: t('success'),
+                    text: t('book_type_group_added_successfully'),
                 });
                 setCreateGroup({ book_types_group: '' });
                 getGroups();
@@ -158,8 +159,8 @@ const BookTypeGroup = () => {
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Eklenirken bir hata oluştu',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_adding'),
             });
         }
     };
@@ -173,16 +174,16 @@ const BookTypeGroup = () => {
             <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                 <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Kitap Tür Grupları Listesi
+                        {t('book_type_groups_list')}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
-                        Kütüphanedeki tüm kitap tür gruplarını buradan yönetebilirsiniz.
+                        {t('manage_book_type_groups_subtitle')}
                     </Typography>
                 </Box>
                 <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
                     <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
                         <TextField
-                            label="Kitap Tür Grubu Adı"
+                            label={t('book_type_group_name')}
                             variant="outlined"
                             value={createGroup.book_types_group}
                             onChange={(e) => setCreateGroup({ ...createGroup, book_types_group: e.target.value })}
@@ -194,7 +195,7 @@ const BookTypeGroup = () => {
                         onClick={createGroupRequest}
                         disabled={disabledButtonAndInput()}
                     >
-                        Kitap Tür Grubu Ekle
+                        {t('add_book_type_group')}
                     </Button>
                 </Paper>
 
@@ -226,22 +227,22 @@ const BookTypeGroup = () => {
             >
                 <DialogTitle>
                     <DialogContentText>
-                        Kitap Tür Grubu Düzenle
+                        {t('edit_book_type_group')}
                     </DialogContentText>
                 </DialogTitle>
                 <DialogContent>
                     <TextField
                         fullWidth
                         margin="normal"
-                        label="Kitap Tür Grubu Adı"
+                        label={t('book_type_group_name')}
                         value={editData.book_types_group}
                         onChange={(e) => setEditData({ ...editData, book_types_group: e.target.value })}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenEditDialog(false)}>İptal</Button>
+                    <Button onClick={() => setOpenEditDialog(false)}>{t('cancel')}</Button>
                     <Button onClick={handleEditSubmit} variant="contained" color="primary">
-                        Kaydet
+                        {t('save')}
                     </Button>
                 </DialogActions>
             </Dialog>

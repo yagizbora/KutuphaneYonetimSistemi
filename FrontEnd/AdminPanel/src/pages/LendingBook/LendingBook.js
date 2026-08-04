@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
@@ -41,6 +42,7 @@ const LendingBook = () => {
     const [oduncalan, setOduncalan] = useState('');
     const [oduncAlmaTarihi, setOduncAlmaTarihi] = useState(dayjs());
     const [CustomerUsers, setCustomerUsers] = useState([]);
+    const { t } = useTranslation();
 
 
     const ListCustomerUsers = async () => {
@@ -52,8 +54,8 @@ const LendingBook = () => {
         }
         catch (error) {
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Müşteri kullanıcılar yüklenirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_loading_customer_users'),
                 icon: 'error'
             });
         }
@@ -67,8 +69,8 @@ const LendingBook = () => {
         } catch (error) {
             console.error('Error fetching books:', error);
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_loading_books'),
                 icon: 'error'
             });
             setBooks([]);
@@ -94,8 +96,8 @@ const LendingBook = () => {
     const handleLendBook = async () => {
         if (selectedBook === '' || oduncalan === '' || oduncAlmaTarihi.value === '') {
             Swal.fire({
-                title: 'Hata',
-                text: 'Lütfen tüm alanları doldurunuz.',
+                title: t('error'),
+                text: t('please_fill_all_fields'),
                 icon: 'error'
             });
             return;
@@ -104,8 +106,8 @@ const LendingBook = () => {
             const response = await lendingBookService.lendBook({ id: selectedBook, customer_id: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
             if (response) {
                 Swal.fire({
-                    title: 'Başarılı',
-                    text: response?.data?.message || 'Kitap başarıyla ödünç verildi.',
+                    title: t('success'),
+                    text: response?.data?.message || t('book_lent_successfully'),
                     icon: 'success'
                 });
                 getBooks();
@@ -116,21 +118,21 @@ const LendingBook = () => {
         catch (error) {
             console.error('Error lending book:', error);
             Swal.fire({
-                title: 'Hata',
-                text: error?.response?.data?.message || 'Kitap ödünç verilirken bir hata oluştu.',
+                title: t('error'),
+                text: error?.response?.data?.message || t('error_lending_book'),
                 icon: 'error'
             });
         }
     }
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200, flex: 1 },
-        { field: 'author_name', headerName: 'Yazar Adı ve soyadı', width: 150, flex: 1 },
-        { field: 'kitap_tur', headerName: 'Kitap Türü', width: 150, flex: 1 },
-        { field: 'isbn', headerName: 'ISBN', width: 150, flex: 1 },
+        { field: 'id', headerName: t('id'), width: 90 },
+        { field: 'kitap_adi', headerName: t('book_name'), width: 200, flex: 1 },
+        { field: 'author_name', headerName: t('author_name_surname'), width: 150, flex: 1 },
+        { field: 'kitap_tur', headerName: t('book_type'), width: 150, flex: 1 },
+        { field: 'isbn', headerName: t('isbn'), width: 150, flex: 1 },
         {
             field: 'daily_lending_fee',
-            headerName: 'Günlük Ödünç Ücreti',
+            headerName: t('daily_lending_fee'),
             width: 150,
             renderCell: (params) => {
                 return formatCurrency(params.value);
@@ -139,7 +141,7 @@ const LendingBook = () => {
         },
         {
             field: 'durum',
-            headerName: 'Durum',
+            headerName: t('status'),
             width: 120,
             renderCell: (params) => (
                 <Checkbox
@@ -158,22 +160,22 @@ const LendingBook = () => {
             <Container maxWidth="xl">
                 <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Ödünç Verme
+                        {t('lending_book_title')}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" textAlign="left">
-                        Kütüphanedeki tüm kitapları buradan ödünç verebilirsiniz.
+                        {t('lending_book_subtitle')}
                     </Typography>
                 </Box>
 
                 <Grid container spacing={2} display="flex" alignItems="center" sx={{ mb: 2 }}>
                     <Grid item xs={12} md={6}>
                         <FormControl fullWidth size="medium" sx={{ minWidth: '300px' }}>
-                            <InputLabel id="book-select-label">Kitap Seçiniz</InputLabel>
+                            <InputLabel id="book-select-label">{t('select_book')}</InputLabel>
                             <Select
                                 labelId="book-select-label"
                                 id="book-select"
                                 value={selectedBook}
-                                label="Kitap Seçiniz"
+                                label={t('select_book')}
                                 onChange={(e) => setSelectedBook(e.target.value)}
                                 sx={{
                                     height: '56px',
@@ -192,7 +194,7 @@ const LendingBook = () => {
                                             padding: '12px'
                                         }}
                                     >
-                                        {`${book.kitap_adi} - Günlük Ücret: ${formatCurrency(book.daily_lending_fee)}`}
+                                        {`${book.kitap_adi} - ${t('daily_fee')}: ${formatCurrency(book.daily_lending_fee)}`}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -200,12 +202,12 @@ const LendingBook = () => {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <FormControl fullWidth size="medium" sx={{ minWidth: '300px' }}>
-                            <InputLabel id="customer-user-select-label">Ödünç Alan Kullanıcı</InputLabel>
+                            <InputLabel id="customer-user-select-label">{t('lending_user')}</InputLabel>
                             <Select
                                 labelId="customer-user-select-label"
                                 id="customer-user-select"
                                 value={oduncalan}
-                                label="Ödünç Alan Kullanıcı"
+                                label={t('lending_user')}
                                 onChange={(e) => setOduncalan(e.target.value)}
                                 sx={{
                                     height: '56px',
@@ -224,7 +226,7 @@ const LendingBook = () => {
                                             padding: '12px'
                                         }}
                                     >
-                                        {`${user.name_surname} - Telefon: +90${user.phone_number}`}
+                                        {`${user.name_surname} - ${t('phone')}: +90${user.phone_number}`}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -233,7 +235,7 @@ const LendingBook = () => {
                     <Grid item xs={12} md={6}>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="tr">
                             <DatePicker
-                                label="Ödünç Alma Tarihi"
+                                label={t('lending_date')}
                                 value={oduncAlmaTarihi}
                                 onChange={(newValue) => setOduncAlmaTarihi(newValue)}
                                 sx={{
@@ -257,7 +259,7 @@ const LendingBook = () => {
                                 fontSize: '1.1rem'
                             }}
                         >
-                            Ödünç Ver
+                            {t('lend_button')}
                         </Button>
                     </Grid>
                 </Grid>
