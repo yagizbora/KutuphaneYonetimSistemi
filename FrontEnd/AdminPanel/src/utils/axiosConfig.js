@@ -5,7 +5,7 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import 'js-loading-overlay';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:44336/api';
 if (!API_URL) {
   console.error('API URL is not configured properly!');
 }

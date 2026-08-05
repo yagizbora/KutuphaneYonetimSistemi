@@ -36,7 +36,7 @@ const Login = () => {
 
   const checkuserinsystem = async () => {
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'https://localhost:44336/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:44336/api';
       const response = await axios.get(`${API_URL}/auth/User/FirstRegisterController`);
       if (response.data.status === false) {
         Swal.fire({
