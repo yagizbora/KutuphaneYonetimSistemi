@@ -218,7 +218,15 @@ const translationEN = {
   total_records: "Total Records",
   event_col: "Event",
   event_description: "Event Description",
-  user_operation_logs: "User Operation Logs"
+  user_operation_logs: "User Operation Logs",
+  lending_document_title: "Lending Document",
+  book_name: "Book Name",
+  lending_user: "Lending User",
+  daily_fee: "Daily Fee",
+  lending_date: "Date",
+  librarian_signature: "Librarian Signature",
+  customer_signature: "Customer Signature",
+  lending_penalty_note: "Lending is free for up to 10 days. After 10 days, a penalty will be applied for each overdue day based on the daily fee."
 };
 
 // Turkish translations
@@ -438,7 +446,15 @@ const translationTR = {
   total_records: "Toplam Kayıt",
   event_col: "Olay",
   event_description: "Olay Açıklaması",
-  user_operation_logs: "Kullanıcı Operasyon Logları"
+  user_operation_logs: "Kullanıcı Operasyon Logları",
+  lending_document_title: "Ödünç Alma Belgesi",
+  book_name: "Kitap Adı",
+  lending_user: "Ödünç Alan",
+  daily_fee: "Tutar (Günlük)",
+  lending_date: "Tarih",
+  librarian_signature: "Teslim Eden (Kütüphane Görevlisi)",
+  customer_signature: "Teslim Alan (Müşteri)",
+  lending_penalty_note: "10 güne kadar ödünç alma ücretsizdir. 10 günden sonra gecikilen her gün için yukarıda belirtilen günlük tutar üzerinden ceza işlemeye başlar."
 };
 
 // German translations
@@ -658,7 +674,15 @@ const translationDE = {
   total_records: "Gesamte Datensätze",
   event_col: "Ereignis",
   event_description: "Ereignisbeschreibung",
-  user_operation_logs: "Benutzer-Operationsprotokolle"
+  user_operation_logs: "Benutzer-Operationsprotokolle",
+  lending_document_title: "Ausleihdokument",
+  book_name: "Buchname",
+  lending_user: "Entleiher",
+  daily_fee: "Tagesgebühr",
+  lending_date: "Datum",
+  librarian_signature: "Unterschrift des Bibliothekars",
+  customer_signature: "Unterschrift des Kunden",
+  lending_penalty_note: "Die Ausleihe ist für bis zu 10 Tage kostenlos. Ab dem 11. Tag wird für jeden überfälligen Tag eine Strafe basierend auf der Tagesgebühr berechnet."
 };
 
 // French translations
@@ -878,7 +902,15 @@ const translationFR = {
   total_records: "Total des enregistrements",
   event_col: "Événement",
   event_description: "Description de l'événement",
-  user_operation_logs: "Journaux d'opérations des utilisateurs"
+  user_operation_logs: "Journaux d'opérations des utilisateurs",
+  lending_document_title: "Document de prêt",
+  book_name: "Nom du livre",
+  lending_user: "Emprunteur",
+  daily_fee: "Frais journaliers",
+  lending_date: "Date",
+  librarian_signature: "Signature du bibliothécaire",
+  customer_signature: "Signature du client",
+  lending_penalty_note: "Le prêt est gratuit jusqu'à 10 jours. Après 10 jours, une pénalité sera appliquée pour chaque jour de retard en fonction des frais journaliers."
 };
 
 i18n

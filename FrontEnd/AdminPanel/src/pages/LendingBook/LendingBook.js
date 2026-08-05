@@ -42,6 +42,8 @@ const LendingBook = () => {
     const [oduncalan, setOduncalan] = useState('');
     const [oduncAlmaTarihi, setOduncAlmaTarihi] = useState(dayjs());
     const [CustomerUsers, setCustomerUsers] = useState([]);
+    const [printModalOpen, setPrintModalOpen] = useState(false);
+    const [isPrinted, setIsPrinted] = useState(false);
     const { t } = useTranslation();
 
 
@@ -93,8 +95,8 @@ const LendingBook = () => {
     //         });
     //     }
     // }
-    const handleLendBook = async () => {
-        if (selectedBook === '' || oduncalan === '' || oduncAlmaTarihi.value === '') {
+    const handleOpenPrintModal = () => {
+        if (selectedBook === '' || oduncalan === '' || !oduncAlmaTarihi) {
             Swal.fire({
                 title: t('error'),
                 text: t('please_fill_all_fields'),
@@ -102,6 +104,77 @@ const LendingBook = () => {
             });
             return;
         }
+        setIsPrinted(false);
+        setPrintModalOpen(true);
+    };
+
+    const handlePrint = () => {
+        const selectedBookObj = bookList.find(b => b.id === selectedBook);
+        const selectedUserObj = CustomerUsers.find(u => u.id === oduncalan);
+        
+        const html = `
+            <html>
+                <head>
+                    <title>${t('lending_document_title', 'Ödünç Alma Belgesi')}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; }
+                        h2 { text-align: center; margin-bottom: 40px; }
+                        .info { margin-bottom: 40px; font-size: 18px; line-height: 1.6; }
+                        .signature { margin-top: 80px; display: flex; justify-content: space-between; }
+                        .sign-box { width: 45%; text-align: center; }
+                        .line { border-top: 1px solid #000; margin-top: 60px; width: 100%; }
+                        .note { margin-top: 50px; font-size: 14px; font-style: italic; color: #555; text-align: center; border-top: 1px dashed #ccc; padding-top: 20px;}
+                    </style>
+                </head>
+                <body>
+                    <h2>${t('lending_document_title', 'Ödünç Alma Belgesi')}</h2>
+                    <div class="info">
+                        <p><strong>${t('book_name', 'Kitap Adı')}:</strong> ${selectedBookObj?.kitap_adi || ''}</p>
+                        <p><strong>${t('lending_user', 'Ödünç Alan')}:</strong> ${selectedUserObj?.name_surname || ''}</p>
+                        <p><strong>${t('daily_fee', 'Tutar (Günlük)')}:</strong> ${formatCurrency(selectedBookObj?.daily_lending_fee || 0)}</p>
+                        <p><strong>${t('lending_date', 'Tarih')}:</strong> ${oduncAlmaTarihi ? dayjs(oduncAlmaTarihi).format('DD/MM/YYYY') : dayjs().format('DD/MM/YYYY')}</p>
+                    </div>
+                    <div class="signature">
+                        <div class="sign-box">
+                            <p><strong>${t('librarian_signature', 'Teslim Eden (Kütüphane Görevlisi)')}</strong></p>
+                            <div class="line"></div>
+                        </div>
+                        <div class="sign-box">
+                            <p><strong>${t('customer_signature', 'Teslim Alan (Müşteri)')}</strong></p>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                    <div class="note">
+                        ${t('lending_penalty_note', '10 güne kadar ödünç alma ücretsizdir. 10 günden sonra gecikilen her gün için yukarıda belirtilen günlük tutar üzerinden ceza işlemeye başlar.')}
+                    </div>
+                </body>
+            </html>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(html);
+        iframe.contentWindow.document.close();
+
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 1000);
+
+        setIsPrinted(true);
+    };
+
+    const handleConfirmLending = async () => {
         try {
             const response = await lendingBookService.lendBook({ id: selectedBook, customer_id: oduncalan, odunc_alma_tarihi: oduncAlmaTarihi });
             if (response) {
@@ -112,6 +185,7 @@ const LendingBook = () => {
                 });
                 getBooks();
                 setOduncalan('');
+                setSelectedBook('');
                 setOduncAlmaTarihi(dayjs());
             }
         }
@@ -123,6 +197,7 @@ const LendingBook = () => {
                 icon: 'error'
             });
         }
+        setPrintModalOpen(false);
     }
     const columns = [
         { field: 'id', headerName: t('id'), width: 90 },
@@ -253,7 +328,7 @@ const LendingBook = () => {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleLendBook}
+                            onClick={handleOpenPrintModal}
                             sx={{
                                 height: '56px',
                                 fontSize: '1.1rem'
@@ -287,6 +362,45 @@ const LendingBook = () => {
                         />
                     </Box>
                 </Paper>
+
+                <Dialog open={printModalOpen} onClose={() => setPrintModalOpen(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle>{t('lending_book_preview', 'Ödünç Alma Belgesi Önizleme')}</DialogTitle>
+                    <DialogContent>
+                        {selectedBook && oduncalan && (
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="body1" gutterBottom>
+                                    <strong>{t('book_name', 'Kitap Adı')}:</strong> {bookList.find(b => b.id === selectedBook)?.kitap_adi}
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <strong>{t('lending_user', 'Ödünç Alan')}:</strong> {CustomerUsers.find(u => u.id === oduncalan)?.name_surname}
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <strong>{t('daily_fee', 'Tutar (Günlük)')}:</strong> {formatCurrency(bookList.find(b => b.id === selectedBook)?.daily_lending_fee || 0)}
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    <strong>{t('lending_date', 'Tarih')}:</strong> {oduncAlmaTarihi ? dayjs(oduncAlmaTarihi).format('DD/MM/YYYY') : dayjs().format('DD/MM/YYYY')}
+                                </Typography>
+                                
+                                <Box sx={{ mt: 3, pt: 2, borderTop: '1px dashed #ccc' }}>
+                                    <Typography variant="body2" color="text.secondary" align="center" fontStyle="italic">
+                                        {t('lending_penalty_note', '10 güne kadar ödünç alma ücretsizdir. 10 günden sonra gecikilen her gün için yukarıda belirtilen günlük tutar üzerinden ceza işlemeye başlar.')}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setPrintModalOpen(false)} color="secondary">
+                            {t('cancel', 'İptal')}
+                        </Button>
+                        <Button onClick={handlePrint} color="info" variant="outlined">
+                            {t('print', 'Yazdır')}
+                        </Button>
+                        <Button onClick={handleConfirmLending} color="primary" variant="contained" disabled={!isPrinted}>
+                            {t('confirm_signed', 'İmzalandı, Onayla')}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </div>
     )
