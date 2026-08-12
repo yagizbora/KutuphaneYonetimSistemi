@@ -89,13 +89,13 @@ const RequestBookLogs = () => {
                             <span style={{ color: '#9e9e9e', fontStyle: 'italic', fontSize: 12 }}>
                                 {t('unknown')}
                             </span>
-                        ) : null}
-
-                        <Checkbox
-                            checked={!!value}
-                            disabled
-                            size="small"
-                        />
+                        ) : (
+                            <Checkbox
+                                checked={!!value}
+                                disabled
+                                size="small"
+                            />
+                        )}
                     </div>
                 );
             }

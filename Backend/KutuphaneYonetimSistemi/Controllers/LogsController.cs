@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
@@ -209,25 +209,27 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if (result.Count > 1)
                     {
                         using var workbook = new XLWorkbook();
-                        var worksheet = workbook.Worksheets.Add("Kitap İstek Logları");
+                        var worksheet = workbook.Worksheets.Add("Book Request Logs");
                         var datatable = new DataTable();
                         datatable.Columns.Add("ID", typeof(int));
-                        datatable.Columns.Add("İstek Tarihi", typeof(DateTime));
-                        datatable.Columns.Add("Onay Durumu", typeof(bool));
-                        datatable.Columns.Add("Yetkili Kişi", typeof(string));
-                        datatable.Columns.Add("Kullanıcı Adı", typeof(string));
-                        datatable.Columns.Add("Kitap Adı", typeof(string));
-                        datatable.Columns.Add("İstek Durumu", typeof(string));
-                        datatable.Columns.Add("İstek Zamanı", typeof(DateTime));
+                        datatable.Columns.Add("Request Date", typeof(string));
+                        datatable.Columns.Add("Approval Status", typeof(string));
+                        datatable.Columns.Add("Authorized Person", typeof(string));
+                        datatable.Columns.Add("Username", typeof(string));
+                        datatable.Columns.Add("Book Name", typeof(string));
+                        datatable.Columns.Add("Request Status", typeof(string));
+                        datatable.Columns.Add("Request Time", typeof(string));
                         foreach (var item in result)
                         {
-                            datatable.Rows.Add(item.id, item.request_date, item.is_approved, item.auth_person, item.name_surname, item.kitap_adi, item.request_status, item.request_date);
+                            string approvalStatus = item.is_approved.HasValue ? (item.is_approved.Value ? "True" : "False") : "Unknown";
+                            string requestStatus = item.request_status ? "True" : "False";
+                            datatable.Rows.Add(item.id, item.request_date?.ToString("yyyy-MM-dd"), approvalStatus, item.auth_person, item.name_surname, item.kitap_adi, requestStatus, item.request_date?.ToString("yyyy-MM-dd"));
                         }
                         worksheet.Cell(1, 1).InsertTable(datatable);
                         using var stream = new MemoryStream();
                         workbook.SaveAs(stream);
                         var content = stream.ToArray();
-                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"KitapIstekLoglariExcel {DateTime.UtcNow}.xlsx");
+                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"BookRequestLogsExcel_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx");
                     }
                     else
                     {

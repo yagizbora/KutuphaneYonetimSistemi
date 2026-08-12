@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
@@ -192,12 +192,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                         using var workbook = new XLWorkbook();
 
                         var dataTable = new DataTable();
-                        dataTable.Columns.Add("Kitap Adı");
+                        dataTable.Columns.Add("Book Name");
                         dataTable.Columns.Add("ISBN");
-                        dataTable.Columns.Add("Durum");
-                        dataTable.Columns.Add("Yazar Adı");
-                        dataTable.Columns.Add("Kitap Türü");
-                        dataTable.Columns.Add("Kütüphane Adı");
+                        dataTable.Columns.Add("Status");
+                        dataTable.Columns.Add("Author Name");
+                        dataTable.Columns.Add("Book Type");
+                        dataTable.Columns.Add("Library Name");
 
                         foreach (var book in books)
                         {
@@ -205,15 +205,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                                 (
                                 book.kitap_adi,
                                 book.ISBN,
-                                (bool)book.Durum ? "Alındı" : "Boşta",
+                                (bool)book.Durum ? "Borrowed" : "Available",
                                 book.author_name,
                                 book.kitap_tur,
                                 book.library_name
                                 );
                         }
 
-                        var wsData = workbook.Worksheets.Add("Kitaplar");
-                        var dataTableRange = wsData.Cell(1, 1).InsertTable(dataTable, "KitaplarTablosu", true);
+                        var wsData = workbook.Worksheets.Add("Books");
+                        var dataTableRange = wsData.Cell(1, 1).InsertTable(dataTable, "BooksTable", true);
                         wsData.SheetView.FreezeRows(1);
                         wsData.Columns().AdjustToContents();
                         dataTableRange.Theme = XLTableTheme.TableStyleLight16;
