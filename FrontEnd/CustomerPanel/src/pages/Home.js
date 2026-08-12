@@ -46,6 +46,7 @@ const Home = () => {
           padding: '2rem'
         }}
       >
+        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}> BORA </h1>
         <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
           {t('welcome')}
         </h1>

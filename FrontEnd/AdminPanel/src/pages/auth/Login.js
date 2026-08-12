@@ -62,6 +62,7 @@ const Login = () => {
         localStorage.setItem('token', response.data.data.token);
         localStorage.setItem('user_id', response.data.data.user_id);
         localStorage.setItem('username', response.data.data.username);
+        sessionStorage.setItem('playAnimation', 'true');
         navigate('/');
       } else {
         setError('Invalid credentials. Please try again.');

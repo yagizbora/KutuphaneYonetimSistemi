@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import WelcomeAnimation from './components/layout/WelcomeAnimation';
 import Login from './pages/auth/Login';
 import NotFound from './pages/NotFound';
 import AccessDenied from './pages/AccessDenied';
@@ -69,6 +70,7 @@ function App() {
         <Route path="/*" element={
 
           <ProtectedRoute>
+            <WelcomeAnimation />
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
               <Routes>
                 <Route path="/" element={<Home />} />
