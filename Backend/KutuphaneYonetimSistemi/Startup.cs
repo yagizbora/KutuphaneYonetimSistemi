@@ -1,4 +1,4 @@
-﻿using AspNetCoreRateLimit;
+using AspNetCoreRateLimit;
 using JWT;
 using KutuphaneYonetimSistemi.Common;
 using Microsoft.Extensions.FileProviders;
@@ -151,8 +151,7 @@ namespace KutuphaneYonetimSistemi
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
-
+ 
             if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Upload")))
             {
                 Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
@@ -164,21 +163,29 @@ namespace KutuphaneYonetimSistemi
                 RequestPath = new PathString ("/" + "Upload")
             });
 
+            
 
-
-            app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseStaticFiles();  
 
             app.UseRouting();
+            app.UseCors("MyPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseIpRateLimiting(); 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("/health", async context =>
+                {
+                    await context.Response.WriteAsync("OK");
+                });
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Library Management System API is running.");
+                });
             });
-
+            
         }
     }
 }

@@ -239,7 +239,6 @@ ORDER BY tk.id ASC;";
                         {
                             return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç isteği başarısız oldu"));
                         }
-                    
                 }
             }
             catch (Exception ex)
