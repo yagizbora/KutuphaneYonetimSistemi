@@ -46,11 +46,11 @@ const Home = () => {
           padding: '2rem'
         }}
       >
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}> BORA </h1>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+        <h1 className="home-title"> BORA </h1>
+        <h1 className="home-title">
           {t('welcome')}
         </h1>
-        <p style={{ fontSize: '1.25rem', opacity: 0.9, maxWidth: '600px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+        <p className="home-subtitle">
           {t('subtitle')}
         </p>
       </div>

@@ -14,7 +14,7 @@ import Date from './Date';
 import { useTranslation } from 'react-i18next';
 const userservice = new userService();
 
-const Topbar = () => {
+const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
   const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [userchangemodal, setUserChangeModal] = useState(false);
@@ -194,6 +194,13 @@ const Topbar = () => {
     <div className="topbar">
       <div className="topbar-container">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Button 
+            className="mobile-menu-btn" 
+            onClick={toggleNavbar}
+            sx={{ display: { xs: 'flex', md: 'none' }, minWidth: '40px', padding: '8px', color: 'var(--text-main)' }}
+          >
+            <i className={`fas fa-${isNavbarOpen ? 'times' : 'bars'}`} style={{ fontSize: '20px' }}></i>
+          </Button>
           <h1 className="welcome-text">Welcome to Library System</h1>
           <Date />
         </div>

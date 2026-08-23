@@ -23,8 +23,20 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:44336/api';
 
 
 function App() {
-  const [isNavbarOpen, setIsNavbarOpen] = useState(true);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(window.innerWidth > 768);
   const [version, setVersion] = useState(null);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsNavbarOpen(false);
+      } else {
+        setIsNavbarOpen(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const checkversion = async () => {
     try {
       const response = await fetch(`${API_URL}/Version/CheckVersion`, {
