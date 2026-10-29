@@ -28,7 +28,7 @@ const PaymentLogsDataTable = ({ data, index }) => {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'kitap_adi', headerName: 'Kitap Adı', width: 200 },
+        { field: 'kitap_adi', headerName: 'Kitap Adı', minWidth: 180, flex: 1 },
         {
             field: 'payment_amount',
             headerName: 'Tutar (₺)',
@@ -56,7 +56,7 @@ const PaymentLogsDataTable = ({ data, index }) => {
         {
             field: 'payment_date',
             headerName: 'Ödeme Tarihi',
-            width: 160,
+            width: 150,
             valueFormatter: (params) => {
                 if (!params) return 'Tarih yok';
                 const date = dayjs(params);
@@ -67,7 +67,7 @@ const PaymentLogsDataTable = ({ data, index }) => {
 
     const activecolumns = [
         ...columns,
-        { field: 'payment_failed_subject', headerName: 'Hata Mesajı', width: 250 },
+        { field: 'payment_failed_subject', headerName: 'Hata Mesajı', minWidth: 220, flex: 1 },
 
     ]
 
@@ -76,9 +76,8 @@ const PaymentLogsDataTable = ({ data, index }) => {
         <DataGrid
             rows={data}
             columns={index === 0 ? columns : activecolumns}
-
-        >
-        </DataGrid>
+            autoHeight
+        />
     )
 
 }

@@ -71,24 +71,25 @@ const CreateUser = () => {
     }
 
     return (
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
             <Box>
                 <Typography variant="h5" sx={{ marginBottom: 2, display: 'flex' }}>
                     Kullanıcı Ekle
                 </Typography>
             </Box>
-            <Box spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                <FormControl className="textField" fullWidth variant="outlined" >
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
+                <FormControl className="textField" fullWidth variant="outlined">
                     <TextField
-
+                        fullWidth
                         label="Kullanıcı Adı"
                         variant="outlined"
                         value={user.username}
                         onChange={(e) => setUser({ ...user, username: e.target.value })}
                     />
                 </FormControl>
-                <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+                <FormControl fullWidth variant="outlined">
                     <TextField
+                        fullWidth
                         label="Şifre"
                         variant="outlined"
                         type="password"
@@ -102,7 +103,7 @@ const CreateUser = () => {
                     variant="contained"
                     color="primary"
                     onClick={createuser}
-                    sx={{ marginTop: 2, width: '200px' }}
+                    sx={{ mt: 1, width: { xs: '100%', sm: '200px' } }}
                     className="createUserButton"
                 >
                     Kullanıcı Ekle

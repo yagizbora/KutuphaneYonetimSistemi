@@ -1,6 +1,7 @@
 using AspNetCoreRateLimit;
 using JWT;
 using KutuphaneYonetimSistemi.Common;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Npgsql;
@@ -160,7 +161,17 @@ namespace KutuphaneYonetimSistemi
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Upload")),
-                RequestPath = new PathString ("/" + "Upload")
+                RequestPath = new PathString("/" + "Upload"),
+                ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
+                {
+                    { ".pdf", "application/pdf" },
+                    { ".epub", "application/epub+zip" }
+                }),
+                ServeUnknownFileTypes = true,
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                }
             });
 
             

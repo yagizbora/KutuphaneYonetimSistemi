@@ -143,8 +143,8 @@ const editLibraries = () => {
     }
     return (
         <>
-            <Container sx={{ mt: 4 }}>
-                <Box sx={{ mt: 4, alignItems: 'center', display: 'flex' }}>
+            <Container sx={{ mt: 3, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
+                <Box sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -163,6 +163,7 @@ const editLibraries = () => {
                                     onChange={(newValue) => setEditData({ ...editdata, library_working_start_time: newValue })}
                                     views={['hours', 'minutes']}
                                     ampm={false}
+                                    slotProps={{ textField: { fullWidth: true } }}
                                 />
                             </LocalizationProvider>
                         </Grid>
@@ -174,6 +175,7 @@ const editLibraries = () => {
                                     onChange={(newValue) => setEditData({ ...editdata, library_working_end_time: newValue })}
                                     views={['hours', 'minutes']}
                                     ampm={false}
+                                    slotProps={{ textField: { fullWidth: true } }}
                                 />
                             </LocalizationProvider>
                         </Grid>
@@ -214,12 +216,13 @@ const editLibraries = () => {
                                 onChange={(e) => setEditData({ ...editdata, library_email: e.target.value })}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Box sx={{ mt: 3 }}>
+                        <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box sx={{ width: '100%', my: { xs: 1, sm: 0 } }}>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     onClick={() => createdatafunction()}
+                                    sx={{ width: { xs: '100%', sm: 'auto' } }}
                                 >
 
                                     Oluştur

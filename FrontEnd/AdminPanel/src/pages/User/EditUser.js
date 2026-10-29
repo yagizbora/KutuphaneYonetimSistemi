@@ -128,70 +128,67 @@ const edituser = () => {
 
 
     return (
-        <Grid container spacing={2} sx={{ padding: 2 }} flexDirection="column">
-            <h5>Edit User</h5>
-            <Box>
-                <Grid item xs={12} md={12} lg={12}>
-                    <Paper elevation={3} sx={{ padding: 2 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={6} lg={6}>
-                                <TextField
-                                    label="Username"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={data.username ?? ''}
-                                    onChange={(e) => setUsers({ ...data, username: e.target.value })}
+        <Container maxWidth="lg" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+            <Typography variant="h5" gutterBottom>
+                Edit User
+            </Typography>
+            <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, width: '100%', minWidth: 0 }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            label="Username"
+                            variant="outlined"
+                            fullWidth
+                            value={data.username ?? ''}
+                            onChange={(e) => setUsers({ ...data, username: e.target.value })}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            label="Password"
+                            variant="outlined"
+                            fullWidth
+                            type="password"
+                            value={data.password ?? ''}
+                            onChange={(e) => setUsers({ ...data, password: e.target.value })}
+                        />
+                    </Grid>
+                    {dayjs(data.login_date).isValid() && (
+                        <Grid item xs={12} md={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    label="Login Date"
+                                    disabled
+                                    value={dayjs(data.login_date)}
+                                    onChange={(e) => setUsers({ ...data, login_date: e?.toISOString?.() || null })}
+                                    slotProps={{ textField: { fullWidth: true } }}
                                 />
-                            </Grid>
-                            <Grid item xs={12} md={6} lg={6}>
-                                <TextField
-                                    label="Password"
-                                    variant="outlined"
-                                    fullWidth
-                                    type="password"
-                                    value={data.password ?? ''}
-                                    onChange={(e) => setUsers({ ...data, password: e.target.value })}
-                                />
-                            </Grid>
-                            {dayjs(data.login_date).isValid() && (
-                                <Grid item xs={12} md={6} lg={6}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DateTimePicker
-                                            label="Login Date"
-                                            variant="outlined"
-                                            fullWidth
-                                            disabled
-                                            value={dayjs(data.login_date)}
-                                            onChange={(e) => setUsers({ ...data, login_date: e?.toISOString?.() || null })}
-                                        />
-                                    </LocalizationProvider>
-                                </Grid>
-                            )}
-                            {data.is_login && (
-                                <Grid item xs={12} md={6} lg={6}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <Box display="flex" alignItems="center" gap={1}>
-                                            <p style={{ margin: 0 }}>Is Login</p>
-                                            <Checkbox
-                                                disabled
-                                                checked={(data.is_login)}
-                                                onChange={(e) =>
-                                                    setUsers({ ...data, is_login: e.target.checked })
-                                                }
-                                            />
-                                        </Box>
-                                    </FormControl>
-                                </Grid>
-                            )}
-
+                            </LocalizationProvider>
                         </Grid>
-                        <Button variant="contained" color="primary" onClick={() => edituser()} sx={{ marginTop: 2 }}>
-                            Save Changes
-                        </Button>
-                    </Paper>
+                    )}
+                    {data.is_login && (
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth variant="outlined">
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <p style={{ margin: 0 }}>Is Login</p>
+                                    <Checkbox
+                                        disabled
+                                        checked={(data.is_login)}
+                                        onChange={(e) =>
+                                            setUsers({ ...data, is_login: e.target.checked })
+                                        }
+                                    />
+                                </Box>
+                            </FormControl>
+                        </Grid>
+                    )}
+
                 </Grid>
-            </Box>
-        </Grid>
+                <Button variant="contained" color="primary" onClick={() => edituser()} sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}>
+                    Save Changes
+                </Button>
+            </Paper>
+        </Container>
     )
 }
 

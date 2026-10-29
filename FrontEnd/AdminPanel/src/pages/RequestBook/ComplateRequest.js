@@ -70,9 +70,9 @@ const ComplateRequest = () => {
     if (loading || !request) return <Typography align="center">Yükleniyor...</Typography>;
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="lg" sx={{ mt: 3, mb: 4, px: { xs: 1.5, sm: 3 } }}>
             <Box>
-                <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                     Kitap İsteğini Güncelle
                 </Typography>
 
@@ -97,7 +97,7 @@ const ComplateRequest = () => {
                             }
                         />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={6} md={3}>
                         <TextField
                             fullWidth
                             label="Başlangıç Tarihi"
@@ -110,7 +110,7 @@ const ComplateRequest = () => {
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={6} md={3}>
                         <TextField
                             fullWidth
                             label="Bitiş Tarihi"
@@ -156,6 +156,7 @@ const ComplateRequest = () => {
                         variant="contained"
                         color="primary"
                         onClick={handleSave}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >
                         Kaydet
                     </Button>

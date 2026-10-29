@@ -48,7 +48,7 @@ const RequestBookLogs = () => {
     }, []);
 
     const columns = [
-        { field: 'id', headerName: t('id'), width: 90 },
+        { field: 'id', headerName: t('id'), width: 80 },
         {
             field: 'auth_person', headerName: t('authorized_person'), width: 150,
             valueFormatter: (params) => {
@@ -58,16 +58,16 @@ const RequestBookLogs = () => {
                 return params.auth_person;
             }
         },
-        { field: 'kitap_adi', headerName: t('book'), width: 200 },
+        { field: 'kitap_adi', headerName: t('book'), minWidth: 180, flex: 1 },
         {
-            field: 'request_date', headerName: t('request_time'), width: 200,
+            field: 'request_date', headerName: t('request_time'), width: 160,
             valueFormatter: (params) => {
                 const date = dayjs(params).format('DD/MM/YYYY');
                 return date;
             }
         },
         {
-            field: 'request_status', headerName: t('operation_status'), width: 150,
+            field: 'request_status', headerName: t('operation_status'), width: 140,
             renderCell: (params) => {
                 return (
                     <>
@@ -79,7 +79,7 @@ const RequestBookLogs = () => {
         {
             field: 'is_approved',
             headerName: t('is_request_accepted'),
-            width: 180,
+            width: 170,
             renderCell: (params) => {
                 const value = params?.value;
 
@@ -124,22 +124,23 @@ const RequestBookLogs = () => {
 
     return (
         <>
-
-            <Container>
-                <Typography variant="h4" gutterBottom>
+            <Container sx={{ mt: 3, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
+                <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                     {t('request_book_logs')}
                 </Typography>
-                <Paper style={{ height: 600, width: '100%', padding: '20px' }}>
-                    <Button startIcon={<OpenInNewIcon />} variant="outlined" color="primary" style={{ marginBottom: '10px' }} onClick={getExcel}>
+                <Paper sx={{ width: '100%', minWidth: 0, p: { xs: 1.5, sm: 2.5 }, mb: 4 }}>
+                    <Button startIcon={<OpenInNewIcon />} variant="outlined" color="primary" sx={{ mb: 2 }} onClick={getExcel}>
                         {t('excel')}
                     </Button>
-                    <DataGrid
-                        rows={data}
-                        columns={columns}
-                        pageSize={10}
-                        rowsPerPageOptions={[10]}
-                        disableSelectionOnClick
-                    />
+                    <Box sx={{ height: { xs: 450, md: 550 }, width: '100%', minWidth: 0 }}>
+                        <DataGrid
+                            rows={data}
+                            columns={columns}
+                            pageSize={10}
+                            rowsPerPageOptions={[10]}
+                            disableSelectionOnClick
+                        />
+                    </Box>
                 </Paper>
             </Container>
         </>

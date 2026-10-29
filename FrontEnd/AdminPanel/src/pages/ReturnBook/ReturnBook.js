@@ -58,19 +58,19 @@ const ReturnBook = () => {
         {
             field: 'id',
             headerName: 'ID',
-            width: 150,
+            width: 90,
             editable: false,
         },
         {
             field: 'kitap_adi',
             headerName: t('book_name_col'),
-            width: 150,
+            width: 160,
             editable: false,
         },
         {
             field: 'Durum',
             headerName: t('status'),
-            width: 150,
+            width: 110,
             editable: false,
             renderCell: (params) => {
                 return (
@@ -89,13 +89,13 @@ const ReturnBook = () => {
         {
             field: 'name_surname',
             headerName: t('borrower_col'),
-            width: 150,
+            width: 160,
             editable: false,
         },
         {
             field: 'odunc_alma_tarihi',
             headerName: t('date_col'),
-            width: 150,
+            minWidth: 160,
             flex: 1,
             valueFormatter: (params) => {
                 if (!params) return '';
@@ -120,13 +120,13 @@ const ReturnBook = () => {
             field: 'İşlemler',
             headerName: t('actions'),
             sortable: false,
-            width: 269,
+            width: 260,
             editable: false,
             renderCell: (params) => (
                 <Stack direction="row" spacing={1} justifyContent="left" alignItems="center">
                     <Button
                         variant="contained"
-                        size="large"
+                        size="medium"
                         color="error"
                         startIcon={<PaymentsIcon />}
                         sx={{ backgroundColor: 'green' }}
@@ -247,28 +247,24 @@ const ReturnBook = () => {
 
     return (
         <div className="ReturnBook">
-            <Container maxWidth="lg" sx={{ marginTop: 2 }}>
-                <Box sx={{ height: 400, width: '100%' }}>
-                    <Typography variant="h4" gutterBottom align="center">
+            <Container maxWidth="lg" sx={{ mt: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+                <Box sx={{ width: '100%', minWidth: 0, mb: 4 }}>
+                    <Typography variant="h4" gutterBottom align="center" sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                         {t('book_return_operations')}
                     </Typography>
 
-                    <Paper spacing={2}>
-                        <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-                            <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
-                                <DataGrid
-                                    rows={data}
-                                    columns={columns}
-                                    pageSize={5}
-                                    rowsPerPageOptions={[5]}
-                                    slots={{
-                                        noRowsOverlay: CustomNoRowsOverlay
-                                    }}
-                                    autoHeight
-                                    disableSelectionOnClick
-                                />
-                            </Paper>
-                        </Stack>
+                    <Paper elevation={3} sx={{ p: { xs: 1, sm: 2 }, width: '100%', minWidth: 0 }}>
+                        <DataGrid
+                            rows={data}
+                            columns={columns}
+                            pageSize={5}
+                            rowsPerPageOptions={[5]}
+                            slots={{
+                                noRowsOverlay: CustomNoRowsOverlay
+                            }}
+                            autoHeight
+                            disableSelectionOnClick
+                        />
                     </Paper>
                 </Box>
             </Container>
@@ -285,7 +281,7 @@ const ReturnBook = () => {
                         <Grid container spacing={2}>
 
                             {/* Ödenicek minimum Tutar */}
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <p>{t('minimum_amount_to_pay')}</p>
                                 <TextField
                                     disabled
@@ -295,9 +291,9 @@ const ReturnBook = () => {
                             </Grid>
 
                             {/* Ödeme Türü */}
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <p>{t('payment_type')}</p>
-                                <FormControl sx={{ width: 300, }}>
+                                <FormControl fullWidth>
                                     <Select
                                         fullWidth
                                         type="number"
@@ -316,13 +312,17 @@ const ReturnBook = () => {
                             </Grid>
 
                             {/* Ödünç Verme Tarihi */}
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <p>{t('lending_date')}</p>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={["DatePicker"]}>
+                                    <DemoContainer
+                                        components={["DatePicker"]}
+                                        sx={{ pt: 0, '& .MuiTextField-root': { minWidth: '0 !important', width: '100%' } }}
+                                    >
                                         <DatePicker
                                             label={t('select_date')}
                                             value={paymentdata.geri_verme_tarihi}
+                                            slotProps={{ textField: { fullWidth: true } }}
                                             onChange={async (newValue) => {
                                                 const updatedData = {
                                                     ...paymentdata,
@@ -342,7 +342,7 @@ const ReturnBook = () => {
                             </Grid>
 
                             {/* Ödenen Miktar */}
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <p>{t('paid_amount')}</p>
                                 <TextField
                                     fullWidth
@@ -356,7 +356,7 @@ const ReturnBook = () => {
                             </Grid>
 
                             {/* Fiş No */}
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <p>{t('receipt_no')}</p>
                                 <TextField
                                     fullWidth
@@ -371,7 +371,7 @@ const ReturnBook = () => {
                         </Grid>
                     </div>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
                     <Button
                         onClick={() => returnbook(false)}
                         variant="outlined"

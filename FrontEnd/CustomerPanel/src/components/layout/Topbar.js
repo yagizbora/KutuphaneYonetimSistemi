@@ -1,44 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Button, Menu, MenuItem, Box, Typography, Paper, TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Button, Menu, MenuItem,
 } from '@mui/material';
-import Modal from '@mui/material/Modal';
 import userService from '../../services/UserService';
 import Swal from 'sweetalert2';
 import Clock from './Clock';
 import Date from './Date';
 import { useTranslation } from 'react-i18next';
+
 const userservice = new userService();
 
 const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
   const { t, i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userchangemodal, setUserChangeModal] = useState(false);
-  const [userchangepasswordmodal, setUserChangePasswordModal] = useState(false);
-  const [langAnchorEl, setLangAnchorEl] = useState(null); // Language menu anchor
-
-
-
-
+  const [langAnchorEl, setLangAnchorEl] = useState(null);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid',
-    boxShadow: 24,
-    p: 4,
   };
 
   const handleMenuClose = () => {
@@ -73,29 +51,25 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
         title: 'Logout Failed',
         text: error?.response?.message || 'An error occurred while logging out. Please try again.',
         confirmButtonText: 'OK'
-      })
+      });
       console.error('Logout error:', error);
     }
     handleMenuClose();
   };
 
-
-
-
-
-
   return (
     <div className="topbar">
       <div className="topbar-container">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="topbar-left">
           <Button 
             className="mobile-menu-btn" 
             onClick={toggleNavbar}
-            sx={{ display: { xs: 'flex', md: 'none' }, minWidth: '40px', padding: '8px', color: 'var(--text-main)' }}
+            aria-label="Toggle navigation"
+            sx={{ display: { xs: 'flex', md: 'none' }, minWidth: '40px', padding: '8px', color: 'var(--text-main)', flexShrink: 0 }}
           >
             <i className={`fas fa-${isNavbarOpen ? 'times' : 'bars'}`} style={{ fontSize: '20px' }}></i>
           </Button>
-          <h1 className="welcome-text">Welcome to Library Customer System</h1>
+          <h1 className="welcome-text">{t('welcome')}</h1>
           <Date />
         </div>
         <div className="topbar-right">
@@ -103,7 +77,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
             <Clock />
             <Button
               onClick={handleLangMenuClick}
-              sx={{ color: 'var(--text-main)', minWidth: '40px', fontWeight: 'bold' }}
+              sx={{ color: 'var(--text-main)', minWidth: '36px', px: 1, fontWeight: 'bold' }}
             >
               {i18n.language ? i18n.language.toUpperCase() : 'TR'}
             </Button>
@@ -124,8 +98,10 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl)}
               onClick={handleMenuClick}
+              sx={{ minWidth: 'auto', px: { xs: 1, sm: 1.5 }, display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              {t('user_settings')}
+              <i className="fas fa-user-cog"></i>
+              <span className="user-settings-label">{t('user_settings')}</span>
             </Button>
             <Menu
               id="user-profile-menu"
@@ -135,14 +111,10 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
-              <MenuItem onClick={() => setUserChangeModal(true)}>{t('change_username')}</MenuItem>
-              <MenuItem onClick={() => openuserchangepasswordmodal()}>{t('change_password')}</MenuItem>
             </Menu>
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };

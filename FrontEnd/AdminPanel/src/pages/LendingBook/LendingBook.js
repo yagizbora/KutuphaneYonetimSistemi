@@ -200,11 +200,11 @@ const LendingBook = () => {
         setPrintModalOpen(false);
     }
     const columns = [
-        { field: 'id', headerName: t('id'), width: 90 },
-        { field: 'kitap_adi', headerName: t('book_name'), width: 200, flex: 1 },
-        { field: 'author_name', headerName: t('author_name_surname'), width: 150, flex: 1 },
-        { field: 'kitap_tur', headerName: t('book_type'), width: 150, flex: 1 },
-        { field: 'isbn', headerName: t('isbn'), width: 150, flex: 1 },
+        { field: 'id', headerName: t('id'), width: 80 },
+        { field: 'kitap_adi', headerName: t('book_name'), minWidth: 160, flex: 1 },
+        { field: 'author_name', headerName: t('author_name_surname'), minWidth: 150, flex: 1 },
+        { field: 'kitap_tur', headerName: t('book_type'), minWidth: 140, flex: 1 },
+        { field: 'isbn', headerName: t('isbn'), minWidth: 130, flex: 1 },
         {
             field: 'daily_lending_fee',
             headerName: t('daily_lending_fee'),
@@ -217,7 +217,7 @@ const LendingBook = () => {
         {
             field: 'durum',
             headerName: t('status'),
-            width: 120,
+            width: 110,
             renderCell: (params) => (
                 <Checkbox
                     checked={params.value === true}
@@ -232,9 +232,9 @@ const LendingBook = () => {
     }, []);
     return (
         <div>
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
                 <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
-                    <Typography variant="h4" component="h1" gutterBottom>
+                    <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                         {t('lending_book_title')}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" textAlign="left">
@@ -244,7 +244,7 @@ const LendingBook = () => {
 
                 <Grid container spacing={2} display="flex" alignItems="center" sx={{ mb: 2 }}>
                     <Grid item xs={12} md={6}>
-                        <FormControl fullWidth size="medium" sx={{ minWidth: '300px' }}>
+                        <FormControl fullWidth size="medium">
                             <InputLabel id="book-select-label">{t('select_book')}</InputLabel>
                             <Select
                                 labelId="book-select-label"
@@ -255,7 +255,7 @@ const LendingBook = () => {
                                 sx={{
                                     height: '56px',
                                     '& .MuiSelect-select': {
-                                        fontSize: '1.1rem',
+                                        fontSize: { xs: '0.95rem', sm: '1.1rem' },
                                         padding: '14px'
                                     }
                                 }}
@@ -265,7 +265,7 @@ const LendingBook = () => {
                                         key={book.id}
                                         value={book.id}
                                         sx={{
-                                            fontSize: '1.1rem',
+                                            fontSize: '1rem',
                                             padding: '12px'
                                         }}
                                     >
@@ -276,7 +276,7 @@ const LendingBook = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <FormControl fullWidth size="medium" sx={{ minWidth: '300px' }}>
+                        <FormControl fullWidth size="medium">
                             <InputLabel id="customer-user-select-label">{t('lending_user')}</InputLabel>
                             <Select
                                 labelId="customer-user-select-label"
@@ -287,7 +287,7 @@ const LendingBook = () => {
                                 sx={{
                                     height: '56px',
                                     '& .MuiSelect-select': {
-                                        fontSize: '1.1rem',
+                                        fontSize: { xs: '0.95rem', sm: '1.1rem' },
                                         padding: '14px'
                                     }
                                 }}
@@ -297,7 +297,7 @@ const LendingBook = () => {
                                         key={user.id}
                                         value={user.id}
                                         sx={{
-                                            fontSize: '1.1rem',
+                                            fontSize: '1rem',
                                             padding: '12px'
                                         }}
                                     >
@@ -313,11 +313,12 @@ const LendingBook = () => {
                                 label={t('lending_date')}
                                 value={oduncAlmaTarihi}
                                 onChange={(newValue) => setOduncAlmaTarihi(newValue)}
+                                slotProps={{ textField: { fullWidth: true } }}
                                 sx={{
                                     width: '100%',
                                     '& .MuiInputBase-input': {
                                         height: '24px',
-                                        fontSize: '1.1rem',
+                                        fontSize: { xs: '0.95rem', sm: '1.1rem' },
                                         padding: '14px'
                                     }
                                 }}
@@ -331,15 +332,16 @@ const LendingBook = () => {
                             onClick={handleOpenPrintModal}
                             sx={{
                                 height: '56px',
-                                fontSize: '1.1rem'
+                                fontSize: '1.05rem',
+                                width: { xs: '100%', md: 'auto' }
                             }}
                         >
                             {t('lend_button')}
                         </Button>
                     </Grid>
                 </Grid>
-                <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
-                    <Box sx={{ height: 600, width: '100%' }}>
+                <Paper elevation={3} sx={{ width: '100%', minWidth: 0, mb: 4, p: { xs: 1, sm: 2 } }}>
+                    <Box sx={{ height: { xs: 450, md: 600 }, width: '100%', minWidth: 0 }}>
                         <DataGrid
                             rows={data}
                             columns={columns}
@@ -389,7 +391,7 @@ const LendingBook = () => {
                             </Box>
                         )}
                     </DialogContent>
-                    <DialogActions>
+                    <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
                         <Button onClick={() => setPrintModalOpen(false)} color="secondary">
                             {t('cancel', 'İptal')}
                         </Button>

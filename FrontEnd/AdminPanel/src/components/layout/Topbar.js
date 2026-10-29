@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Button, Menu, MenuItem, Box, Typography, Paper, TextField,
   Dialog,
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import Clock from './Clock';
 import Date from './Date';
 import { useTranslation } from 'react-i18next';
+
 const userservice = new userService();
 
 const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
@@ -19,16 +20,16 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userchangemodal, setUserChangeModal] = useState(false);
   const [userchangepasswordmodal, setUserChangePasswordModal] = useState(false);
-  const [langAnchorEl, setLangAnchorEl] = useState(null); // Language menu anchor
+  const [langAnchorEl, setLangAnchorEl] = useState(null);
+
   const openuserchangepasswordmodal = () => {
     setPassword({
       password: "",
       confirmpassword: ""
     });
-    setUserChangePasswordModal(true)
+    setUserChangePasswordModal(true);
+  };
 
-
-  }
   const [username, setUsername] = useState({
     username: "",
     confirmusername: ""
@@ -37,6 +38,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
     password: "",
     confirmpassword: ""
   });
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -46,11 +48,13 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: { xs: 'calc(100% - 32px)', sm: 400 },
+    maxWidth: 400,
     bgcolor: 'background.paper',
-    border: '2px solid',
+    border: '1px solid var(--border-light)',
+    borderRadius: 3,
     boxShadow: 24,
-    p: 4,
+    p: { xs: 2.5, sm: 4 },
   };
 
   const handleMenuClose = () => {
@@ -85,15 +89,13 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
         title: 'Logout Failed',
         text: error?.response?.message || 'An error occurred while logging out. Please try again.',
         confirmButtonText: 'OK'
-      })
+      });
       console.error('Logout error:', error);
     }
     handleMenuClose();
   };
 
   const handlechangeusername = async () => {
-
-
     if (username.username.trim() !== username.confirmusername.trim()) {
       Swal.fire({
         icon: 'error',
@@ -118,7 +120,6 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
 
     try {
       const payload = { username: username.username.trim() };
-
       const response = await userservice.changeusername(payload);
 
       if (response) {
@@ -142,10 +143,9 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
     }
   };
 
-
   const handlechangepassword = async () => {
     if (password.password === '') {
-      setUserChangePasswordModal(false)
+      setUserChangePasswordModal(false);
       Swal.fire({
         icon: 'error',
         title: 'Please enter a new password.',
@@ -154,7 +154,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
       return;
     }
     if (password.password !== password.confirmpassword) {
-      setUserChangePasswordModal(false)
+      setUserChangePasswordModal(false);
       Swal.fire({
         icon: 'error',
         title: 'Passwords do not match.',
@@ -164,7 +164,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
     }
     try {
       const payload = { username: username.username, password: password.password };
-      const response = await userservice.changepassword(payload)
+      const response = await userservice.changepassword(payload);
       if (response.status === 200 || response) {
         setUserChangePasswordModal(false);
         Swal.fire({
@@ -177,9 +177,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
           window.location.href = '/login';
         });
       }
-
-    }
-    catch (error) {
+    } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Change Password Failed',
@@ -188,20 +186,21 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
       });
       setUserChangeModal(false);
     }
-  }
+  };
 
   return (
     <div className="topbar">
       <div className="topbar-container">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Button 
-            className="mobile-menu-btn" 
+        <div className="topbar-left">
+          <Button
+            className="mobile-menu-btn"
             onClick={toggleNavbar}
-            sx={{ display: { xs: 'flex', md: 'none' }, minWidth: '40px', padding: '8px', color: 'var(--text-main)' }}
+            aria-label="Toggle navigation"
+            sx={{ display: { xs: 'flex', md: 'none' }, minWidth: '40px', padding: '8px', color: 'var(--text-main)', flexShrink: 0 }}
           >
             <i className={`fas fa-${isNavbarOpen ? 'times' : 'bars'}`} style={{ fontSize: '20px' }}></i>
           </Button>
-          <h1 className="welcome-text">Welcome to Library System</h1>
+          <h1 className="welcome-text">{t('welcome')}</h1>
           <Date />
         </div>
         <div className="topbar-right">
@@ -209,7 +208,7 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
             <Clock />
             <Button
               onClick={handleLangMenuClick}
-              sx={{ color: 'var(--text-main)', minWidth: '40px', fontWeight: 'bold' }}
+              sx={{ color: 'var(--text-main)', minWidth: '36px', px: 1, fontWeight: 'bold' }}
             >
               {i18n.language ? i18n.language.toUpperCase() : 'TR'}
             </Button>
@@ -230,8 +229,10 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl)}
               onClick={handleMenuClick}
+              sx={{ minWidth: 'auto', px: { xs: 1, sm: 1.5 }, display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              {t('user_settings')}
+              <i className="fas fa-user-cog"></i>
+              <span className="user-settings-label">{t('user_settings')}</span>
             </Button>
             <Menu
               id="user-profile-menu"
@@ -241,8 +242,8 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
-              <MenuItem onClick={() => setUserChangeModal(true)}>{t('change_username')}</MenuItem>
-              <MenuItem onClick={() => openuserchangepasswordmodal()}>{t('change_password')}</MenuItem>
+              <MenuItem onClick={() => { handleMenuClose(); setUserChangeModal(true); }}>{t('change_username')}</MenuItem>
+              <MenuItem onClick={() => { handleMenuClose(); openuserchangepasswordmodal(); }}>{t('change_password')}</MenuItem>
             </Menu>
           </div>
         </div>
@@ -252,13 +253,12 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
         onClose={() => setUserChangeModal(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        maxWidth="md"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Change Username
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Box id="modal-modal-description" sx={{ mt: 2 }}>
             <Paper elevation={3} sx={{ padding: 2 }}>
               <p>Enter your new username:</p>
               <TextField
@@ -277,15 +277,17 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
                 value={username.confirmusername}
               />
             </Paper>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
               <Button variant="contained" onClick={handlechangeusername}>Change Username</Button>
             </Box>
-          </Typography>
+          </Box>
         </Box>
       </Modal>
       <Dialog
         open={userchangepasswordmodal}
         onClose={() => setUserChangePasswordModal(false)}
+        fullWidth
+        maxWidth="xs"
       >
         <DialogTitle> Change Password </DialogTitle>
         <DialogContent>
@@ -293,20 +295,24 @@ const Topbar = ({ toggleNavbar, isNavbarOpen }) => {
           <TextField
             variant="outlined"
             fullWidth
+            type="password"
             onChange={(e) => setPassword({ ...password, password: e.target.value })}
             value={password.password}
+            sx={{ mb: 2 }}
           />
 
-          <p>Enter your new password:</p>
+          <p>Confirm your new password:</p>
           <TextField
             variant="outlined"
             fullWidth
+            type="password"
             onChange={(e) => setPassword({ ...password, confirmpassword: e.target.value })}
             value={password.confirmpassword}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handlechangepassword()}>Save</Button>
+          <Button onClick={() => setUserChangePasswordModal(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => handlechangepassword()}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>

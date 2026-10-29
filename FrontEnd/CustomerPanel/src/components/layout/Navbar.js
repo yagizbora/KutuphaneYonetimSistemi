@@ -7,19 +7,19 @@ import './Navbar.css';
 const Navbar = ({ isOpen, toggleNavbar }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 900);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (mobile) {
+    const mediaQuery = window.matchMedia('(max-width: 899.98px)');
+    const handleMediaChange = (e) => {
+      setIsMobile(e.matches);
+      if (e.matches) {
         setActiveDropdown(null);
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    mediaQuery.addEventListener('change', handleMediaChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
   }, []);
 
   const menuItems = [
@@ -38,11 +38,30 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       items: [
         { path: '/library', text: t('libraries'), icon: 'fas fa-plus' },
       ]
+    },
+    {
+      text: t('ekitap'),
+      icon: 'fas fa-book-open',
+      items: [
+        { path: '/e-kitap', text: t('ebook_catalog'), icon: 'fas fa-book' },
+        { path: '/e-kitap/kitapligim', text: t('my_ebooks'), icon: 'fas fa-bookmark' }
+      ]
     }
   ];
 
   const handleDropdownClick = (index) => {
+    if (!isOpen && !isMobile) {
+      toggleNavbar();
+      setActiveDropdown(index);
+      return;
+    }
     setActiveDropdown(activeDropdown === index ? null : index);
+  };
+
+  const handleNavLinkClick = () => {
+    if (isMobile && isOpen) {
+      toggleNavbar();
+    }
   };
 
   const renderMenuItem = (item, index) => {
@@ -56,7 +75,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
             onClick={() => handleDropdownClick(index)}
             style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: 0 }}>
               <i className={item.icon}></i>
               {!(!isOpen && !isMobile) && <span>{item.text}</span>}
             </div>
@@ -68,8 +87,9 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
                 <Link
                   key={subItem.path}
                   to={subItem.path}
+                  onClick={handleNavLinkClick}
                   className={`submenu-link ${location.pathname === subItem.path ? 'active-sub' : ''}`}
-                  style={{ textDecoration: 'none', color: location.pathname === subItem.path ? 'var(--primary-color)' : 'var(--text-muted)', fontSize: '14px', fontWeight: location.pathname === subItem.path ? '600' : '400' }}
+                  style={{ textDecoration: 'none', color: location.pathname === subItem.path ? 'var(--primary-color)' : 'var(--text-muted)', fontSize: '14px', fontWeight: location.pathname === subItem.path ? '600' : '400', padding: '6px 0' }}
                 >
                   {subItem.text}
                 </Link>
@@ -84,6 +104,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
       <li key={index}>
         <Link
           to={item.path}
+          onClick={handleNavLinkClick}
           className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
         >
           <i className={item.icon}></i>
@@ -97,8 +118,20 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
     <div className={`sidebar-nav ${!isOpen ? 'collapsed' : ''}`}>
       <div className="navbar-brand">
         <div className="navbar-header">
-          <i className="fas fa-layer-group"></i>
-          {isOpen && <span>CustomerSys</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <i className="fas fa-layer-group"></i>
+            {(isOpen || isMobile) && <span>CustomerSys</span>}
+          </div>
+          {isMobile && (
+            <button
+              type="button"
+              className="mobile-sidebar-close"
+              onClick={toggleNavbar}
+              aria-label="Close menu"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          )}
         </div>
       </div>
       
@@ -108,7 +141,7 @@ const Navbar = ({ isOpen, toggleNavbar }) => {
         </button>
       )}
 
-      <ul className="nav-menu" style={{ overflowY: 'auto', paddingBottom: '30px' }}>
+      <ul className="nav-menu" style={{ overflowY: 'auto', paddingBottom: '30px', flex: 1 }}>
         {menuItems.map((item, index) => renderMenuItem(item, index))}
       </ul>
     </div>

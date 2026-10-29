@@ -4,26 +4,32 @@ import Topbar from './Topbar';
 import Footer from './Footer';
 
 const Layout = ({ children, isNavbarOpen, toggleNavbar, version }) => {
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = React.useState(() => window.innerWidth < 900);
 
   React.useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const mediaQuery = window.matchMedia('(max-width: 899.98px)');
+    const handleMediaChange = (e) => setIsMobile(e.matches);
+    mediaQuery.addEventListener('change', handleMediaChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
   }, []);
+
+  React.useEffect(() => {
+    if (isMobile && isNavbarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobile, isNavbarOpen]);
 
   return (
     <div className="layout">
       {isMobile && isNavbarOpen && (
-        <div 
-          className="sidebar-overlay" 
+        <div
+          className="sidebar-overlay"
           onClick={toggleNavbar}
-          style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 999
-          }}
         />
       )}
       <Navbar isOpen={isNavbarOpen} toggleNavbar={toggleNavbar} />
@@ -38,4 +44,4 @@ const Layout = ({ children, isNavbarOpen, toggleNavbar, version }) => {
   );
 };
 
-export default Layout; 
+export default Layout;

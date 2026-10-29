@@ -112,3 +112,22 @@
   0% { width: 0%; }
   100% { width: 100%; }
 }
+
+@media (max-width: 600px) {
+  .welcome-logo-container {
+    width: min(200px, 65vw);
+    height: min(200px, 65vw);
+    margin-bottom: 18px;
+  }
+
+  .welcome-title {
+    font-size: 24px;
+    text-align: center;
+    padding: 0 16px;
+    margin-bottom: 20px;
+  }
+
+  .loading-bar-container {
+    width: min(220px, 75vw);
+  }
+}

@@ -201,15 +201,15 @@ const BookType = () => {
                         {t('manage_all_book_types')}
                     </Typography>
                 </Box>
-                <Paper elevation={3} sx={{ width: '60%', mb: 4, p: 2, mx: 'auto' }}>
-                    <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
+                <Paper elevation={3} sx={{ width: { xs: '100%', md: '75%', lg: '60%' }, mb: 4, p: 2, mx: 'auto' }}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" alignItems="stretch" sx={{ mb: 2 }}>
                         <TextField
                             select
                             label={t('type_group')}
                             variant="outlined"
                             value={createbooktype.book_group_id}
                             onChange={(e) => setcreatebooktype({ ...createbooktype, book_group_id: e.target.value })}
-                            sx={{ width: '50%' }}
+                            sx={{ width: { xs: '100%', sm: '50%' } }}
                         >
                             {groups.map((group) => (
                                 <MenuItem key={group.id} value={group.id}>
@@ -222,16 +222,17 @@ const BookType = () => {
                             variant="outlined"
                             value={createbooktype.aciklama}
                             onChange={(e) => setcreatebooktype({ ...createbooktype, aciklama: e.target.value })}
-                            sx={{ width: '50%' }}
+                            sx={{ width: { xs: '100%', sm: '50%' } }}
                         />
                     </Stack>
                     <Button variant="contained"
                         onClick={createbooktyperequest}
                         disabled={disabledbuttonandinput()}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >{t('add_book_type')}</Button>
                 </Paper>
 
-                <Box sx={{ width: '60%', mx: 'auto', p: 4, borderRadius: 2, mb: 4 }}>
+                <Box sx={{ width: { xs: '100%', md: '75%', lg: '60%' }, mx: 'auto', p: { xs: 2, sm: 4 }, borderRadius: 2, mb: 4 }}>
                     {data.map((group) => (
                         <Box key={group.book_group_id} sx={{ mb: 4 }}>
                             {/* Grup Başlığı */}

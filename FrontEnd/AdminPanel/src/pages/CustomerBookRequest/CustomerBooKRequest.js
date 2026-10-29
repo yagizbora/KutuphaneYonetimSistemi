@@ -86,21 +86,21 @@ const CustomerBooKRequest = () => {
 
 
     const columns = [
-        { field: 'name_surname', headerName: t('customer_name'), width: 200 },
-        { field: 'kitap_adi', headerName: t('book_name'), width: 200 },
-        { field: 'library_name', headerName: t('library'), width: 200 },
+        { field: 'name_surname', headerName: t('customer_name'), minWidth: 160, flex: 1 },
+        { field: 'kitap_adi', headerName: t('book_name'), minWidth: 160, flex: 1 },
+        { field: 'library_name', headerName: t('library'), minWidth: 160, flex: 1 },
         {
             field: 'request_date',
             headerName: t('request_date'),
-            width: 200,
+            width: 140,
             valueGetter: (params) => dayjs(params.request_date).format('YYYY-MM-DD')
         },
         {
             field: 'operations',
             headerName: t('operations'),
-            width: 150,
+            width: 220,
             renderCell: (params) => (
-                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ height: '100%' }}>
                     <Button
                         variant="contained"
                         color="primary"
@@ -124,21 +124,19 @@ const CustomerBooKRequest = () => {
 
     return (
         <>
-            <Container>
-                <Box my={4}>
-                    <Typography variant="h4" component="h1" gutterBottom>
+            <Container sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+                <Box my={3}>
+                    <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                         {t('customer_requests')}
                     </Typography>
-                    <Paper>
+                    <Paper sx={{ width: '100%', minWidth: 0, p: { xs: 1, sm: 2 } }}>
                         <DataGrid
                             rows={data}
                             columns={columns}
+                            autoHeight
                             disableSelectionOnClick
                             disableColumnSorting
-                        >
-
-                        </DataGrid>
-
+                        />
                     </Paper>
                 </Box>
             </Container>

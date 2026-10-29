@@ -111,12 +111,13 @@ const User = () => {
             )
         },
         {
-            field: 'actions', headerName: t('actions'), width: 75, flex: 1, renderCell: (params) => (
+            field: 'actions', headerName: t('actions'), minWidth: 250, flex: 1, renderCell: (params) => (
 
-                <Box spacing={1} gap={1} sx={{ display: 'flex' }}>
+                <Box spacing={1} gap={1} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Button
                         variant="contained"
                         color="primary"
+                        size="small"
                         onClick={() => Swal.fire({
                             title: t('delete'),
                             text: t('are_you_sure_delete_user'),
@@ -138,6 +139,7 @@ const User = () => {
                     <Button
                         variant="contained"
                         color="primary"
+                        size="small"
                         href={`/user/edit-user/${params.row.id}`}
                         disabled={(localStorage.getItem('user_id') == params.row.id)}
                     >
@@ -150,30 +152,31 @@ const User = () => {
 
     return (
         <Container maxWidth="xl">
-            <Box sx={{ padding: 2 }}>
+            <Box sx={{ py: 2 }}>
                 <Typography variant="h4" sx={{ marginBottom: 2, justifyContent: 'center', display: 'flex' }}>
                     {t('users')}
                 </Typography>
             </Box>
-            <Box spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2, bgcolor: '#cfe8fc' }}>
-                <Button variant="contained" color="primary" href="/user/create">
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, justifyContent: 'space-between', marginBottom: 2, p: 2, borderRadius: 1, bgcolor: '#cfe8fc' }}>
+                <Button variant="contained" color="primary" href="/user/create" sx={{ flex: { xs: '1 1 100%', sm: '0 1 auto' } }}>
                     {t('add_user')}
                 </Button>
-                <Button variant="contained" color="primary" href="/user/customer-user-list">
+                <Button variant="contained" color="primary" href="/user/customer-user-list" sx={{ flex: { xs: '1 1 100%', sm: '0 1 auto' } }}>
                     {t('customer_user_list')}
                 </Button>
 
-                <Button variant="contained" color="primary" href="/user/customer-user-create">
+                <Button variant="contained" color="primary" href="/user/customer-user-create" sx={{ flex: { xs: '1 1 100%', sm: '0 1 auto' } }}>
                     {t('add_customer_user')}
                 </Button>
             </Box>
-            <Stack>
-                <Paper sx={{ width: '100%', mb: 4, p: 2 }}>
+            <Stack sx={{ width: '100%', minWidth: 0 }}>
+                <Paper sx={{ width: '100%', minWidth: 0, mb: 4, p: { xs: 1, sm: 2 } }}>
                     <DataGrid
                         rows={data}
                         columns={columns}
                         pageSize={10}
                         rowsPerPageOptions={[10, 25, 50]}
+                        autoHeight
                         disableSelectionOnClick
                         disableColumnSorting
                         components={{

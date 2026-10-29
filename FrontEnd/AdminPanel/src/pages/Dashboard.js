@@ -28,18 +28,14 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="dashboard" style={{ position: 'relative', zIndex: 1, minHeight: '80vh' }}>
+    <div className="dashboard" style={{ position: 'relative', zIndex: 1, minHeight: '75vh', overflow: 'hidden', borderRadius: 'var(--radius-lg)' }}>
       <div 
         style={{
           position: 'absolute',
-          top: -32,
-          left: -32,
-          right: -32,
-          bottom: -100,
+          inset: 0,
           backgroundImage: "url('/library_background.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
           opacity: 0.12,
           zIndex: -1,
           pointerEvents: 'none'

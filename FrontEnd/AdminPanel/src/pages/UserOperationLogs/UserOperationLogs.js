@@ -69,12 +69,12 @@ const UserOperationLogs = () => {
     }, [event]);
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Paper sx={{ p: 2 }}>
+        <Container maxWidth="lg" sx={{ mt: 3, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
+            <Paper sx={{ p: { xs: 1.5, sm: 2 }, width: '100%', minWidth: 0 }}>
                 <Typography variant="h6" gutterBottom>
                     {t('user_operation_logs')}
                 </Typography>
-                <FormControl sx={{ m: 1, width: 300 }}>
+                <FormControl sx={{ my: 1, mb: 2, width: { xs: '100%', sm: 320 } }}>
                     <InputLabel id="demo-multiple-name-label">{t('event')}</InputLabel>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Select
@@ -83,7 +83,7 @@ const UserOperationLogs = () => {
                             value={event}
                             label={t('event')}
                             onChange={(e) => setEvent(e.target.value)}
-                            sx={{ flexGrow: 1 }}
+                            sx={{ flexGrow: 1, minWidth: 0 }}
                         >
                             {[...new Set(eventdata.map((item) => item.event))].map((uniqueEvent) => (
                                 <MenuItem key={uniqueEvent} value={uniqueEvent}>
@@ -107,8 +107,8 @@ const UserOperationLogs = () => {
                     rows={data}
                     columns={[
                         { field: 'id', headerName: t('id'), width: 70 },
-                        { field: 'event', headerName: t('event_col'), width: 200 },
-                        { field: 'event_description', headerName: t('event_description'), width: 1000 },
+                        { field: 'event', headerName: t('event_col'), width: 180 },
+                        { field: 'event_description', headerName: t('event_description'), minWidth: 300, flex: 1 },
                     ]}
                     pageSize={5}
                     rowsPerPageOptions={[5]}

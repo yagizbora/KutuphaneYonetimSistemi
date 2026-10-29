@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import CustomerBook from './pages/CustomerBook/CustomerBook';
 import Library from './pages/Library/Library';
+import CustomerEBook from './pages/EBook/CustomerEBook';
+
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -21,22 +23,19 @@ const ProtectedRoute = ({ children }) => {
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:44336/api';
 
-
 function App() {
-  const [isNavbarOpen, setIsNavbarOpen] = useState(window.innerWidth > 768);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(() => window.innerWidth >= 900);
   const [version, setVersion] = useState(null);
 
   React.useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsNavbarOpen(false);
-      } else {
-        setIsNavbarOpen(true);
-      }
+    const mediaQuery = window.matchMedia('(max-width: 899.98px)');
+    const handleMediaChange = (e) => {
+      setIsNavbarOpen(!e.matches);
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    mediaQuery.addEventListener('change', handleMediaChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
   }, []);
+
   const checkversion = async () => {
     try {
       const response = await fetch(`${API_URL}/Version/CheckVersion`, {
@@ -49,20 +48,25 @@ function App() {
         const data = await response.json();
         if (data) {
           const filterdata = data.map(item => item.app_name === "Customer Panel" ? item : null).filter(item => item !== null)[0];
-          setVersion(filterdata.version);
+          if (filterdata) {
+            setVersion(filterdata.version);
+          }
         }
       }
     }
     catch (error) {
       console.error('Error checking version:', error);
     }
-  }
+  };
+
   React.useEffect(() => {
     checkversion();
+    const intervalId = setInterval(checkversion, 50000);
+    return () => clearInterval(intervalId);
   }, []);
-  setInterval(checkversion, 50000);
+
   const toggleNavbar = () => {
-    setIsNavbarOpen(!isNavbarOpen);
+    setIsNavbarOpen((prev) => !prev);
   };
 
   return (
@@ -77,10 +81,8 @@ function App() {
         <Route path="/404" element={<NotFound />} />
         <Route path="/access-denied" element={<AccessDenied />} />
 
-
         {/* Protected routes */}
         <Route path="/*" element={
-
           <ProtectedRoute>
             <WelcomeAnimation />
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
@@ -89,9 +91,10 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/customer-book" element={<CustomerBook />} />
                 <Route path="/library" element={<Library />} />
+                <Route path="/e-kitap" element={<CustomerEBook />} />
+                <Route path="/e-kitap/kitapligim" element={<CustomerEBook />} />
                 {/* Add more protected routes here */}
                 <Route path="*" element={<NotFound />} />
-                {/* Redirect to 404 for any unmatched routes */}
               </Routes>
             </Layout>
           </ProtectedRoute>
@@ -102,4 +105,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

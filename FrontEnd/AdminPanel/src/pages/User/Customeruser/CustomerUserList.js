@@ -37,18 +37,18 @@ const customerUserService = new CustomerUserService();
 
 
 const CustomerUserList = () => {
-    const [data, setCustomerUsers] = useState({});
+    const [data, setCustomerUsers] = useState([]);
     const [editdata, setEditData] = useState({});
     const [editdataOpen, setEditDataOpen] = useState(false);
 
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'id', headerName: 'ID', width: 80 },
         { field: 'tc_kimlik_no', headerName: 'T.C. Kimlik No', width: 150 },
         { field: 'username', headerName: 'Kullanıcı Adı', width: 150 },
-        { field: 'name_surname', headerName: 'Ad Soyad', width: 200 },
+        { field: 'name_surname', headerName: 'Ad Soyad', minWidth: 180, flex: 1 },
         {
-            field: 'birthday_date', headerName: 'Doğum Tarihi', width: 180, type: 'Date',
+            field: 'birthday_date', headerName: 'Doğum Tarihi', width: 150, type: 'Date',
             valueGetter: (params) => dayjs(params.value).format('DD/MM/YYYY')
         },
         {
@@ -63,9 +63,9 @@ const CustomerUserList = () => {
                 </>
             )
         },
-        { field: 'eposta', headerName: 'E-posta', width: 200 },
+        { field: 'eposta', headerName: 'E-posta', minWidth: 200, flex: 1 },
         {
-            field: 'is_disabled_account', headerName: 'Hesap Durumu', width: 150,
+            field: 'is_disabled_account', headerName: 'Hesap Durumu', width: 140,
             renderCell: (params) => (
                 <>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -87,10 +87,10 @@ const CustomerUserList = () => {
             )
         },
         {
-            field: '', headerName: 'İşlemler', width: 150, renderCell: (params) => (
+            field: 'actions', headerName: 'İşlemler', width: 140, renderCell: (params) => (
                 <>
                     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-                        <Button onClick={() => ListCustomerUsersbyid(params.row.id)} variant="contained" color="primary">
+                        <Button size="small" onClick={() => ListCustomerUsersbyid(params.row.id)} variant="contained" color="primary">
                             Düzenle
                         </Button>
                     </Stack>
@@ -191,18 +191,19 @@ const CustomerUserList = () => {
 
     return (
         <>
-            <Container>
-                <Box sx={{ marginTop: 2 }}>
-                    <Typography variant="h4" gutterBottom>
+            <Container sx={{ px: { xs: 1, sm: 2, md: 3 }, mb: 4 }}>
+                <Box sx={{ mt: 2 }}>
+                    <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                         Müşteri Kullanıcı Listesi
                     </Typography>
                 </Box>
-                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <Paper sx={{ width: '100%', minWidth: 0, p: { xs: 1, sm: 2 } }}>
                     <DataGrid
-                        rows={data}
+                        rows={Array.isArray(data) ? data : []}
                         columns={columns}
                         pageSize={5}
                         rowsPerPageOptions={[5, 10, 20]}
+                        autoHeight
                         components={{ Toolbar: GridToolbar }}
                     />
                 </Paper>
@@ -211,7 +212,7 @@ const CustomerUserList = () => {
                         <Typography variant="h6" gutterBottom>
                             Kullanıcıyı Düzenle
                         </Typography>
-                        <Paper sx={{ padding: 3 }}>
+                        <Paper sx={{ p: { xs: 2, sm: 3 }, width: '100%', minWidth: 0 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
@@ -269,7 +270,7 @@ const CustomerUserList = () => {
                                     </LocalizationProvider>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Stack direction="row" spacing={2}>
+                                    <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
                                         <Button variant="contained" color="primary" onClick={editCustomerUser}>
                                             Kaydet
                                         </Button>

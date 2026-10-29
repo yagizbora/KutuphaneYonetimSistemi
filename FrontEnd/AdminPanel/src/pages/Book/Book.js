@@ -303,9 +303,9 @@ const Book = () => {
     };
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'kitap_adi', headerName: t('book_name'), width: 200, flex: 1 },
-        { field: 'author_name', headerName: t('author_name_surname'), width: 150, flex: 1 },
+        { field: 'id', headerName: 'ID', width: 80 },
+        { field: 'kitap_adi', headerName: t('book_name'), minWidth: 160, flex: 1 },
+        { field: 'author_name', headerName: t('author_name_surname'), minWidth: 150, flex: 1 },
         { field: 'isbn', headerName: 'ISBN', width: 130 },
         {
             field: 'daily_lending_fee',
@@ -319,7 +319,7 @@ const Book = () => {
         {
             field: 'durum',
             headerName: t('status'),
-            width: 120,
+            width: 110,
             renderCell: (params) => (
                 <Checkbox
                     checked={params.value || false}
@@ -328,7 +328,7 @@ const Book = () => {
             )
         },
         {
-            field: 'library_name', headerName: t('library_name'), width: 150, flex: 1,
+            field: 'library_name', headerName: t('library_name'), minWidth: 150, flex: 1,
             renderCell: (params) => {
                 if (params?.row?.location_google_map_adress) {
                     return (
@@ -342,11 +342,11 @@ const Book = () => {
                 }
             }
         },
-        { field: 'kitap_tur', headerName: t('book_type'), width: 150, flex: 1 },
+        { field: 'kitap_tur', headerName: t('book_type'), minWidth: 140, flex: 1 },
         {
             field: 'actions',
             headerName: t('operations'),
-            width: 200,
+            width: 220,
             sortable: false,
             renderCell: (params) => (
                 <Stack direction="row" spacing={1}>
@@ -373,9 +373,9 @@ const Book = () => {
     ];
 
     return (
-        <Container maxWidth="xl">
-            <Box sx={{ width: '100%', mb: 4, textAlign: 'center' }}>
-                <Typography variant="h4" component="h1" gutterBottom>
+        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+            <Box sx={{ width: '100%', mb: 3, textAlign: 'center' }}>
+                <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>
                     {t('book_list')}
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
@@ -383,11 +383,12 @@ const Book = () => {
                 </Typography>
             </Box>
             <div>
-                <Box sx={{ display: 'flex', mb: 2, gap: 2, bgcolor: '#cfe8fc', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 2, gap: 1.5, bgcolor: '#cfe8fc', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', p: 2, borderRadius: 1 }}>
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={() => createbookmodalopen(true)}
+                        sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}
                     >
                         {t('add_new_book')}
                     </Button>
@@ -395,6 +396,7 @@ const Book = () => {
                         variant="contained"
                         color="secondary"
                         onClick={() => getbookexcel()}
+                        sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}
                     >
                         {t('download_excel')}
                     </Button>
@@ -403,15 +405,16 @@ const Book = () => {
             <Typography variant="h6" gutterBottom>
                 {t('filter')}
             </Typography>
-            <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+            <Paper elevation={3} sx={{ width: '100%', minWidth: 0, mb: 4, p: { xs: 1.5, sm: 2 } }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
                     <TextField
                         label={t('book_name')}
                         value={filterbooks.kitap_adi || ""}
                         onChange={(e) => setFilterBooks(prev => ({ ...prev, kitap_adi: e.target.value }))}
+                        sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}
                     />
 
-                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                    <FormControl variant="outlined" sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}>
                         <InputLabel id="demo-multiple-name-label">{t('authors')}</InputLabel>
                         <Select
                             labelId="demo-multiple-name-label"
@@ -438,6 +441,7 @@ const Book = () => {
                         label="ISBN"
                         value={filterbooks.isbn || ""}
                         onChange={(e) => setFilterBooks(prev => ({ ...prev, isbn: e.target.value }))}
+                        sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}
                     />
 
                     <FormControlLabel
@@ -448,10 +452,10 @@ const Book = () => {
                             />
                         }
                         label={t('status')}
-                        sx={{ alignItems: 'center', display: 'flex' }}
+                        sx={{ alignItems: 'center', display: 'flex', mr: 1 }}
                     />
 
-                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                    <FormControl variant="outlined" sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}>
                         <InputLabel id="demo-multiple-name-label">{t('book_type')}</InputLabel>
                         <Select
                             labelId="demo-multiple-name-label"
@@ -475,7 +479,7 @@ const Book = () => {
                             ])}
                         </Select>
                     </FormControl>
-                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                    <FormControl variant="outlined" sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}>
                         <InputLabel id="library-select-label">{t('library')}</InputLabel>
                         <Select
                             labelId="library-select-label"
@@ -496,9 +500,10 @@ const Book = () => {
                             ))}
                         </Select>
                     </FormControl>
-                    <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                    <FormControl variant="outlined" sx={{ flex: { xs: '1 1 100%', sm: '1 1 200px' }, minWidth: { xs: 0, sm: 200 } }}>
 
                         <TextField
+                            fullWidth
                             label={t('library_location')}
                             value={filterbooks.library_location ?? ""}
                             onChange={(e) =>
@@ -511,20 +516,22 @@ const Book = () => {
                         </TextField>
 
                     </FormControl>
-                    <IconButton aria-label="search" size="large" onClick={() => { searchbooks() }}>
-                        <SearchIcon />
-                    </IconButton>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <IconButton aria-label="search" size="large" onClick={() => { searchbooks() }}>
+                            <SearchIcon />
+                        </IconButton>
 
-                    <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
-                        <DeleteIcon />
-                    </IconButton>
+                        <IconButton onClick={() => { clearfilter() }} aria-label="delete" size="large">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
 
                 </Box>
             </Paper>
 
 
-            <Paper elevation={3} sx={{ width: '100%', mb: 4, p: 2 }}>
-                <Box sx={{ height: 600, width: '100%' }}>
+            <Paper elevation={3} sx={{ width: '100%', minWidth: 0, mb: 4, p: { xs: 1, sm: 2 } }}>
+                <Box sx={{ height: { xs: 480, md: 600 }, width: '100%', minWidth: 0 }}>
                     <DataGrid
                         rows={data}
                         columns={columns}
@@ -669,7 +676,7 @@ const Book = () => {
                         </Stack>
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ pr: 3, pb: 2 }}>
+                <DialogActions sx={{ pr: 3, pb: 2, flexWrap: 'wrap', gap: 1 }}>
                     <Button onClick={createbook} variant="contained" color="primary">
                         {t('create_book')}
                     </Button>
@@ -696,7 +703,7 @@ const Book = () => {
                                     variant="outlined"
                                 />
 
-                                <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                                <FormControl fullWidth variant="outlined">
                                     <InputLabel id="demo-multiple-name-label">{t('authors')}</InputLabel>
                                     <Select
                                         labelId="demo-multiple-name-label"
@@ -758,7 +765,7 @@ const Book = () => {
                                         ))
                                     ])}
                                 </Select>
-                                <FormControl variant="outlined" sx={{ minWidth: 200 }}>
+                                <FormControl fullWidth variant="outlined">
                                     <InputLabel id="library-select-label">{t('library')}</InputLabel>
                                     <Select
                                         labelId="library-select-label"
@@ -797,7 +804,7 @@ const Book = () => {
                         </Box>
                     )}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
                     <Button onClick={handleCloseModal} color="inherit">
                         {t('cancel')}
                     </Button>

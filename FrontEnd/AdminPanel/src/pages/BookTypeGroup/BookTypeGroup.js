@@ -180,7 +180,7 @@ const BookTypeGroup = () => {
                         {t('manage_book_type_groups_subtitle')}
                     </Typography>
                 </Box>
-                <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
+                <Paper elevation={3} sx={{ width: { xs: '100%', md: '70%', lg: '50%' }, mb: 4, p: 2, mx: 'auto' }}>
                     <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
                         <TextField
                             label={t('book_type_group_name')}
@@ -194,14 +194,15 @@ const BookTypeGroup = () => {
                         variant="contained"
                         onClick={createGroupRequest}
                         disabled={disabledButtonAndInput()}
+                        sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >
                         {t('add_book_type_group')}
                     </Button>
                 </Paper>
 
-                <Paper elevation={3} sx={{ width: '50%', mb: 4, p: 2, mx: 'auto' }}>
+                <Paper elevation={3} sx={{ width: { xs: '100%', md: '70%', lg: '50%' }, mb: 4, p: { xs: 1, sm: 2 }, mx: 'auto' }}>
                     <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-                        <Box sx={{ height: 600, width: '100%' }}>
+                        <Box sx={{ height: { xs: 420, md: 600 }, width: '100%', minWidth: 0 }}>
                             <DataGrid
                                 rows={data}
                                 columns={columns}

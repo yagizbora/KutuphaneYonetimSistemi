@@ -3,37 +3,18 @@ import { useTranslation } from 'react-i18next';
 import {
     Container,
     Box,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    TextField,
-    Checkbox,
-    FormControl,
-    InputLabel,
-    FormControlLabel,
     Typography,
     Paper,
-    Alert,
-    Grid,
-    Select,
-    MenuItem,
-    Stack
 } from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import Swal from 'sweetalert2';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
 import LibraryService from '../../services/LibraryService';
+
 const libraryService = new LibraryService();
 
 const Library = () => {
     const { t } = useTranslation();
     const [libraries, setLibraries] = useState([]);
-
 
     const getdata = async () => {
         try {
@@ -49,31 +30,30 @@ const Library = () => {
                 title: t('error'),
                 text: t('error_fetching_libraries') || error.message,
                 icon: 'error'
-            })
+            });
         }
-    }
-
+    };
 
     const columns = [
-        { field: 'id', headerName: t('id'), width: 90, sortable: false, },
-        { field: 'library_name', headerName: t('library_name'), width: 150, sortable: false, },
-        { field: 'library_working_start_time', headerName: t('opening_date'), width: 150, type: 'Date', sortable: false, },
-        { field: 'library_working_end_time', headerName: t('closing_date'), width: 180, type: 'Date', sortable: false, },
+        { field: 'id', headerName: t('id'), width: 70, sortable: false },
+        { field: 'library_name', headerName: t('library_name'), minWidth: 160, flex: 1, sortable: false },
+        { field: 'library_working_start_time', headerName: t('opening_date'), width: 130, type: 'Date', sortable: false },
+        { field: 'library_working_end_time', headerName: t('closing_date'), width: 130, type: 'Date', sortable: false },
         {
             field: 'phone_number', headerName: t('phone_number'), width: 150, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.phone_number ? (
-                        <a href={`tel: +90${params.row.phone_number}`} rel="noopener noreferrer">
+                        <a href={`tel:+90${params.row.phone_number}`} rel="noopener noreferrer">
                             +90{params.row.phone_number}
                         </a>
                     ) : null}
                 </>
             )
         },
-        { field: 'location', headerName: t('location'), width: 150, sortable: false, },
+        { field: 'location', headerName: t('location'), minWidth: 150, flex: 1, sortable: false },
         {
-            field: 'location_google_map_adress', headerName: t('location_address'), width: 200, sortable: false,
+            field: 'location_google_map_adress', headerName: t('location_address'), width: 160, sortable: false,
             renderCell: (params) => (
                 <>
                     {params.row.location_google_map_adress ? (
@@ -103,38 +83,36 @@ const Library = () => {
     }, []);
 
     return (
-        <>
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Paper>
-                    <Box>
-                        <Typography component="h2" variant="h6" color="primary" gutterBottom sx={{ p: 2 }}>
-                            {t('libraries')}
-                        </Typography>
-                    </Box>
-                </Paper>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', width: '100%', mt: 2 }}>
-                    <Box sx={{ height: 900, width: '100%' }}>
-                        <DataGrid
-                            rows={libraries}
-                            columns={columns}
-                            pageSize={10}
-                            rowsPerPageOptions={[10, 25, 50]}
-                            sx={{
-                                boxShadow: 2,
-                                width: '100%',
-                                border: 2,
-                                borderColor: 'primary.light',
-                                '& .MuiDataGrid-cell:hover': {
-                                    color: 'primary.main',
-                                },
-                            }}
-                        />
-                    </Box>
-                </Paper>
-            </Container>
-        </>
-    )
-}
-
+        <Container maxWidth="lg" sx={{ mt: { xs: 1, sm: 4 }, mb: { xs: 2, sm: 4 } }}>
+            <Paper sx={{ mb: 2 }}>
+                <Box>
+                    <Typography component="h2" variant="h6" color="primary" sx={{ p: 2, fontWeight: 600 }}>
+                        {t('libraries')}
+                    </Typography>
+                </Box>
+            </Paper>
+            <Paper sx={{ p: { xs: 1, sm: 2 }, display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 }}>
+                <Box sx={{ width: '100%', minWidth: 0 }}>
+                    <DataGrid
+                        rows={libraries}
+                        columns={columns}
+                        pageSize={10}
+                        rowsPerPageOptions={[10, 25, 50]}
+                        autoHeight
+                        sx={{
+                            boxShadow: 2,
+                            width: '100%',
+                            border: 2,
+                            borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                            },
+                        }}
+                    />
+                </Box>
+            </Paper>
+        </Container>
+    );
+};
 
 export default Library;

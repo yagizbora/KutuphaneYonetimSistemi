@@ -71,11 +71,11 @@ const Author = () => {
 
     const columns = [
         { field: 'id', headerName: t('id'), width: 70 },
-        { field: 'name_surname', headerName: t('name_surname'), width: 200 },
+        { field: 'name_surname', headerName: t('name_surname'), minWidth: 180, flex: 1 },
         {
             field: 'birthday_date',
             headerName: t('birthday'),
-            width: 150,
+            width: 140,
             valueFormatter: (params) => {
                 const value = params;
                 return value ? value.split('T')[0] : 'N/A';
@@ -84,7 +84,7 @@ const Author = () => {
         {
             field: 'biography',
             headerName: t('biography'),
-            width: 150,
+            width: 140,
             sortable: false,
             renderCell: (params) => (
                 <Button
@@ -105,9 +105,9 @@ const Author = () => {
         {
             field: 'actions',
             headerName: t('actions'),
-            width: 160,
+            width: 170,
             renderCell: (params) => (
-                <Stack direction="row" spacing={4}>
+                <Stack direction="row" spacing={1} alignItems="center">
                     <Button
                         variant="contained"
                         size="small"
@@ -117,7 +117,6 @@ const Author = () => {
                     </Button>
                     <IconButton
                         variant="contained"
-
                         color="error"
                         onClick={() => deleteAuthor(params)}
                     >
@@ -131,12 +130,12 @@ const Author = () => {
     ];
 
     return (
-        <Container sx={{ mt: 4 }}>
+        <Container sx={{ mt: 3, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
             <Typography variant="h5" gutterBottom>
                 {t('author_list')}
             </Typography>
-            <Paper sx={{ p: 2 }}>
-                <Box sx={{ height: 600, width: '100%' }}>
+            <Paper sx={{ p: { xs: 1, sm: 2 }, width: '100%', minWidth: 0 }}>
+                <Box sx={{ height: { xs: 450, md: 600 }, width: '100%', minWidth: 0 }}>
                     <DataGrid
                         rows={authors}
                         columns={columns}
@@ -161,26 +160,26 @@ const Author = () => {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: { xs: '90%', sm: 600, md: 700 },
-                        maxHeight: '80vh',
+                        width: { xs: '92vw', sm: 600, md: 700 },
+                        maxHeight: '85vh',
                         bgcolor: 'background.paper',
                         boxShadow: 24,
-                        p: 4,
+                        p: { xs: 2.5, sm: 4 },
                         overflowY: 'auto',
                         borderRadius: 2,
                     }}
                 >
-                    <Typography id="author-biography-title" variant="h4" gutterBottom>
+                    <Typography id="author-biography-title" variant="h4" gutterBottom sx={{ fontSize: { xs: '1.35rem', sm: '2rem' } }}>
                         {selectedAuthor.name_surname} - {t('biography')}
                     </Typography>
                     <Typography
                         id="author-biography-description"
                         variant="body1"
-                        sx={{ whiteSpace: 'pre-line', fontSize: '1.1rem' }}
+                        sx={{ whiteSpace: 'pre-line', fontSize: { xs: '0.95rem', sm: '1.1rem' } }}
                     >
                         {selectedAuthor.biography}
                     </Typography>
-                    <Box sx={{ mt: 4, textAlign: 'right' }}>
+                    <Box sx={{ mt: 3, textAlign: 'right' }}>
                         <Button variant="contained" color="primary" onClick={() => setOpenModal(false)}>
                             {t('close')}
                         </Button>

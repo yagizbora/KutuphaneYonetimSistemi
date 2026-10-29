@@ -37,26 +37,26 @@ const RequestBook = () => {
 
     const columnsCommon = [
         { field: 'id', headerName: t('id'), width: 70 },
-        { field: 'book_name', headerName: t('book_name'), width: 150 },
+        { field: 'book_name', headerName: t('book_name'), minWidth: 160, flex: 1 },
         {
             field: 'request_start_time',
             headerName: t('request_start_time'),
-            width: 180,
+            width: 160,
             type: 'dateTime',
             valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
         {
             field: 'request_deadline',
             headerName: t('deadline'),
-            width: 180,
+            width: 160,
             type: 'dateTime',
             valueFormatter: (params) => dayjs(params).format('DD.MM.YYYY')
         },
-        { field: 'comment', headerName: t('comment'), width: 200 },
+        { field: 'comment', headerName: t('comment'), minWidth: 180, flex: 1 },
         {
             field: 'is_complated',
             headerName: t('is_completed'),
-            width: 150,
+            width: 130,
             renderCell: (params) => (
                 <Checkbox checked={params.value || false} disabled />
             )
@@ -68,15 +68,16 @@ const RequestBook = () => {
         {
             field: 'operations',
             headerName: t('operations'),
-            width: 300,
+            width: 280,
             renderCell: (params) => (
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={1} alignItems="center">
                     <IconButton color="error" onClick={() => handleDelete(params.row)}>
                         <DeleteOutlineIcon />
                     </IconButton>
                     <Button
                         variant="contained"
                         color="primary"
+                        size="small"
                         href={`/request/complate-request/${params.row.id}`}
                     >
                         {t('go_to_completion_page')}
@@ -91,20 +92,22 @@ const RequestBook = () => {
         {
             field: 'closed_subject_details',
             headerName: t('closing_note'),
-            width: 250,
+            minWidth: 220,
+            flex: 1,
         },
         {
             field: 'operations',
             headerName: t('operations'),
-            width: 300,
+            width: 280,
             renderCell: (params) => (
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={1} alignItems="center">
                     <IconButton color="error" onClick={() => handleDelete(params.row)}>
                         <DeleteOutlineIcon />
                     </IconButton>
                     <Button
                         variant="contained"
                         color="primary"
+                        size="small"
                         href={`/request/complate-request/${params.row.id}`}
                     >
                         {t('go_to_completion_page')}
@@ -172,15 +175,15 @@ const RequestBook = () => {
     }, [tabIndex]);
 
     return (
-        <Container>
+        <Container sx={{ px: { xs: 1, sm: 2, md: 3 }, mb: 4 }}>
             <Box my={3}>
-                <Typography variant="h4" align="center">{t('book_requests')}</Typography>
+                <Typography variant="h4" align="center" sx={{ fontSize: { xs: '1.6rem', sm: '2.125rem' } }}>{t('book_requests')}</Typography>
             </Box>
 
             {/* Form */}
-            <Paper sx={{ padding: 2, mb: 4 }}>
+            <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 4, width: '100%', minWidth: 0 }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
                             label={t('book_name')}
@@ -188,7 +191,7 @@ const RequestBook = () => {
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, book_name: e.target.value }))}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
                             label={t('comment')}
@@ -196,7 +199,7 @@ const RequestBook = () => {
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, comment: e.target.value }))}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
                             label={t('start')}
@@ -206,7 +209,7 @@ const RequestBook = () => {
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, request_start_time: e.target.value }))}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
                             label={t('end')}
@@ -216,7 +219,7 @@ const RequestBook = () => {
                             onChange={(e) => setCreateRequest(prev => ({ ...prev, request_deadline: e.target.value }))}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -228,25 +231,31 @@ const RequestBook = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={createRequestFunc}>{t('add')}</Button>
+                        <Button variant="contained" onClick={createRequestFunc} sx={{ width: { xs: '100%', sm: 'auto' } }}>{t('add')}</Button>
                     </Grid>
                 </Grid>
             </Paper>
 
             {/* Tabs */}
-            <Paper sx={{ padding: 2 }}>
-                <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)} centered>
+            <Paper sx={{ p: { xs: 1.5, sm: 2 }, width: '100%', minWidth: 0 }}>
+                <Tabs
+                    value={tabIndex}
+                    onChange={(e, newIndex) => setTabIndex(newIndex)}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    allowScrollButtonsMobile
+                >
                     <Tab label={t('active_requests')} />
                     <Tab label={t('completed_requests')} />
                 </Tabs>
 
-                <Box mt={3}>
+                <Box mt={2} sx={{ width: '100%', minWidth: 0 }}>
                     <DataGrid
                         rows={data}
                         columns={tabIndex === 0 ? columnsActive : columnsCompleted}
                         pageSize={10}
                         rowsPerPageOptions={[10]}
-                        sx={{ height: 900, width: '100%' }}
+                        autoHeight
                     />
                 </Box>
             </Paper>

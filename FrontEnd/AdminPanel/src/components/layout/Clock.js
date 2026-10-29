@@ -1,26 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Clock.css";
 
-
 const Clock = () => {
-    let time = new Date().toLocaleTimeString()
+    const [ctime, setTime] = useState(() => new Date().toLocaleTimeString());
 
-    const [ctime, setTime] = useState(time)
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTime(new Date().toLocaleTimeString());
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, []);
 
-    const UpdateTime = () => {
-        time = new Date().toLocaleTimeString()
-        setTime(time)
-    }
-    setInterval(UpdateTime)
     return (
-        <>
-            <div className="time-container">
-                <p className="time-text">{ctime}</p>
-            </div>
-        </>
-
-    )
-}
-
+        <div className="time-container clock-badge">
+            <p className="time-text">{ctime}</p>
+        </div>
+    );
+};
 
 export default Clock;

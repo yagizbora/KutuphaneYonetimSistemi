@@ -28,7 +28,10 @@ import CustomerUserCreate from './pages/User/Customeruser/CustomerUserCreate.js'
 import CustomerUserList from './pages/User/Customeruser/CustomerUserList.js';
 import CustomerBooKRequest from './pages/CustomerBookRequest/CustomerBooKRequest.js';
 import RequestBookLogs from './pages/RequestBookLogs/RequestBookLogs.js';
-import BookTypeGroup from './pages/BookTypeGroup/BookTypeGroup.js'
+import BookTypeGroup from './pages/BookTypeGroup/BookTypeGroup.js';
+import EBook from './pages/EBook/EBook.js';
+import EBookRequest from './pages/EBookRequest/EBookRequest.js';
+
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const user_id = localStorage.getItem('user_id');
@@ -39,51 +42,52 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-
 const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:44336/api';
 
 function App() {
-  const [isNavbarOpen, setIsNavbarOpen] = useState(window.innerWidth > 768);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(() => window.innerWidth >= 900);
   const [version, setVersion] = useState(null);
 
   React.useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsNavbarOpen(false);
-      } else {
-        setIsNavbarOpen(true);
-      }
+    const mediaQuery = window.matchMedia('(max-width: 899.98px)');
+    const handleMediaChange = (e) => {
+      setIsNavbarOpen(!e.matches);
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    mediaQuery.addEventListener('change', handleMediaChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
   }, []);
+
   const checkversion = async () => {
     try {
-    const response = await fetch(`${API_URL}/Version/CheckVersion`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+      const response = await fetch(`${API_URL}/Version/CheckVersion`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         if (data) {
           const filterdata = data.map(item => item.app_name === "Admin Panel" ? item : null).filter(item => item !== null)[0];
-          setVersion(filterdata.version);
+          if (filterdata) {
+            setVersion(filterdata.version);
+          }
         }
       }
     }
     catch (error) {
       console.error('Error checking version:', error);
     }
-  }
+  };
+
   React.useEffect(() => {
     checkversion();
+    const intervalId = setInterval(checkversion, 50000);
+    return () => clearInterval(intervalId);
   }, []);
-  setInterval(checkversion, 50000);
- 
+
   const toggleNavbar = () => {
-    setIsNavbarOpen(!isNavbarOpen);
+    setIsNavbarOpen((prev) => !prev);
   };
 
   return (
@@ -98,10 +102,8 @@ function App() {
         <Route path="/404" element={<NotFound />} />
         <Route path="/access-denied" element={<AccessDenied />} />
 
-
         {/* Protected routes */}
         <Route path="/*" element={
-
           <ProtectedRoute>
             <WelcomeAnimation />
             <Layout isNavbarOpen={isNavbarOpen} toggleNavbar={toggleNavbar} version={version}>
@@ -109,9 +111,11 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/book" element={<Book />} />
+                <Route path="/ebook" element={<EBook />} />
+                <Route path="/ebook/requests" element={<EBookRequest />} />
                 <Route path="/lending-book" element={<LendingBook />} />
                 <Route path="/book/categories" element={<BookType />} />
-                <Route path= "/book/book-type-group" element={<BookTypeGroup/>} />
+                <Route path="/book/book-type-group" element={<BookTypeGroup />} />
                 <Route path="/book/return-book" element={<ReturnBook />} />
                 <Route path="/book/customer-book-request" element={<CustomerBooKRequest />} />
                 <Route path="/user" element={<User />} />
@@ -132,9 +136,7 @@ function App() {
                 <Route path="/user/customer-user-list" element={<CustomerUserList />} />
 
                 {/* Catch-all route for 404 */}
-
                 <Route path="*" element={<NotFound />} />
-                {/* Redirect to 404 for any unmatched routes */}
               </Routes>
             </Layout>
           </ProtectedRoute>
@@ -145,4 +147,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

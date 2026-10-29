@@ -61,12 +61,19 @@ const PaymentLogs = () => {
     }, [tabIndex]);
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Paper sx={{ p: 2 }}>
+        <Container maxWidth="lg" sx={{ mt: 3, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
+            <Paper sx={{ p: { xs: 1.5, sm: 2 }, width: '100%', minWidth: 0 }}>
                 <Typography variant="h6" gutterBottom>
                     {t('payment_logs')}
                 </Typography>
-                <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)} centered>
+                <Tabs
+                    value={tabIndex}
+                    onChange={(e, newIndex) => setTabIndex(newIndex)}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    allowScrollButtonsMobile
+                    sx={{ mb: 2 }}
+                >
                     <Tab label={t('completed_payments')} />
                     <Tab label={t('uncompleted_payments')} />
                 </Tabs>

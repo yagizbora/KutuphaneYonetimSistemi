@@ -9,7 +9,8 @@ const Home = () => {
       className="dashboard" 
       style={{ 
         position: 'relative', 
-        height: 'calc(100vh - var(--topbar-height) - 64px)', 
+        minHeight: 'calc(100dvh - var(--topbar-height) - 96px)',
+        height: '100%',
         borderRadius: 'var(--radius-lg)',
         overflow: 'hidden',
         boxShadow: 'var(--shadow-lg)'
@@ -18,10 +19,7 @@ const Home = () => {
       <div 
         style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          inset: 0,
           backgroundImage: "url('/library_background.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -30,12 +28,9 @@ const Home = () => {
       />
       <div 
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(to top, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.2))',
+          position: 'relative',
+          minHeight: 'calc(100dvh - var(--topbar-height) - 96px)',
+          background: 'linear-gradient(to top, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.25))',
           zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
@@ -43,7 +38,7 @@ const Home = () => {
           justifyContent: 'center',
           color: 'white',
           textAlign: 'center',
-          padding: '2rem'
+          padding: '1.5rem'
         }}
       >
         <h1 className="home-title"> BORA </h1>
