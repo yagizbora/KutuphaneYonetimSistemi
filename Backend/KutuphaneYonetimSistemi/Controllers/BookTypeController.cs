@@ -127,7 +127,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             {
                 if (string.IsNullOrEmpty(models.aciklama))
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse("Tür ismi boş olamaz!"));
+                    return BadRequest(ResponseHelper.ErrorResponse("Book type name cannot be empty!"));
                 }
                 using (var connection = _dbHelper.GetConnection())
                 {

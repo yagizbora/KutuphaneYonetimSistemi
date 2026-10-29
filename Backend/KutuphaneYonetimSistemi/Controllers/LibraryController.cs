@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -130,7 +130,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 var checkemail = helper.ValidateEmail(models.library_email);
                 if (!checkemail)
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));
+                    return BadRequest(ResponseHelper.ErrorResponse("Invalid email address!"));
                 }
             }   
             try
@@ -143,7 +143,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         var phoneNumberString = models.phone_number.Value.ToString(CultureInfo.InvariantCulture);
                         if (!Helper.ValidatePhoneNumber(phoneNumberString))
                         {
-                            return BadRequest(ResponseHelper.ErrorResponse("Telefon numarası geçerli değil!"));
+                            return BadRequest(ResponseHelper.ErrorResponse("Invalid phone number!"));
                         }
                     }
 
@@ -189,7 +189,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var checkemail = helper.ValidateEmail(model.library_email);
                     if (!checkemail)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Bu e mail geçerli değil!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid email address!"));
                     }
                 }
                 using (var connection = _dbHelper.GetConnection())
@@ -199,7 +199,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         var phoneNumberString = model.phone_number.Value.ToString(CultureInfo.InvariantCulture);
                         if (!Helper.ValidatePhoneNumber(phoneNumberString))
                         {
-                            return BadRequest(ResponseHelper.ErrorResponse("Telefon numarası geçerli değil!"));
+                            return BadRequest(ResponseHelper.ErrorResponse("Invalid phone number!"));
                         }
                     }
 
@@ -249,7 +249,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     else
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Bi şeyler ters gitti"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Something went wrong."));
                     }
                 }
             }

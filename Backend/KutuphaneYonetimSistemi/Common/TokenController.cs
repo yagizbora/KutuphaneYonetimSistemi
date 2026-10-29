@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -39,14 +39,14 @@ namespace KutuphaneYonetimSistemi.Common
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(user_id_str) || !int.TryParse(user_id_str, out user_id))
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "You cannot access the system without logging in!" };
             }
 
             var handler = new JwtSecurityTokenHandler();
             Helper helper = new Helper();
             if (!handler.CanReadToken(token))
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Invalid token!" };
             }
 
             var checkTokenSignature = helper.CheckJWTokenHaveTrueKey(token);
@@ -64,7 +64,7 @@ namespace KutuphaneYonetimSistemi.Common
                     var user = connection.QuerySingleOrDefault<UserLoginModels>(sql, new { token = token,user_id = user_id });
                     if (user == null)
                     {
-                        return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token doğrulanamadı!" };
+                        return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token could not be verified!" };
                     }
                     if (user.login_date != null)
                     {
@@ -80,7 +80,7 @@ namespace KutuphaneYonetimSistemi.Common
                                 {
                                     userLoginLogs.LoginTimeOutLog(user.username, DateTime.Now);
                                 }
-                                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Oturum süresi doldu!" };
+                                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Session has expired!" };
                             }
                         }
                         if (user.login_date.Value > DateTime.Now)
@@ -92,15 +92,15 @@ namespace KutuphaneYonetimSistemi.Common
                                 return new ApiResponse<UserLoginModels>()
                                 {
                                     Status = false,
-                                    Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz" +
-                                    $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!"
+                                    Message = "A system error occurred: your login time is ahead of the current system time. " +
+                                    "If you encounter this issue, please contact our support team immediately!"
                                 };
                             }
                         }
                     }
                     else
                     {
-                        return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token doğrulandı!" };
+                        return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token verified!" };
                     }
                 }
                 catch (Exception ex)
@@ -109,7 +109,7 @@ namespace KutuphaneYonetimSistemi.Common
                 }
             }
 
-            return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token Geçerli" };
+            return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token is valid" };
         }
     }
     public class CustomerTokenController
@@ -138,14 +138,14 @@ namespace KutuphaneYonetimSistemi.Common
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(user_id_str) || !int.TryParse(user_id_str, out user_id))
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Login olmadan sisteme giriş yapamazsın!" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "You cannot access the system without logging in!" };
             }
 
             var handler = new JwtSecurityTokenHandler();
             Helper helper = new Helper();
             if (!handler.CanReadToken(token))
             {
-                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token geçerli değil!" };
+                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Invalid token!" };
             }
 
             var checkTokenSignature = helper.CheckJWTokenHaveTrueKey(token);
@@ -164,7 +164,7 @@ namespace KutuphaneYonetimSistemi.Common
                     var user = connection.QuerySingleOrDefault<UserLoginModels>(sql, new { token = token, user_id = user_id });
                     if (user == null)
                     {
-                        return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token doğrulanamadı!" };
+                        return new ApiResponse<UserLoginModels>() { Status = false, Message = "Token could not be verified!" };
                     }
                     if (user.user_account_status.HasValue && !user.user_account_status.Value)
                     {
@@ -172,7 +172,7 @@ namespace KutuphaneYonetimSistemi.Common
                         int disable = connection.Execute(disablesql, new { id = user.id });
                         if (disable > 0)
                         {
-                            return new ApiResponse<UserLoginModels>() { Status = false, Message = "Bu hesap devre dışı bırakılmıştır!" };
+                            return new ApiResponse<UserLoginModels>() { Status = false, Message = "This account has been disabled!" };
                         }
 
                     }
@@ -190,7 +190,7 @@ namespace KutuphaneYonetimSistemi.Common
                                 {
                                     customeruserloginlogs.LoginTimeOutLog(user.username, DateTime.Now);
                                 }
-                                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Oturum süresi doldu!" };
+                                return new ApiResponse<UserLoginModels>() { Status = false, Message = "Session has expired!" };
                             }
                         }
                         if (user.login_date.Value > DateTime.Now)
@@ -202,15 +202,15 @@ namespace KutuphaneYonetimSistemi.Common
                                 return new ApiResponse<UserLoginModels>()
                                 {
                                     Status = false,
-                                    Message = $"Sistemde hata oluştu sistemdeki giriş saatiniz" +
-                                    $" güncel saatten daha az bu durum ile karşılaşırsanız destek ekibimiz ile acilen iletişime geçin!"
+                                    Message = "A system error occurred: your login time is ahead of the current system time. " +
+                                    "If you encounter this issue, please contact our support team immediately!"
                                 };
                             }
                         }
                     }
                     else
                     {
-                        return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token doğrulandı!" };
+                        return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token verified!" };
                     }
                 }
                 catch (Exception ex)
@@ -219,7 +219,7 @@ namespace KutuphaneYonetimSistemi.Common
                 }
             }
 
-            return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token Geçerli" };
+            return new ApiResponse<UserLoginModels>() { Status = true, Message = "Token is valid" };
         }
     }
 }

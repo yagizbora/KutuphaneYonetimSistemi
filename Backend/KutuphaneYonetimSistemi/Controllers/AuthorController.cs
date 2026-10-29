@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.HttpLogging;
@@ -104,7 +104,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 if (!checkdate.status)
                 {
                     
-                    var errorMessage = checkdate.message ?? "Geçersiz tarih formatı.";
+                    var errorMessage = checkdate.message ?? "Invalid date format.";
                     return BadRequest(ResponseHelper.ErrorResponse(errorMessage));
                 }
                 ;
@@ -115,7 +115,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var checkauthorresult = await connection.QueryFirstOrDefaultAsync<(string name_surname, int id)>(checkauthor, new { name_surname = model.name_surname });
                     if (checkauthorresult.name_surname != default)
                     {
-                        return BadRequest(ResponseHelper.ActionResponse($"Yazar zaten mevcut"));
+                        return BadRequest(ResponseHelper.ActionResponse("Author already exists."));
                     }
 
                     string query = "INSERT INTO table_authors(name_surname, biography, birthday_date, is_deleted) VALUES (@name_surname, @biography, @birthday_date, false)";

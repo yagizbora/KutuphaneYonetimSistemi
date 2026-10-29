@@ -45,7 +45,7 @@ namespace KutuphaneYonetimSistemi.Controllers
             var ext = Path.GetExtension(file.FileName);
             if (string.IsNullOrWhiteSpace(ext) || !AllowedExtensions.Contains(ext))
             {
-                throw new InvalidOperationException("Sadece PDF veya EPUB formatında dosya yüklenebilir.");
+                throw new InvalidOperationException("Only PDF or EPUB files can be uploaded.");
             }
 
             var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Upload", "EKitap");
@@ -245,10 +245,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                 await EBookSchemaInitializer.EnsureCreatedAsync(_dbHelper);
 
                 if (string.IsNullOrWhiteSpace(model.kitap_adi))
-                    return BadRequest(ResponseHelper.ErrorResponse("Kitap adı zorunludur."));
+                    return BadRequest(ResponseHelper.ErrorResponse("Book name is required."));
 
                 if (model.file == null && string.IsNullOrWhiteSpace(model.external_url))
-                    return BadRequest(ResponseHelper.ErrorResponse("Lütfen bir PDF/EPUB dosyası yükleyin veya harici bir bağlantı (URL) girin."));
+                    return BadRequest(ResponseHelper.ErrorResponse("Please upload a PDF/EPUB file or provide an external URL."));
 
                 string? filePath = null;
                 if (model.file != null && model.file.Length > 0)
@@ -313,7 +313,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 await EBookSchemaInitializer.EnsureCreatedAsync(_dbHelper);
 
                 if (string.IsNullOrWhiteSpace(model.kitap_adi))
-                    return BadRequest(ResponseHelper.ErrorResponse("Kitap adı zorunludur."));
+                    return BadRequest(ResponseHelper.ErrorResponse("Book name is required."));
 
                 using var connection = _dbHelper.GetConnection();
                 var existing = await connection.QueryFirstOrDefaultAsync<ListEBookModel>(
@@ -343,7 +343,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 string? cleanUrl = string.IsNullOrWhiteSpace(model.external_url) ? null : model.external_url.Trim();
 
                 if (string.IsNullOrWhiteSpace(filePath) && string.IsNullOrWhiteSpace(cleanUrl))
-                    return BadRequest(ResponseHelper.ErrorResponse("En az bir dosya veya harici URL bulunmalıdır."));
+                    return BadRequest(ResponseHelper.ErrorResponse("At least one file or external URL must be provided."));
 
                 string fileFormat = DetermineFormat(filePath, cleanUrl);
 
@@ -542,16 +542,16 @@ namespace KutuphaneYonetimSistemi.Controllers
                 new { id });
 
             if (ebook == null || string.IsNullOrWhiteSpace(ebook.file_path))
-                return NotFound(ResponseHelper.NotFoundResponse("Dosya bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("File not found."));
 
             var physicalName = Path.GetFileName(ebook.file_path);
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload", "EKitap", physicalName);
             if (!System.IO.File.Exists(fullPath))
-                return NotFound(ResponseHelper.NotFoundResponse("Sunucuda dosya bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("File not found on server."));
 
             var ext = Path.GetExtension(fullPath).ToLowerInvariant();
             var contentType = ext == ".epub" ? "application/epub+zip" : "application/pdf";
-            var downloadName = $"{Regex.Replace(ebook.kitap_adi ?? "ekitap", @"[^a-zA-Z0-9_\-ğüşıöçĞÜŞİÖÇ ]", "").Trim()}{ext}";
+            var downloadName = $"{Regex.Replace(ebook.kitap_adi ?? "ebook", @"[^a-zA-Z0-9_\-ğüşıöçĞÜŞİÖÇ ]", "").Trim()}{ext}";
 
             var bytes = await System.IO.File.ReadAllBytesAsync(fullPath);
             return File(bytes, contentType, downloadName);
@@ -608,7 +608,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
             ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
             if (StringValues.IsNullOrEmpty(useridvalue) || !int.TryParse(useridvalue, out int adminUserId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -632,12 +632,12 @@ namespace KutuphaneYonetimSistemi.Controllers
                 if (updated > 0)
                 {
                     var msg = model.result
-                        ? "Müşterinin e-kitap erişim talebi onaylandı."
-                        : "Müşterinin e-kitap erişim talebi reddedildi.";
+                        ? "Customer e-book access request has been approved."
+                        : "Customer e-book access request has been rejected.";
                     return Ok(ResponseHelper.ActionResponse(msg));
                 }
 
-                return NotFound(ResponseHelper.NotFoundResponse("Talep bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("Request not found."));
             }
             catch (Exception ex)
             {
@@ -670,9 +670,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                     new { id = requestId, auth_person_id = adminUserId > 0 ? (int?)adminUserId : null });
 
                 if (updated > 0)
-                    return Ok(ResponseHelper.ActionResponse("E-kitap erişimi iptal edildi."));
+                    return Ok(ResponseHelper.ActionResponse("E-Book access has been revoked."));
 
-                return NotFound(ResponseHelper.NotFoundResponse("Kayıt bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("Record not found."));
             }
             catch (Exception ex)
             {

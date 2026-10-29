@@ -341,7 +341,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (count == 0)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Book type not found!"));
                     }
 
                     string query = "INSERT INTO table_kitaplar (kitap_adi,author_id,isbn,kitap_tur_kodu,library_id,daily_lending_fee,is_deleted) VALUES (@kitap_adi,@author_id,@isbn,@kitap_tur_kodu,@library_id,@daily_lending_fee,false)";
@@ -379,7 +379,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (count == 0)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Book type is not found!s"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Book type not found!"));
                     }
 
                     string datasql = "UPDATE table_kitaplar SET kitap_adi = @kitap_adi,author_id = @author_id,isbn = @isbn,kitap_tur_kodu = @kitap_tur_kodu,library_id = @library_id,daily_lending_fee = @daily_lending_fee WHERE id = @id";

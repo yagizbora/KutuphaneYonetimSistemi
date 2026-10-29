@@ -34,11 +34,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                     if (StringValues.IsNullOrEmpty(useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
                     if (!int.TryParse(useridvalue, out int userid))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                     }
                     string sql = "SELECT tk.id, tk.kitap_adi,tk.odunc_alma_tarihi,lb.library_name,lb.location,au.name_surname as author_name " +
                                  "FROM table_kitaplar tk " +
@@ -49,7 +49,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var result = await connection.QueryAsync<MyBooks>(sql, new { user_id = userid });
                     if (result == null || !result.Any())
                     {
-                        return Ok(ResponseHelper.OkResponse("Kullanıcının şu anda ödünçte kitabı yok.", result));
+                        return Ok(ResponseHelper.OkResponse("The user currently has no borrowed books.", result));
                     }
                     return Ok(ResponseHelper.OkResponse("Books retrieved successfully.", result));
                 }   
@@ -151,11 +151,11 @@ ORDER BY tk.id ASC;";
             ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
             if (StringValues.IsNullOrEmpty(useridvalue))
             {
-                return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
             }
             if (!int.TryParse(useridvalue, out int userid))
             {
-                return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
             }
 
 
@@ -167,7 +167,7 @@ ORDER BY tk.id ASC;";
                     {
                         string sql = "UPDATE table_kitap_request SET request_status = false,auth_person_id = @userid,is_approved = @is_approved WHERE id = @id";
                         var result = await connection.ExecuteAsync(sql, new { id = model.request_id, userid = userid, is_approved = model.result });
-                        return Ok(ResponseHelper.ActionResponse("Müşterinin kitap ödünç alma isteği başarı ile red edildi!"));
+                        return Ok(ResponseHelper.ActionResponse("Customer book borrowing request was rejected successfully!"));
                     }
                     else
                     {
@@ -177,7 +177,7 @@ ORDER BY tk.id ASC;";
                         {
                             string secondsql = "UPDATE table_kitaplar SET durum = false, odunc_alma_tarihi = @odunc_alma_tarihi, customer_id = @customer_id WHERE id = @book_id";
                             var execute = await connection.ExecuteAsync(secondsql, new { odunc_alma_tarihi = DateTime.Now, customer_id = model.customer_id, book_id = model.book_id });
-                            return Ok(ResponseHelper.ActionResponse("Müşterinin kitap ödünç alma isteği başarı ile kabul edildi!"));
+                            return Ok(ResponseHelper.ActionResponse("Customer book borrowing request was approved successfully!"));
                         }
                     }
                 }
@@ -188,7 +188,7 @@ ORDER BY tk.id ASC;";
                     ResponseHelper.ExceptionResponse($"{ex.Message}"));
             }
 
-            return BadRequest(ResponseHelper.ErrorResponse("Beklenmeyen bir hata oluştu."));
+            return BadRequest(ResponseHelper.ErrorResponse("An unexpected error occurred."));
         }
         [HttpPost("Customerbookrequest")]
         public async Task <IActionResult> Customerbookrequest([FromBody]CustomerBookRequest model)
@@ -204,40 +204,40 @@ ORDER BY tk.id ASC;";
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                     if (StringValues.IsNullOrEmpty(useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
                     if (!int.TryParse(useridvalue, out int userid))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                     }
                     string bookcountsql = "SELECT Count(*) FROM table_kitap_request WHERE request_status = true AND customer_user_id = @user_id";
                     var bookcontrol = await connection.QueryFirstOrDefaultAsync<int>(bookcountsql, new { user_id = userid });
                     if(bookcontrol >= 2)
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("2 kitaptan fazla ödünç alma isteği oluşturamazsınız! Lütfen çalışan ekip ile irtibata geçiniz!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("You cannot create more than 2 book borrowing requests! Please contact library staff."));
                     }
                     string secondstatuscountsql = "SELECT Count(*) FROM table_kitaplar WHERE customer_id = @user_id AND durum = FALSE";
                     var secondstatuscountsqlresult = await connection.QueryFirstOrDefaultAsync<int>(secondstatuscountsql, new { user_id = userid });
                     if(secondstatuscountsqlresult >= 2)
                     {
-                     return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("2 kitaptan fazla kitap sahibi olamazsınız ve isteyemezsiniz! Lütfen çalışan ekip ile irtibata geçiniz!"));
+                     return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("You cannot borrow or request more than 2 books at a time! Please contact library staff."));
                     }
                     string bookisavaible = "SELECT request_status = true FROM table_kitap_request WHERE book_id = @book_id";
                     var bookfreecontrol = await connection.QueryFirstOrDefaultAsync<bool>(bookisavaible, new { book_id = model.book_id });
                     if (bookfreecontrol)
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiş!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("This book has already been requested!"));
                     }
                     
                         string sql = "INSERT INTO table_kitap_request (book_id,customer_user_id,request_status,library_id,request_date) VALUES (@book_id,@customer_user_id,true,@library_id,@request_date)";
                         int result = await connection.ExecuteAsync(sql, new { book_id = model.book_id, customer_user_id = userid, library_id = model.library_id, request_date = DateTime.Now.Date });
                         if (result == 1)
                         {
-                            return Ok(ResponseHelper.ActionResponse($@"Kitap ödünç isteği başarı ile iletildi lütfen kütüphanenizle görüşünüz!"));
+                            return Ok(ResponseHelper.ActionResponse("Book borrowing request submitted successfully. Please contact your library!"));
                         }
                         else
                         {
-                            return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç isteği başarısız oldu"));
+                            return BadRequest(ResponseHelper.ErrorResponse("Book borrowing request failed."));
                         }
                 }
             }

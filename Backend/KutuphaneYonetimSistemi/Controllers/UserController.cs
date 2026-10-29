@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using static KutuphaneYonetimSistemi.Common.UserLoginLogs;
@@ -96,15 +96,15 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                     if (StringValues.IsNullOrEmpty(useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
                     if (!int.TryParse(useridvalue, out int userid))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                     }
                     if(userid == model.id)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Kendi kullanıcı bilgilerinizi güncelleyemezsiniz!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("You cannot update your own user account from here!"));
 
                     }
 
@@ -127,16 +127,16 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         if (fetcholdusername == null)
                         {
-                            return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                            return NotFound(ResponseHelper.ErrorResponse("User not found."));
                         }
 
                         
                         userOperationLogs.edituserlog(userid, fetcholdusername, model.id);
-                        return Ok(ResponseHelper.ActionResponse("Kullanıcı bilgileri değiştirildi"));
+                        return Ok(ResponseHelper.ActionResponse("User information updated successfully."));
                     }
                     else
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Kullanıcı bilgileri değiştirilirken hata oluştu"));
+                        return BadRequest(ResponseHelper.ErrorResponse("An error occurred while updating user information."));
                     }
 
                 }
@@ -163,11 +163,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                     if (StringValues.IsNullOrEmpty(useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
                     if (!int.TryParse(useridvalue, out int userid))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                     }
 
 
@@ -176,18 +176,18 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.password, saltrounds);
                     if (string.IsNullOrEmpty(passwordHash))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Şifre Hashlenemedi!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Failed to hash password!"));
                     }
 
                     string query = "UPDATE table_users SET hashedpassword = @hashedpassword, token = NULL, login_date = NULL, is_login = false WHERE id = @id";
                     int result = await connection.ExecuteAsync(query, new { hashedpassword = passwordHash,id = userid });
                     if(result == 1)
                     {
-                        return Ok(ResponseHelper.ActionResponse($@"Kullanıcı şifresi başarıyla güncellendi!"));
+                        return Ok(ResponseHelper.ActionResponse("Password updated successfully!"));
                     }
                     else
                     {
-                        return BadRequest($@"Kullanıcı Şifresi güncellenemedi!");
+                        return BadRequest(ResponseHelper.ErrorResponse("Failed to update password!"));
                     }
 
                 }
@@ -219,11 +219,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                     if (StringValues.IsNullOrEmpty(useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
                     if (!int.TryParse(useridvalue, out int userid))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                     }
 
                     //FOR LOGS
@@ -231,7 +231,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string? fetcholdusername = connection.QueryFirstOrDefault<string?>(fetcholdusernamesql, new { userid = userid });
                     if (fetcholdusername == null)
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                        return NotFound(ResponseHelper.ErrorResponse("User not found."));
                     }
                     //
 
@@ -247,11 +247,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     if(result == 1)
                     {
                         userOperationLogs.changeusernamelog(fetcholdusername, model.username);
-                        return Ok(ResponseHelper.ActionResponse($@"Kullanıcı adı başarıyla güncellendi!"));
+                        return Ok(ResponseHelper.ActionResponse("Username updated successfully!"));
                     }
                     else
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Kullanıcı adı güncellenemedi."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Failed to update username."));
                     }
 
                 }
@@ -321,14 +321,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                 {
                     if (!ControllerContext.HttpContext.Request.Headers.TryGetValue("token", out var tokenValue))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Token header eksik."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Token header is missing."));
                     }
 
                     string? token = tokenValue.FirstOrDefault();
 
                     if (string.IsNullOrEmpty(token))
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Token boş."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Token is empty."));
                     }
 
                     string fetcholdusernamesql = "SELECT username FROM table_users where id = @id";
@@ -337,11 +337,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     string? fetcholdusername = connection.QueryFirstOrDefault<string?>(fetcholdusernamesql, new { id = id });
                     if (fetcholdusername == null)
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("Kullanıcı bulunamadı."));
+                        return NotFound(ResponseHelper.ErrorResponse("User not found."));
                     }
                     if (!ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue))
                     {
-                        return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                        return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                     }
 
 
@@ -402,7 +402,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return Ok(new
                         {
                             status = true,
-                            message = "Sistemde kullanıcı mevcuttur!"
+                            message = "Users exist in the system!"
                         });
                     }
                     else
@@ -410,7 +410,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         return Ok(new
                         {
                             status = false,
-                            message = "Sistemde kullanıcı mevcut değildir!"
+                            message = "No users exist in the system!"
                         });
                     }
                 }
@@ -478,11 +478,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                 ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                 if (StringValues.IsNullOrEmpty(useridvalue))
                 {
-                    return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                 }
                 if (!int.TryParse(useridvalue, out int userid))
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                 }
                 using (var connection = _dbHelper.GetConnection())
                 {

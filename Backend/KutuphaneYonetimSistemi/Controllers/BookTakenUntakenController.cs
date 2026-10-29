@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -101,7 +101,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     var bookfreecontrol = await connection.QueryFirstOrDefaultAsync<bool>(bookisavaible, new { book_id = models.id });
                     if (bookfreecontrol)
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("Bu kitap zaten talep edilmiştir!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ErrorResponse("This book has already been requested!"));
                     }
 
                     DateTime oduncAlmaTarihi = models.odunc_alma_tarihi;
@@ -116,11 +116,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                     });
                     if (command == 1)
                     {
-                        return Ok(ResponseHelper.ActionResponse("Kitap başarıyla ödünç alındı."));
+                        return Ok(ResponseHelper.ActionResponse("Book lent successfully."));
                     }
                     else
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Ödünç verme işlemi başarısız."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Failed to lend book."));
                     }
                 }
             }
@@ -182,7 +182,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (!oduncAlmaTarihiRaw.HasValue)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alma tarihi sistemde bulunamadı."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Book lending date was not found in the system."));
                     }
 
                     DateOnly oduncAlmaTarihi = DateOnly.FromDateTime(oduncAlmaTarihiRaw.Value);
@@ -206,7 +206,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         calculatedDelayAllowance = ceza
                     };
 
-                    return Ok(ResponseHelper.OkResponse("Hesaplama başarılı!", result));
+                    return Ok(ResponseHelper.OkResponse("Calculation successful!", result));
                 }
             }
             catch (Exception ex)
@@ -231,13 +231,13 @@ namespace KutuphaneYonetimSistemi.Controllers
                     BookStatusModel? book = await connection.QueryFirstOrDefaultAsync<BookStatusModel>(checkBookQuery, new { id = models.id });
 
                     if (book == null)
-                        return BadRequest(ResponseHelper.ErrorResponse("Kitap bulunamadı!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Book not found!"));
 
                     if (book.Durum)
                         return BadRequest(ResponseHelper.ErrorResponse(ReturnMessages.BookIsFree));
 
                     if (!book.customer_id.HasValue || !book.odunc_alma_tarihi.HasValue)
-                        return BadRequest(ResponseHelper.ErrorResponse("Kitap ödünç alınmamış!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Book is not currently borrowed!"));
 
                     string findFeeQuery = "SELECT daily_lending_fee FROM table_kitaplar WHERE id = @id";
                     int dailyFee = await connection.QueryFirstOrDefaultAsync<int>(findFeeQuery, new { id = models.id });
@@ -267,10 +267,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                             });
 
                             if (logResult > 0)
-                                return Ok(ResponseHelper.ActionResponse("Kitap zamanında iade edildi."));
+                                return Ok(ResponseHelper.ActionResponse("Book returned on time."));
                         }
 
-                        return BadRequest(ResponseHelper.ErrorResponse("Kitap durumu güncellenemedi."));
+                        return BadRequest(ResponseHelper.ErrorResponse("Failed to update book status."));
                     }
 
                     int delayDays = totalDays - 10;
@@ -280,7 +280,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         string insertFailLog = @"
                     INSERT INTO table_payment_logs (payment_amount, payment_type, book_id, payment_is_success, is_deleted, payment_date, payment_failed_subject) 
-                    VALUES (@payment_amount, @payment_type, @book_id, false, false, @payment_date, 'Ödeme miktarı yetersiz!')";
+                    VALUES (@payment_amount, @payment_type, @book_id, false, false, @payment_date, 'Insufficient payment amount!')";
 
                         await connection.ExecuteAsync(insertFailLog, new
                         {
@@ -290,7 +290,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                             payment_date = DateTime.Now
                         });
 
-                        return BadRequest(ResponseHelper.ErrorResponse("Ödeme miktarı yetersiz!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("Insufficient payment amount!"));
                     }
 
                     string updateBookQuery = "UPDATE table_kitaplar SET Durum = true, customer_id = NULL, odunc_alma_tarihi = NULL WHERE id = @id";
@@ -312,10 +312,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                         });
 
                         if (paymentLogResult > 0)
-                            return Ok(ResponseHelper.ActionResponse("Kitap başarıyla iade edildi."));
+                            return Ok(ResponseHelper.ActionResponse("Book returned successfully."));
                     }
 
-                    return BadRequest(ResponseHelper.ErrorResponse("İade işlemi başarısız."));
+                    return BadRequest(ResponseHelper.ErrorResponse("Failed to return book."));
                 }
             }
             catch (Exception ex)

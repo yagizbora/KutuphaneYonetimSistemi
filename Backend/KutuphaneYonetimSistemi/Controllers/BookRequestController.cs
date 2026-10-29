@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -153,7 +153,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     int checkrequestisdeleted = await connection.QueryFirstOrDefaultAsync<int>(requestisdeleted, new { id = models.id });
                     if(checkrequestisdeleted == 1)
                     {
-                        return BadRequest(ResponseHelper.ErrorResponse("Bu istek zaten silinmiş!"));
+                        return BadRequest(ResponseHelper.ErrorResponse("This request has already been deleted!"));
                     }
                     string query = "UPDATE table_request_books SET is_complated = @is_complated, closed_subject_details = @closed_subject_details, request_start_time = @request_start_time, request_deadline = @request_deadline, book_name = @book_name, comment = @comment WHERE id = @id";
                     var result = await connection.ExecuteAsync(query, models);

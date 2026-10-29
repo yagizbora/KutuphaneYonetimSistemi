@@ -106,7 +106,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -168,7 +168,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -237,7 +237,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -283,7 +283,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -295,10 +295,10 @@ namespace KutuphaneYonetimSistemi.Controllers
                     new { id = model.ebook_id });
 
                 if (ebook == null || !ebook.durum)
-                    return NotFound(ResponseHelper.NotFoundResponse("E-kitap bulunamadı."));
+                    return NotFound(ResponseHelper.NotFoundResponse("E-Book not found."));
 
                 if (!ebook.requires_approval)
-                    return BadRequest(ResponseHelper.ErrorResponse("Bu e-kitap zaten açık erişimlidir, doğrudan okuyabilirsiniz."));
+                    return BadRequest(ResponseHelper.ErrorResponse("This e-book is already open access; you can read it directly."));
 
                 var activeOrApproved = await connection.QueryFirstOrDefaultAsync<int?>(@"
                     SELECT id FROM table_ekitap_requests
@@ -309,14 +309,14 @@ namespace KutuphaneYonetimSistemi.Controllers
                     new { ebook_id = model.ebook_id, user_id = userId });
 
                 if (activeOrApproved.HasValue)
-                    return BadRequest(ResponseHelper.ErrorResponse("Bu e-kitap için zaten aktif bir talebiniz veya onaylanmış erişiminiz bulunuyor."));
+                    return BadRequest(ResponseHelper.ErrorResponse("You already have an active request or approved access for this e-book."));
 
                 await connection.ExecuteAsync(@"
                     INSERT INTO table_ekitap_requests (ebook_id, customer_user_id, request_status, request_date)
                     VALUES (@ebook_id, @user_id, true, CURRENT_TIMESTAMP);",
                     new { ebook_id = model.ebook_id, user_id = userId });
 
-                return Ok(ResponseHelper.ActionResponse("E-kitap erişim talebiniz başarıyla iletildi."));
+                return Ok(ResponseHelper.ActionResponse("Your e-book access request has been submitted successfully."));
             }
             catch (Exception ex)
             {
@@ -333,7 +333,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -345,9 +345,9 @@ namespace KutuphaneYonetimSistemi.Controllers
                     new { id = requestId, user_id = userId });
 
                 if (deleted > 0)
-                    return Ok(ResponseHelper.ActionResponse("İşlem başarıyla tamamlandı."));
+                    return Ok(ResponseHelper.ActionResponse("Operation completed successfully."));
 
-                return NotFound(ResponseHelper.NotFoundResponse("Talep kaydı bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("Request record not found."));
             }
             catch (Exception ex)
             {
@@ -364,7 +364,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             try
             {
@@ -381,7 +381,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         "DELETE FROM table_customer_ekitap_library WHERE id = @id;",
                         new { id = existingId.Value });
 
-                    return Ok(ResponseHelper.OkResponse("E-kitap kitaplığınızdan çıkarıldı.", new { added = false }));
+                    return Ok(ResponseHelper.OkResponse("E-Book removed from your library.", new { added = false }));
                 }
                 else
                 {
@@ -389,7 +389,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         "INSERT INTO table_customer_ekitap_library (ebook_id, customer_user_id) VALUES (@ebook_id, @user_id);",
                         new { ebook_id = ebookId, user_id = userId });
 
-                    return Ok(ResponseHelper.OkResponse("E-kitap kitaplığınıza eklendi.", new { added = true }));
+                    return Ok(ResponseHelper.OkResponse("E-Book added to your library.", new { added = true }));
                 }
             }
             catch (Exception ex)
@@ -407,7 +407,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                 return Unauthorized(ResponseHelper.UnAuthorizedResponse(login?.Message));
 
             if (!TryGetCustomerId(out int userId))
-                return BadRequest(ResponseHelper.ErrorResponse("Geçerli bir kullanıcı bilgisi bulunamadı."));
+                return BadRequest(ResponseHelper.ErrorResponse("Valid user information not found."));
 
             await EBookSchemaInitializer.EnsureCreatedAsync(_dbHelper);
             using var connection = _dbHelper.GetConnection();
@@ -430,26 +430,26 @@ namespace KutuphaneYonetimSistemi.Controllers
 
             var ebook = await connection.QueryFirstOrDefaultAsync<dynamic>(sql, new { id = ebookId, user_id = userId });
             if (ebook == null)
-                return NotFound(ResponseHelper.NotFoundResponse("E-kitap bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("E-Book not found."));
 
             bool requiresApproval = (bool)ebook.requires_approval;
             bool hasApprovedAccess = (bool)ebook.has_approved_access;
 
             if (requiresApproval && !hasApprovedAccess)
-                return Unauthorized(ResponseHelper.ErrorResponse("Bu e-kitabı indirmek için yönetici onayı gereklidir."));
+                return Unauthorized(ResponseHelper.ErrorResponse("Administrator approval is required to download this e-book."));
 
             string? filePath = (string?)ebook.file_path;
             if (string.IsNullOrWhiteSpace(filePath))
-                return NotFound(ResponseHelper.NotFoundResponse("Bu e-kitaba ait indirilebilir dosya bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("No downloadable file found for this e-book."));
 
             var physicalName = Path.GetFileName(filePath);
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload", "EKitap", physicalName);
             if (!System.IO.File.Exists(fullPath))
-                return NotFound(ResponseHelper.NotFoundResponse("Sunucuda dosya bulunamadı."));
+                return NotFound(ResponseHelper.NotFoundResponse("File not found on server."));
 
             var ext = Path.GetExtension(fullPath).ToLowerInvariant();
             var contentType = ext == ".epub" ? "application/epub+zip" : "application/pdf";
-            string bookTitle = (string?)ebook.kitap_adi ?? "ekitap";
+            string bookTitle = (string?)ebook.kitap_adi ?? "ebook";
             var downloadName = $"{Regex.Replace(bookTitle, @"[^a-zA-Z0-9_\-ğüşıöçĞÜŞİÖÇ ]", "").Trim()}{ext}";
 
             var bytes = await System.IO.File.ReadAllBytesAsync(fullPath);

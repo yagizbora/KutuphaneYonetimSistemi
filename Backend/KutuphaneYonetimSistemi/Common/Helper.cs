@@ -1,4 +1,4 @@
-﻿using JWT;
+using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
@@ -156,7 +156,7 @@ namespace KutuphaneYonetimSistemi.Common
 
                 if (date > todaydate)
                 {
-                    return (false, "Tarih bugünde büyük olamaz");
+                    return (false, "Date cannot be in the future.");
                 }
                 else
                 {
@@ -176,16 +176,16 @@ namespace KutuphaneYonetimSistemi.Common
             {
                 if (int.TryParse(number, out _))
                 {
-                    return (true, "Sayı geçerli");
+                    return (true, "Valid number.");
                 }
                 else
                 {
-                    return (false,"Bu bir sayı değil!");
+                    return (false,"This is not a valid number!");
                 }
             }
             catch
             {
-                return (false,"Bi şeyler ters gitti");
+                return (false,"Something went wrong.");
             }
         }
 

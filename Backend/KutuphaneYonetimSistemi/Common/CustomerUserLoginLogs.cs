@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 
 namespace KutuphaneYonetimSistemi.Common
 {
@@ -15,7 +15,7 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var event_description = $@"Bu ( {username} ) adlı müşteri kullanıcısı bu zamanda {login_date} giriş yaptı!";
+                var event_description = $@"Customer user ({username}) logged in at {login_date}.";
 
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Login", event_description = event_description });
@@ -32,7 +32,7 @@ namespace KutuphaneYonetimSistemi.Common
 
                 var logoutDate = DateTime.Now;
 
-                var event_description = $@"Bu ( {username} ) adlı müşteri kullanıcısı kullanıcı bu ( {logoutDate} ) bu zamanda çıkış yapmıştır";
+                var event_description = $@"Customer user ({username}) logged out at {logoutDate}.";
 
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Logout", event_description = event_description });
@@ -42,7 +42,7 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var event_description = $@"Bu ( {username} ) adlı müşteri kullanıcısı  kullanıcsı bu zamanda ( {login_date} ) oturum süresi dolduğu için çıkış yaptırılmıştır!";
+                var event_description = $@"Customer user ({username}) was logged out at {login_date} due to session timeout.";
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Login Time out", event_description = event_description });
             }

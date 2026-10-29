@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ namespace KutuphaneYonetimSistemi.Common
         {
             using (var connection = _dbHelper.GetConnection())
             {
-                var event_description = $@"( {oldUsername} ) adlı kullanıcı ismini ( {newUsername} ) ile değiştirmiştir";
+                var event_description = $@"User ({oldUsername}) changed their username to ({newUsername}).";
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Change Username", event_description = event_description });
             }
@@ -26,7 +26,7 @@ namespace KutuphaneYonetimSistemi.Common
         {
                 using (var connection = _dbHelper.GetConnection())
                 {
-                    var event_description = $@"( {deletedusername} ) adlı kullanıcı ( {DateTime.Now} ) zamanında silinmiştir";
+                    var event_description = $@"User ({deletedusername}) was deleted at {DateTime.Now}.";
                     var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                     connection.Execute(sql, new { @event = "Delete User", event_description = event_description });
                 }
@@ -37,7 +37,7 @@ namespace KutuphaneYonetimSistemi.Common
             {
                 string findUsernameQuery = "SELECT username FROM table_users WHERE id = @user_id";
                 var username = connection.QueryFirstOrDefault<string>(findUsernameQuery, new { user_id });
-                var event_description = $@"( {username} ) adlı kullanıcı bu ( {editeduser} ) kullanıcı adlı ve ( {editeduserid} ) id ye sahip kullanıcı bu {DateTime.Now} zamanda düzenlenmiştir. Kullanıcı adı değişti ise id den kontrol ediniz";
+                var event_description = $@"User ({username}) edited user ({editeduser}, ID: {editeduserid}) at {DateTime.Now}. Check by ID if the username was changed.";
                 var sql = "INSERT INTO table_user_operation_logs(event, event_description) VALUES(@event, @event_description);";
                 connection.Execute(sql, new { @event = "Edit User", event_description = event_description });
             }

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using KutuphaneYonetimSistemi.Common;
 using KutuphaneYonetimSistemi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +38,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                         Helper helper = new();
                         if (!Helper.TcKimlikNoDogrula(model.tc_kimlik_no))
                         {
-                        return Ok(ResponseHelper.ErrorResponse("TC Kimlik No Geçersiz"));
+                        return Ok(ResponseHelper.ErrorResponse("Invalid National ID Number (TC Kimlik No)."));
                         }
 
 
@@ -113,7 +113,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     {
                         return StatusCode(500,new
                         {
-                            message = "Bir şeyler ters gitti :("
+                            message = "Something went wrong."
                         });
                     }
                 }
@@ -166,7 +166,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if (!Helper.TcKimlikNoDogrula(model.tc_kimlik_no))
                     {
-                        return Ok(ResponseHelper.ErrorResponse("TC Kimlik No Geçersiz"));
+                        return Ok(ResponseHelper.ErrorResponse("Invalid National ID Number (TC Kimlik No)."));
                     }
 
                     string sql = @$"
@@ -187,7 +187,7 @@ namespace KutuphaneYonetimSistemi.Controllers
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse("Kullanıcı Güncellenemedi!"));
+                        return StatusCode(StatusCodes.Status500InternalServerError, ResponseHelper.ExceptionResponse("Failed to update user!"));
                     }
                 }
             }
@@ -220,7 +220,7 @@ namespace KutuphaneYonetimSistemi.Controllers
 
                     if(userdata.user_account_status.HasValue && !userdata.user_account_status.Value)
                     {
-                        return BadRequest(ResponseHelper.UnAuthorizedResponse("Bu hesaba giriş mümkün değildir! Lütfen kütüphanenizle görüşünüz!"));
+                        return BadRequest(ResponseHelper.UnAuthorizedResponse("Login is disabled for this account! Please contact your library."));
                     }
 
                     string? token = helper.GenerateJWTToken(userdata.id, userdata.username);
@@ -267,11 +267,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                 ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                 if (StringValues.IsNullOrEmpty(useridvalue))
                 {
-                    return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                 }
                 if (!int.TryParse(useridvalue, out int userid))
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                 }
                 using (var connection = _dbHelper.GetConnection())
                 {
@@ -308,11 +308,11 @@ namespace KutuphaneYonetimSistemi.Controllers
                 ControllerContext.HttpContext.Request.Headers.TryGetValue("user_id", out var useridvalue);
                 if (StringValues.IsNullOrEmpty(useridvalue))
                 {
-                    return NotFound(ResponseHelper.ErrorResponse("User id yok"));
+                    return NotFound(ResponseHelper.ErrorResponse("User ID header is missing."));
                 }
                 if (!int.TryParse(useridvalue, out int userid))
                 {
-                    return BadRequest(ResponseHelper.ErrorResponse("User_id geçerli bir id değil"));
+                    return BadRequest(ResponseHelper.ErrorResponse("Invalid User ID."));
                 }
 
                 using (var connection = _dbHelper.GetConnection())
